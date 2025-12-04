@@ -9,9 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "gsap": "^3.13.0",
+    "locomotive-scroll": "^4.1.4",
+    "lucide-react": "^0.555.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "lucide-react": "^0.555.0"
+    "sass": "^1.94.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
