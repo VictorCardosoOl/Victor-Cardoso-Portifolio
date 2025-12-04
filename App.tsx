@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Projects from './components/Projects';
 import Services from './components/Services';
 import Skills from './components/Skills';
 import About from './components/About';
@@ -14,6 +15,7 @@ const App: React.FC = () => {
       <Navbar />
       <main>
         <Hero />
+        <Projects />
         <Services />
         <Skills />
         <About />
