@@ -1,0 +1,447 @@
+/* --- CONFIGURAÇÕES GERAIS E VARIÁVEIS --- */
+:root {
+  --sm-width: clamp(260px, 38vw, 420px);
+  --sm-z-index-wrapper: 40;
+  --sm-z-index-header: 50;
+  --sm-z-index-panel: 45;
+  --sm-accent: #B19EEF; /* Cor padrão caso não seja passada via prop */
+}
+
+.staggered-menu-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 40;
+}
+
+.staggered-menu-wrapper.fixed-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 40;
+  /* Garante que o menu fixo não bloqueie cliques na página abaixo dele quando fechado */
+  pointer-events: none;
+}
+
+.staggered-menu-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2em;
+  background: transparent;
+  pointer-events: none; /* Alterado de 'none' para 'auto' no wrapper */
+  z-index: 20;
+}
+
+/* Garante que o logo e o botão de menu sejam clicáveis */
+.staggered-menu-header > * {
+  pointer-events: auto;
+}
+.staggered-menu-wrapper.fixed-wrapper > * {
+  pointer-events: auto;
+}
+
+/* O painel (quando aberto) deve ser interativo */
+.staggered-menu-panel {
+   pointer-events: auto;
+}
+
+
+.sm-logo {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* ========== NOVO ESTILO PARA O LOGO EM TEXTO ========== */
+/* Inspirado no teu Header.css antigo */
+.sm-logo-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.4rem;
+  font-weight: 700;
+  transition: color 0.2s ease;
+}
+
+.sm-logo-link:hover {
+  color: #e0e0e0;
+}
+/* ================================================== */
+
+
+.sm-logo-img {
+  display: block;
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.sm-toggle {
+  position: fixed; /* Fixado na tela */
+  top: 40px;       /* Distância do topo */
+  
+  /* Posição Padrão (Direita) - Sobrescrito se data-position="left" */
+  right: 40px; 
+  left: auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px; /* Espaço entre texto e ícone */
+  
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #e9e9ef;
+  
+  /* Garante visibilidade sobre fundos claros */
+  mix-blend-mode: difference; 
+  
+  overflow: visible;
+  z-index: calc(var(--sm-z-index-header) + 10);
+}
+
+.sm-toggle:focus-visible {
+  outline: 2px solid #ffffffaa;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.sm-line:last-of-type {
+  margin-top: 6px;
+}
+
+/* --- TEXTO DO BOTÃO (Tamanho Aumentado) --- */
+.sm-toggle-textWrap {
+  position: relative;
+  display: inline-block;
+  
+  
+  /* Altura ajustada para o novo tamanho da fonte */
+  height: 1.3rem; 
+  overflow: hidden;
+  white-space: nowrap;
+  
+  width: var(--sm-toggle-width, auto);
+  min-width: var(--sm-toggle-width, auto);
+  text-align: right;
+}
+
+.sm-toggle-textInner {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.sm-toggle-line {
+  display: block;
+  /* CORREÇÃO DO TAMANHO DA FONTE */
+  font-size: 1.25rem; /* Aumentado de 1rem para 1.25rem (~20px) */
+  font-weight: 500;   /* Texto mais grosso */
+  line-height: 1.3rem; /* Igual à altura do wrapper */
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.sm-icon {
+  position: relative;
+  width: 16px; /* Levemente maior */
+  height: 16px;
+  flex: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+}
+.sm-panel-itemWrap {
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.sm-icon-line {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.sm-line {
+  display: none !important;
+}
+
+.staggered-menu-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(260px, 38vw, 420px);
+  height: 100%;
+  /* Cor de fundo do painel - alterado para um escuro para combinar */
+  background: rgba(26, 26, 26, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  padding: 6em 2em 2em 2em;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+[data-position='left'] .staggered-menu-panel {
+  right: auto;
+  left: 0;
+}
+
+.sm-prelayers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: clamp(260px, 38vw, 420px);
+  pointer-events: none;
+  z-index: 5;
+}
+
+[data-position='left'] .sm-prelayers {
+  right: auto;
+  left: 0;
+}
+
+.sm-prelayer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  transform: translateX(0);
+}
+
+.sm-panel-inner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sm-socials {
+  margin-top: auto;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sm-socials-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--sm-accent, #B19EEF); /* Cor de destaque */
+}
+
+.sm-socials-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.sm-socials-list .sm-socials-link {
+  opacity: 1;
+}
+
+.sm-socials-list:hover .sm-socials-link {
+  opacity: 0.35;
+}
+
+.sm-socials-list:hover .sm-socials-link:hover {
+  opacity: 1;
+}
+
+.sm-socials-link:focus-visible {
+  outline: 2px solid var(--sm-accent, #B19EEF);
+  outline-offset: 3px;
+}
+
+.sm-socials-list:focus-within .sm-socials-link {
+  opacity: 0.35;
+}
+
+.sm-socials-list:focus-within .sm-socials-link:focus-visible {
+  opacity: 1;
+}
+
+.sm-socials-link {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #e0e0e0; /* Cor do link social */
+  text-decoration: none;
+  position: relative;
+  padding: 2px 0;
+  display: inline-block;
+  transition:
+    color 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.sm-socials-link:hover {
+  color: var(--sm-accent, #B19EEF);
+}
+
+.sm-panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.sm-panel-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sm-panel-item {
+  position: relative;
+  color: #ffffff; /* Cor do texto do menu */
+  font-weight: 600;
+  font-size: 3.5rem;
+  cursor: pointer;
+  line-height: 1;
+  letter-spacing: -2px;
+  text-transform: uppercase;
+  transition:
+    background 0.25s,
+    color 0.25s;
+  display: inline-block;
+  text-decoration: none;
+  padding-right: 1.4em;
+}
+
+.staggered-menu-panel .sm-socials-list .sm-socials-link {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.staggered-menu-panel .sm-socials-list:hover .sm-socials-link:not(:hover) {
+  opacity: 0.35;
+}
+
+.staggered-menu-panel .sm-socials-list:focus-within .sm-socials-link:not(:focus-visible) {
+  opacity: 0.35;
+}
+
+.staggered-menu-panel .sm-socials-list .sm-socials-link:hover,
+.staggered-menu-panel .sm-socials-list .sm-socials-link:focus-visible {
+  opacity: 1;
+}
+
+.sm-panel-itemLabel {
+  display: inline-block;
+  will-change: transform;
+  transform-origin: 50% 100%;
+}
+
+.sm-panel-item:hover {
+  color: var(--sm-accent, #B19EEF);
+}
+
+.sm-panel-list[data-numbering] {
+  counter-reset: smItem;
+}
+
+.sm-panel-list[data-numbering] .sm-panel-item::after {
+  counter-increment: smItem;
+  content: counter(smItem, decimal-leading-zero);
+  position: absolute;
+  top: 0.1em;
+  right: 2.8em;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--sm-accent, #B19EEF);
+  letter-spacing: 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: var(--sm-num-opacity, 0);
+}
+
+/* O menu em si ocupa a tela inteira, mas o header (logo/botão) não deve inverter */
+@media (max-width: 1024px) {
+  .staggered-menu-panel {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .staggered-menu-panel {
+    width: 100%;
+    left: 0;
+    right: 0;
+  }
+}
+
+/* ... (todo o CSS anterior) ... */
+
+/* Estilo para a parte do nome que anima (restOfName) */
+.sm-logo-rest {
+  display: inline-block; /* Necessário para animar a largura */
+  vertical-align: bottom; /* Alinha com a primeira letra */
+  white-space: nowrap; /* Evita quebra de linha durante a animação */
+  overflow: hidden; /* Esconde o texto enquanto a largura anima */
+  margin-left: 1px; /* Pequeno espaço entre V e o resto */
+}
+
+/* ... (todo o CSS anterior) ... */
+
+.staggered-menu-wrapper.fixed-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 40;
+  /* Por padrão, o wrapper não intercepta cliques */
+  pointer-events: none; 
+}
+
+/* Quando o menu está aberto, o wrapper e seus filhos diretos podem receber eventos */
+.staggered-menu-wrapper.menu-open,
+.staggered-menu-wrapper.menu-open > * {
+   pointer-events: auto;
+}
+
+/* Garante que o header (logo/botão) seja sempre clicável, mesmo com o wrapper em none */
+.staggered-menu-header {
+  /* ... outros estilos ... */
+  pointer-events: auto; /* Garante que o header sempre receba eventos */
+}
+.staggered-menu-header > * {
+  pointer-events: auto; /* E seus filhos também */
+}
+
+/* O painel do menu (quando visível) também deve receber eventos */
+.staggered-menu-panel {
+   /* ... outros estilos ... */
+   pointer-events: auto;
+}
+

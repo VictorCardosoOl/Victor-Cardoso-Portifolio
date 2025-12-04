@@ -1,4 +1,5 @@
 import React from 'react';
+import { LocomotiveScrollProvider } from './contexts/LocomotiveScrollContext';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Services from './components/Services';
@@ -10,18 +11,22 @@ import Footer from './components/Footer';
 
 const App: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-      <main>
-        <Hero />
-        <Services />
-        <Skills />
-        <About />
-        <Education />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <LocomotiveScrollProvider>
+      <div className="flex flex-col min-h-screen bg-offwhite text-offblack">
+        <Navbar />
+        
+        {/* Conteúdo Principal com data-scroll-section para melhor performance do Locomotive */}
+        <main data-scroll-section>
+          <Hero />
+          <Services />
+          <Skills />
+          <About />
+          <Education />
+          <Contact />
+          <Footer />
+        </main>
+      </div>
+    </LocomotiveScrollProvider>
   );
 };
 
