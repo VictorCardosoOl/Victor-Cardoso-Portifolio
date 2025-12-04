@@ -17,6 +17,12 @@ export const PROJECTS = [
     description: 'Uma plataforma imersiva para um escritório de arquitetura premiado. O foco foi criar uma galeria visual fluida com carregamento progressivo de imagens e transições suaves entre páginas.',
     tags: ['React', 'Framer Motion', 'Tailwind', 'Strapi'],
     image: 'https://picsum.photos/id/10/1200/800',
+    gallery: [
+      'https://picsum.photos/id/10/1200/800',
+      'https://picsum.photos/id/11/1200/800',
+      'https://picsum.photos/id/12/1200/800',
+      'https://picsum.photos/id/13/1200/800'
+    ],
     link: '#'
   },
   {
@@ -25,6 +31,11 @@ export const PROJECTS = [
     description: 'Interface administrativa para gestão de ativos de alta performance. Desenvolvido com foco em visualização de dados em tempo real e segurança bancária.',
     tags: ['Next.js', 'TypeScript', 'D3.js', 'Node.js'],
     image: 'https://picsum.photos/id/160/1200/800',
+    gallery: [
+      'https://picsum.photos/id/160/1200/800',
+      'https://picsum.photos/id/161/1200/800',
+      'https://picsum.photos/id/162/1200/800'
+    ],
     link: '#'
   },
   {
@@ -33,6 +44,11 @@ export const PROJECTS = [
     description: 'Loja virtual boutique com experiência de compra personalizada. Integração completa com gateway de pagamentos e sistema de gestão de estoque inteligente.',
     tags: ['Shopify Headless', 'React', 'GraphQL', 'AWS'],
     image: 'https://picsum.photos/id/338/1200/800',
+    gallery: [
+      'https://picsum.photos/id/338/1200/800',
+      'https://picsum.photos/id/339/1200/800',
+      'https://picsum.photos/id/340/1200/800'
+    ],
     link: '#'
   }
 ];
