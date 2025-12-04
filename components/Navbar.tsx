@@ -41,38 +41,41 @@ const Navbar: React.FC = () => {
   return (
     <>
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out border-b ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out border-b ${
           isScrolled 
-            ? 'bg-white/90 backdrop-blur-md border-gray-100 py-4 shadow-sm' 
+            ? 'bg-white/80 backdrop-blur-lg border-gray-100 py-4 shadow-sm' 
             : 'bg-transparent border-transparent py-6'
         }`}
       >
         <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-          <a href="#" className="text-xl md:text-2xl font-serif font-bold tracking-tight z-50 relative mix-blend-difference text-offblack">
-            DEV<span className="text-gray-400">.</span>PORTFOLIO
+          <a href="#" className="text-xl md:text-2xl font-serif font-bold tracking-tight z-50 relative text-offblack hover:opacity-70 transition-opacity">
+            VICTOR<span className="text-gray-400">.</span>DEV
           </a>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            {NAV_LINKS.map((link) => {
-              const isActive = activeSection === link.href.replace('#', '');
-              return (
-                <a 
-                  key={link.name} 
-                  href={link.href}
-                  className={`text-xs font-medium uppercase tracking-widest transition-all duration-300 hover:text-black relative group ${
-                    isActive ? 'text-black' : 'text-gray-500'
-                  }`}
-                >
-                  {link.name}
-                  <span className={`absolute -bottom-1 left-0 h-[1px] bg-black transition-all duration-300 ${isActive ? 'w-full' : 'w-0 group-hover:w-full'}`}></span>
-                </a>
-              );
-            })}
+          <div className="hidden md:flex items-center gap-1">
+            <div className="flex items-center bg-gray-50/50 rounded-full px-2 p-1 border border-transparent hover:border-gray-200 transition-colors mr-4 backdrop-blur-sm">
+                {NAV_LINKS.map((link) => {
+                const isActive = activeSection === link.href.replace('#', '');
+                return (
+                    <a 
+                    key={link.name} 
+                    href={link.href}
+                    className={`text-[11px] font-bold uppercase tracking-widest px-5 py-2.5 rounded-full transition-all duration-300 ${
+                        isActive 
+                        ? 'bg-white text-black shadow-sm' 
+                        : 'text-gray-500 hover:text-black hover:bg-gray-100/50'
+                    }`}
+                    >
+                    {link.name}
+                    </a>
+                );
+                })}
+            </div>
             
              <a 
               href="#contact" 
-              className="px-6 py-2.5 bg-offblack text-white text-xs font-medium uppercase tracking-wider hover:bg-gray-800 transition-colors rounded-md shadow-lg hover:shadow-xl transform duration-300"
+              className="px-6 py-3 bg-offblack text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 transition-all rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-300"
             >
               Fale Comigo
             </a>
@@ -80,7 +83,7 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2 text-black z-50 relative"
+            className="md:hidden p-2 text-black z-50 relative hover:bg-gray-100 rounded-full transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -89,7 +92,7 @@ const Navbar: React.FC = () => {
 
         {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 bg-offwhite z-40 flex flex-col justify-center items-center space-y-8 animate-in slide-in-from-top-10 duration-300">
+          <div className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center space-y-8 animate-in slide-in-from-top-10 duration-300">
             {NAV_LINKS.map((link) => {
                const isActive = activeSection === link.href.replace('#', '');
                return (
