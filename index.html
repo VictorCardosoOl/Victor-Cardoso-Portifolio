@@ -15,11 +15,35 @@
               serif: ['Playfair Display', 'serif'],
             },
             colors: {
-              offblack: '#0a0a0a',
-              offwhite: '#fafafa',
+              offblack: '#0f172a', // Changed to Slate-900 for blue tint
+              offwhite: '#f8fafc', // Changed to Slate-50
+              slate: {
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b', // Muted Blue Accent
+                600: '#475569',
+                700: '#334155',
+                800: '#1e293b',
+                900: '#0f172a',
+              }
             },
             borderRadius: {
-              '4xl': '2rem',
+              '4xl': '2.5rem',
+              '5xl': '3rem',
+            },
+            animation: {
+              'blob': 'blob 10s infinite',
+            },
+            keyframes: {
+              blob: {
+                '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                '100%': { transform: 'translate(0px, 0px) scale(1)' },
+              }
             }
           }
         }
@@ -30,16 +54,34 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-      /* Custom scrollbar for Webkit */
+      /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }
       ::-webkit-scrollbar-track {
-        background: #fafafa;
+        background: #f1f5f9;
       }
       ::-webkit-scrollbar-thumb {
-        background: #e5e7eb;
+        background: #94a3b8;
         border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+      
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      }
+      
+      .glass-card {
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
       }
     </style>
   <script type="importmap">
@@ -53,7 +95,7 @@
 }
 </script>
 </head>
-  <body class="bg-offwhite text-offblack antialiased selection:bg-offblack selection:text-white">
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-slate-200 selection:text-slate-900">
     <div id="root"></div>
   </body>
 </html>

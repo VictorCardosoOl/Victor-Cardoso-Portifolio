@@ -7,7 +7,6 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
 
-  // Handle Scroll Appearance
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -16,7 +15,6 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Handle Active Section (Wayfinding)
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,21 +39,21 @@ const Navbar: React.FC = () => {
   return (
     <>
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-in-out border-b ${
-          isScrolled 
-            ? 'bg-white/80 backdrop-blur-lg border-gray-100 py-4 shadow-sm' 
-            : 'bg-transparent border-transparent py-6'
-        }`}
+        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-500 ease-out 
+          ${isScrolled 
+            ? 'top-4 w-[90%] md:w-auto md:min-w-[600px] glass-panel rounded-full shadow-lg border-white/50 py-3 px-6' 
+            : 'top-6 w-full md:w-auto bg-transparent py-4 px-6 md:px-0'
+          }`}
       >
-        <div className="container mx-auto px-6 md:px-12 flex justify-between items-center">
-          <a href="#" className="text-xl md:text-2xl font-serif font-bold tracking-tight z-50 relative text-offblack hover:opacity-70 transition-opacity">
-            VICTOR<span className="text-gray-400">.</span>DEV
+        <div className={`flex justify-between items-center ${!isScrolled ? 'container mx-auto md:px-12' : 'w-full'}`}>
+          
+          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70`}>
+            V<span className="text-slate-400">.</span>DEV
           </a>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-1">
-            <div className="flex items-center bg-gray-50/50 rounded-full px-2 p-1 border border-transparent hover:border-gray-200 transition-colors mr-4 backdrop-blur-sm">
-                {NAV_LINKS.map((link) => {
+          <div className="hidden md:flex items-center gap-2">
+             {NAV_LINKS.map((link) => {
                 const isActive = activeSection === link.href.replace('#', '');
                 return (
                     <a 
@@ -63,19 +61,22 @@ const Navbar: React.FC = () => {
                     href={link.href}
                     className={`text-[11px] font-bold uppercase tracking-widest px-5 py-2.5 rounded-full transition-all duration-300 ${
                         isActive 
-                        ? 'bg-white text-black shadow-sm' 
-                        : 'text-gray-500 hover:text-black hover:bg-gray-100/50'
+                        ? 'bg-slate-800 text-white shadow-md' 
+                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100/50'
                     }`}
                     >
                     {link.name}
                     </a>
                 );
-                })}
-            </div>
+             })}
             
              <a 
               href="#contact" 
-              className="px-6 py-3 bg-offblack text-white text-[11px] font-bold uppercase tracking-widest hover:bg-gray-800 transition-all rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-300"
+              className={`ml-2 px-6 py-2.5 text-[11px] font-bold uppercase tracking-widest transition-all rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 duration-300
+                ${isScrolled 
+                  ? 'bg-slate-200 text-slate-900 hover:bg-slate-300' 
+                  : 'bg-slate-900 text-white hover:bg-slate-800'
+                }`}
             >
               Fale Comigo
             </a>
@@ -83,16 +84,16 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2 text-black z-50 relative hover:bg-gray-100 rounded-full transition-colors"
+            className="md:hidden p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Mobile Menu Overlay */}
+        {/* Mobile Menu Overlay with Glass Effect */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 bg-white z-40 flex flex-col justify-center items-center space-y-8 animate-in slide-in-from-top-10 duration-300">
+          <div className="fixed inset-0 bg-white/80 backdrop-blur-xl z-40 flex flex-col justify-center items-center space-y-8 animate-in slide-in-from-top-10 duration-300">
             {NAV_LINKS.map((link) => {
                const isActive = activeSection === link.href.replace('#', '');
                return (
@@ -100,7 +101,7 @@ const Navbar: React.FC = () => {
                   key={link.name} 
                   href={link.href}
                   className={`text-3xl font-serif font-medium transition-all ${
-                    isActive ? 'text-offblack scale-110' : 'text-gray-400'
+                    isActive ? 'text-slate-900 scale-110' : 'text-slate-400'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
