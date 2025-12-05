@@ -1,20 +1,22 @@
+
 import { Monitor, Code, Layout, Database, Smartphone, Globe } from 'lucide-react';
 
 export const NAV_LINKS = [
   { name: 'Início', href: '#hero' },
   { name: 'Projetos', href: '#projects' },
+  { name: 'Sobre', href: '#about' },
   { name: 'Lab', href: '#lab' },
   { name: 'Artigos', href: '#writing' },
-  { name: 'Sobre', href: '#about' },
   { name: 'Contato', href: '#contact' },
 ];
 
 export const PROJECTS = [
   {
     title: 'Lumina Architecture',
-    category: 'Web Design / Desenvolvimento',
-    description: 'Uma plataforma imersiva para um escritório de arquitetura premiado. O foco foi criar uma galeria visual fluida com carregamento progressivo.',
-    tags: ['React', 'Framer Motion', 'Tailwind', 'Strapi'],
+    category: 'Web Design',
+    year: '2024',
+    description: 'Plataforma imersiva para arquitetura com foco em galeria visual fluida.',
+    tags: ['React', 'Motion', 'Tailwind'],
     image: 'https://picsum.photos/id/10/1200/800',
     gallery: [
       'https://picsum.photos/id/10/1200/800',
@@ -25,30 +27,16 @@ export const PROJECTS = [
     link: '#',
     caseStudy: {
       challenge: 'O cliente precisava traduzir a sensação física de visitar uma exposição de arte para o ambiente digital, sem comprometer a acessibilidade e o SEO.',
-      solution: 'Desenvolvi um ambiente com transições de página (SPA) que elimina o "piscar" da tela branca, mantendo o usuário imerso. Utilizei carregamento inteligente de imagens para garantir performance.',
-      result: 'Aumento de 300% no tempo médio de permanência na página e feedback positivo pela fluidez da navegação.',
-      codeSnippet: `// Custom Intersection Observer Hook for Prefetching
-const usePrefetch = (ref) => {
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const img = new Image();
-          img.src = entry.target.dataset.src; // Preload logic
-          observer.unobserve(entry.target);
-        }
-      });
-    });
-    if (ref.current) observer.observe(ref.current);
-  }, []);
-};`
+      solution: 'Desenvolvi um ambiente com transições de página (SPA) que elimina o "piscar" da tela branca. Utilizei carregamento inteligente de imagens para garantir performance.',
+      result: 'Aumento de 300% no tempo médio de permanência na página.'
     }
   },
   {
-    title: 'Apex Finance Dashboard',
-    category: 'SaaS / Fintech',
-    description: 'Interface administrativa para gestão de ativos. Desenvolvido com foco em visualização de dados em tempo real e segurança.',
-    tags: ['Next.js', 'TypeScript', 'D3.js', 'Node.js'],
+    title: 'Apex Finance',
+    category: 'Fintech',
+    year: '2023',
+    description: 'Dashboard administrativo para gestão de ativos em tempo real.',
+    tags: ['Next.js', 'TypeScript', 'D3.js'],
     image: 'https://picsum.photos/id/160/1200/800',
     gallery: [
       'https://picsum.photos/id/160/1200/800',
@@ -57,26 +45,17 @@ const usePrefetch = (ref) => {
     ],
     link: '#',
     caseStudy: {
-      challenge: 'Usuários reclamavam da lentidão ao carregar grandes volumes de dados financeiros, o que prejudicava a tomada de decisão rápida.',
-      solution: 'Implementei renderização do lado do servidor (SSR) com Next.js e otimizei as queries do banco de dados. Criei gráficos interativos leves que não travam o navegador.',
-      result: 'O tempo de carregamento caiu de 4s para 0.8s, aumentando drasticamente a produtividade dos gestores.',
-      codeSnippet: `// WebWorker for heavy data processing
-self.onmessage = (e) => {
-  const { rawData } = e.data;
-  // Process 100k+ points off the main thread
-  const processed = rawData.map(point => ({
-    x: point.timestamp,
-    y: calculateMovingAverage(point.value)
-  }));
-  self.postMessage(processed);
-};`
+      challenge: 'Usuários reclamavam da lentidão ao carregar grandes volumes de dados financeiros.',
+      solution: 'Implementei renderização do lado do servidor (SSR) com Next.js e otimizei as queries. Gráficos interativos leves que não travam o navegador.',
+      result: 'Tempo de carregamento reduzido de 4s para 0.8s.'
     }
   },
   {
-    title: 'Velvet E-commerce',
-    category: 'E-commerce / Moda',
-    description: 'Loja virtual boutique com experiência de compra personalizada e gestão de estoque inteligente.',
-    tags: ['Shopify Headless', 'React', 'GraphQL', 'AWS'],
+    title: 'Velvet Store',
+    category: 'E-commerce',
+    year: '2023',
+    description: 'Boutique online com experiência de compra personalizada.',
+    tags: ['Shopify', 'React', 'AWS'],
     image: 'https://picsum.photos/id/338/1200/800',
     gallery: [
       'https://picsum.photos/id/338/1200/800',
@@ -85,26 +64,68 @@ self.onmessage = (e) => {
     ],
     link: '#',
     caseStudy: {
-      challenge: 'A plataforma anterior caía durante picos de acesso (Black Friday) e tinha um design genérico que não refletia a marca de luxo.',
-      solution: 'Criei uma arquitetura "Headless", separando o visual (React) do sistema de vendas (Shopify). Isso permitiu liberdade total de design e escalabilidade infinita.',
-      result: 'Zero downtime durante lançamentos e aumento de 25% na conversão de vendas mobile.',
-      codeSnippet: `// Shopify Storefront API GraphQL Query
-const checkoutMutation = gql\`
-  mutation checkoutCreate($input: CheckoutCreateInput!) {
-    checkoutCreate(input: $input) {
-      checkout {
-        id
-        webUrl
-      }
-      checkoutUserErrors {
-        code
-        field
-        message
-      }
+      challenge: 'A plataforma anterior caía durante picos de acesso e tinha design genérico.',
+      solution: 'Arquitetura "Headless", separando o visual do sistema de vendas. Liberdade total de design.',
+      result: 'Aumento de 25% na conversão mobile.'
     }
   }
-\`;`
-    }
+];
+
+export const CASE_STUDIES = [
+  {
+    client: 'Nexus Fin',
+    title: 'High-Performance Dashboard',
+    tech: ['React', 'D3.js', 'TypeScript'],
+    challenge: 'Renderização lenta de datasets complexos (>50k registros) causava travamentos no navegador dos analistas.',
+    solution: 'Implementação de virtualização (windowing), memoização agressiva e Web Workers para processamento off-main-thread.',
+    result: 'Tempo de interação reduzido em 90%.'
+  },
+  {
+    client: 'Global Shop',
+    title: 'Escalabilidade para E-commerce',
+    tech: ['Next.js', 'Redis', 'AWS'],
+    challenge: 'Infraestrutura não suportava picos de acesso repentinos, resultando em downtime durante lançamentos.',
+    solution: 'Migração para arquitetura Serverless com estratégias de Edge Caching e Database Read Replicas.',
+    result: 'Zero downtime na Black Friday com 5x mais tráfego.'
+  },
+  {
+    client: 'Civic App',
+    title: 'Acessibilidade em Governo Digital',
+    tech: ['Vue.js', 'WCAG', 'A11y'],
+    challenge: 'O portal de serviços públicos era inacessível para usuários com deficiência visual ou motora.',
+    solution: 'Reconstrução completa seguindo diretrizes WCAG 2.1 AA, incluindo navegação por teclado e suporte a leitores de tela.',
+    result: 'Acesso universal garantido e conformidade legal atingida.'
+  }
+];
+
+export const ARCHIVE_PROJECTS = [
+  {
+    title: 'Neon Banking App',
+    category: 'Mobile App',
+    tech: 'React Native',
+    image: 'https://picsum.photos/id/445/800/600',
+    link: '#'
+  },
+  {
+    title: 'Urban Mobility',
+    category: 'Public Sector',
+    tech: 'Vue.js',
+    image: 'https://picsum.photos/id/188/800/600',
+    link: '#'
+  },
+  {
+    title: 'Alpha Health',
+    category: 'MedTech',
+    tech: 'Angular',
+    image: 'https://picsum.photos/id/201/800/600',
+    link: '#'
+  },
+  {
+    title: 'Kroma Design System',
+    category: 'Internal Tool',
+    tech: 'Storybook',
+    image: 'https://picsum.photos/id/3/800/600',
+    link: '#'
   }
 ];
 
@@ -174,37 +195,11 @@ export const EDUCATION = [
   }
 ];
 
-export const CASE_STUDIES = [
-  {
-    client: 'Fintech Corp',
-    title: 'Escalando Plataforma de Trading',
-    tech: ['Rust', 'WebAssembly', 'React', 'Go'],
-    challenge: 'A plataforma existente sofria com latência de microssegundos que resultava em perdas financeiras significativas.',
-    solution: 'Reescrevemos o motor de correspondência em Rust e otimizamos o frontend usando WebAssembly.',
-    result: 'Redução de 90% na latência e capacidade de processar 100k transações por segundo.'
-  },
-  {
-    client: 'MediCare Systems',
-    title: 'Portal Seguro de Dados de Pacientes',
-    tech: ['Next.js', 'GraphQL', 'AWS Lambda', 'DynamoDB'],
-    challenge: 'Necessidade de compartilhamento seguro e compatível com normas de saúde entre diferentes unidades.',
-    solution: 'Arquitetura serverless com criptografia de ponta a ponta e controles de acesso granulares.',
-    result: 'Aprovação em todas as auditorias de segurança e recuperação de dados em milissegundos.'
-  },
-  {
-    client: 'EcoEnergy',
-    title: 'Dashboard de Gestão de IoT',
-    tech: ['Vue.js', 'D3.js', 'MQTT', 'Python'],
-    challenge: 'Falta de visibilidade em tempo real da rede de energia renovável para balanceamento de carga.',
-    solution: 'Dashboard em tempo real visualizando dados de milhares de sensores IoT via MQTT.',
-    result: 'Melhoria de 25% na eficiência de distribuição de energia.'
-  }
-];
-
 export const CONTACT_INFO = {
   email: 'contato@seudominio.com',
   phone: '+55 (11) 99999-9999',
   location: 'São Paulo, SP - Brasil',
+  whatsapp: 'https://wa.me/5511999999999',
   socials: [
     { name: 'LinkedIn', url: '#' },
     { name: 'GitHub', url: '#' },

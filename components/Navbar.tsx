@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { NAV_LINKS } from '../constants';
@@ -16,7 +17,7 @@ const Navbar: React.FC = () => {
       // Reading Progress Logic
       const totalScroll = document.documentElement.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scroll = `${totalScroll / windowHeight}`;
+      const scroll = windowHeight > 0 ? totalScroll / windowHeight : 0;
       setReadingProgress(Number(scroll));
     };
     window.addEventListener('scroll', handleScroll);
@@ -46,8 +47,8 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Reading Progress Bar */}
-      <div className="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[100] pointer-events-none">
+      {/* Reading Progress Bar - Z-index fixed to not overlap lightbox */}
+      <div className="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[49] pointer-events-none">
         <div 
           className="h-full bg-slate-900 transition-all duration-100 ease-out"
           style={{ width: `${readingProgress * 100}%` }}
