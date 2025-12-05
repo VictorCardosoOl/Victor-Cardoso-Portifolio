@@ -101,7 +101,7 @@ const Projects: React.FC = () => {
   }
 
   return (
-    <section id="projects" className="py-24 md:py-32 bg-white relative rounded-t-[3rem] -mt-10 z-20 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.05)]">
+    <section id="projects" className="py-20 md:py-32 bg-white relative rounded-t-[3rem] -mt-10 z-20 shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.05)]">
       <div className="container mx-auto px-6 md:px-12">
         
         {/* Header Compacto */}
@@ -129,8 +129,8 @@ const Projects: React.FC = () => {
             </div>
         </div>
 
-        {/* Projects List - ZigZag Layout */}
-        <div className="flex flex-col gap-32">
+        {/* Projects List - ZigZag Layout Compactado */}
+        <div className="flex flex-col gap-24 md:gap-32">
           {visibleProjects.map((project, index) => {
             const isEven = index % 2 === 0;
 
@@ -160,7 +160,7 @@ const Projects: React.FC = () => {
                   </div>
                   
                   {/* Small Thumbs Row */}
-                  <div className="flex gap-4 mt-6 pl-2">
+                  <div className={`flex gap-4 mt-6 ${!isEven ? 'justify-end' : ''}`}>
                      {project.gallery.slice(0, 3).map((img, idx) => (
                         <div key={idx} className="w-24 h-16 flex-shrink-0 cursor-pointer opacity-60 hover:opacity-100 transition-all duration-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-md border border-transparent hover:border-gray-200" onClick={() => openLightbox(project, idx)}>
                            <img src={img} className="w-full h-full object-cover" alt="" />
@@ -170,43 +170,45 @@ const Projects: React.FC = () => {
                 </div>
 
                 {/* Info Section */}
-                <div className={`w-full lg:w-1/2 ${isEven ? 'lg:pl-4' : 'lg:pr-4'}`}>
-                   <span className="inline-block px-3 py-1 bg-gray-100 text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-6 rounded-full">
-                      {project.category}
-                    </span>
-                    
-                    <h3 className="text-4xl font-serif font-medium mb-6 text-offblack leading-tight">
-                      {project.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 leading-relaxed mb-8 text-base font-light border-l-2 border-gray-100 pl-6">
-                      {project.description}
-                    </p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-10">
-                      {project.tags.map((tag, idx) => (
-                        <span key={idx} className="px-4 py-1.5 bg-white text-[10px] text-gray-500 uppercase tracking-wider font-bold rounded-full border border-gray-200 shadow-sm">
-                          {tag}
+                <div className="w-full lg:w-1/2">
+                   <div className={`flex flex-col ${!isEven ? 'lg:items-end lg:text-right' : 'lg:items-start lg:text-left'}`}>
+                      <span className="inline-block px-4 py-1.5 bg-gray-50 text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-5 rounded-full border border-gray-100">
+                          {project.category}
                         </span>
-                      ))}
-                    </div>
+                        
+                        <h3 className="text-3xl md:text-5xl font-serif font-medium mb-5 text-offblack leading-tight">
+                          {project.title}
+                        </h3>
+                        
+                        <p className={`text-gray-600 leading-relaxed mb-8 text-base md:text-lg font-light max-w-lg ${!isEven ? 'lg:ml-auto' : ''}`}>
+                          {project.description}
+                        </p>
+                        
+                        <div className={`flex flex-wrap gap-2 mb-10 ${!isEven ? 'lg:justify-end' : ''}`}>
+                          {project.tags.map((tag, idx) => (
+                            <span key={idx} className="px-4 py-1.5 bg-white text-[10px] text-gray-500 uppercase tracking-wider font-bold rounded-full border border-gray-200 shadow-sm">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
 
-                    <div className="flex flex-wrap items-center gap-4">
-                       <button 
-                         onClick={() => openCaseStudy(project)}
-                         className="px-6 py-3.5 border border-gray-200 hover:border-black text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all rounded-full group hover:bg-gray-50"
-                       >
-                         <BookOpen className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
-                         Estudo de Caso
-                       </button>
-                       <a 
-                         href={project.link}
-                         className="px-6 py-3.5 bg-offblack text-white hover:bg-gray-800 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                       >
-                         Visitar Site
-                         <ArrowUpRight className="w-4 h-4" />
-                       </a>
-                    </div>
+                        <div className="flex flex-wrap items-center gap-4">
+                          <button 
+                            onClick={() => openCaseStudy(project)}
+                            className="px-6 py-3.5 border border-gray-200 hover:border-black text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all rounded-full group hover:bg-gray-50"
+                          >
+                            <BookOpen className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
+                            Estudo de Caso
+                          </button>
+                          <a 
+                            href={project.link}
+                            className="px-6 py-3.5 bg-offblack text-white hover:bg-gray-800 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                          >
+                            Visitar Site
+                            <ArrowUpRight className="w-4 h-4" />
+                          </a>
+                        </div>
+                   </div>
                 </div>
               </div>
             );

@@ -14,25 +14,22 @@ const Hero: React.FC = () => {
           
           {/* Left Column: Photo */}
           <div className="w-full lg:w-5/12 order-1 lg:order-1 flex justify-center lg:justify-end">
-            <div className="relative w-full max-w-md aspect-[3/4] group">
-               {/* Decorative frame */}
-               <div className="absolute inset-0 border-2 border-gray-200 rounded-[3rem] translate-x-4 translate-y-4 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500"></div>
+            <div className="relative w-full max-w-md aspect-[3/4] group select-none">
                
                {/* Image Container */}
-               <div className="relative w-full h-full rounded-[3rem] overflow-hidden shadow-2xl">
+               <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden bg-gray-100 shadow-2xl transition-transform duration-700 hover:scale-[1.01]">
                  <img 
                    src="https://picsum.photos/id/64/800/1000" // Placeholder portrait
                    alt="Victor Cardoso" 
-                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 scale-105 group-hover:scale-100"
+                   className="w-full h-full object-cover grayscale contrast-110 brightness-110 transition-all duration-700"
                  />
-                 
-                 {/* Floating Badge */}
-                 <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-lg border border-white/20 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
-                    <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-offblack">
-                       <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                       Open to Work
-                    </span>
-                 </div>
+               </div>
+               
+               {/* Floating Badge */}
+               <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-white rounded-full flex items-center justify-center shadow-lg animate-in fade-in zoom-in duration-1000 delay-500 z-30 hidden md:flex">
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-center leading-tight text-offblack">
+                    Not a<br/>Portfolio
+                  </div>
                </div>
             </div>
           </div>
@@ -40,15 +37,20 @@ const Hero: React.FC = () => {
           {/* Right Column: Text */}
           <div className="w-full lg:w-7/12 order-2 lg:order-2 text-center lg:text-left">
             
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-8 duration-1000">
               
               {/* Personal Intro */}
-              <div className="space-y-2">
-                <span className="inline-block px-4 py-2 bg-white border border-gray-100 rounded-full shadow-sm text-xs font-bold tracking-widest uppercase text-gray-500 mb-2">
+              <div className="space-y-4">
+                <span className="inline-block px-4 py-2 bg-white border border-gray-100 rounded-full shadow-sm text-xs font-bold tracking-widest uppercase text-gray-500">
                   Olá, seja bem-vindo(a)
                 </span>
                 <h2 className="text-2xl md:text-3xl font-serif text-gray-800">
-                  Prazer, sou o <span className="text-offblack font-semibold">Victor Cardoso</span>.
+                  Prazer, sou o <span className="text-offblack font-semibold relative inline-block">
+                    Victor Cardoso
+                    <svg className="absolute w-full h-3 -bottom-1 left-0 text-gray-200 -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                      <path d="M0,5 Q50,10 100,5" stroke="currentColor" strokeWidth="8" fill="none" />
+                    </svg>
+                  </span>.
                 </h2>
                 <p className="text-lg text-gray-500 font-light">
                   Software Developer & Estudante de Engenharia da Computação.
@@ -58,7 +60,7 @@ const Hero: React.FC = () => {
               {/* Main Headline */}
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-serif font-medium leading-[1.1] tracking-tight text-offblack">
                 Criando soluções <br />
-                <span className="italic text-gray-400">para você.</span>
+                <span className="italic text-gray-400 font-serif">para você.</span>
               </h1>
               
               <p className="text-base md:text-lg text-gray-600 max-w-lg leading-relaxed mx-auto lg:mx-0 font-light">
