@@ -18,7 +18,9 @@ export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, width = "fi
           observer.unobserve(entry.target);
         }
       },
-      { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+      // Alterado rootMargin para 0px para disparar assim que o elemento tocar a viewport
+      // Reduzido threshold para 0.1 para garantir disparo em elementos grandes (como o Hero)
+      { threshold: 0.1, rootMargin: "0px 0px 0px 0px" }
     );
     if (ref.current) observer.observe(ref.current);
     
@@ -30,7 +32,7 @@ export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, width = "fi
   return (
     <div ref={ref} style={{ width }} className="relative">
       <div 
-        className={`transition-all duration-1000 ease-out-expo transform ${
+        className={`transition-all duration-1000 ease-out-expo transform will-change-transform ${
           isVisible ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-12 opacity-0 blur-sm'
         }`}
         style={{ transitionDelay }}

@@ -1,48 +1,43 @@
 import React from 'react';
 import { Reveal } from './ui/Reveal';
+import { Layers, Zap, Shield, Users } from 'lucide-react';
 
-// Simulate GitHub Contribution Graph
-const ContributionGraph = () => {
-  const weeks = 40; 
-  const days = 7;
-  const levels = ['bg-gray-100', 'bg-gray-300', 'bg-gray-400', 'bg-slate-900'];
-  
+// Philosophy Grid instead of fake github graph
+const PhilosophyGrid = () => {
+  const principles = [
+    {
+      icon: Layers,
+      title: "Arquitetura Escalável",
+      desc: "Código desacoplado e modular. Penso em como o sistema vai se comportar daqui a 2 anos, não apenas hoje."
+    },
+    {
+      icon: Zap,
+      title: "Performance First",
+      desc: "Otimização crítica de renderização e carregamento. Cada milissegundo conta para a conversão do usuário."
+    },
+    {
+      icon: Shield,
+      title: "Robustez & Tipagem",
+      desc: "TypeScript rigoroso e testes automatizados. Erros devem ser pegos em build-time, não em produção."
+    },
+    {
+      icon: Users,
+      title: "Empatia pelo Usuário",
+      desc: "Acessibilidade (a11y) não é opcional. Crio interfaces inclusivas e navegáveis por todos."
+    }
+  ];
+
   return (
-    <div className="w-full overflow-hidden">
-      <div className="flex gap-1.5 justify-center lg:justify-start opacity-80 hover:opacity-100 transition-opacity duration-500">
-        {Array.from({ length: weeks }).map((_, w) => (
-          <div key={w} className="flex flex-col gap-1.5">
-            {Array.from({ length: days }).map((_, d) => {
-               const rand = Math.random();
-               let level = 0;
-               if (d > 0 && d < 6) { 
-                 if (rand > 0.6) level = 1;
-                 if (rand > 0.8) level = 2;
-                 if (rand > 0.95) level = 3;
-               } else {
-                 if (rand > 0.9) level = 1;
-               }
-               
-               return (
-                 <div 
-                   key={d} 
-                   className={`w-2.5 h-2.5 rounded-full ${levels[level]} transition-colors duration-500`}
-                 ></div>
-               )
-            })}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {principles.map((p, i) => (
+        <div key={i} className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 hover:border-slate-200 transition-colors">
+          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 text-slate-900">
+            <p.icon size={18} strokeWidth={1.5} />
           </div>
-        ))}
-      </div>
-      <div className="flex justify-between items-center mt-4 text-[10px] text-gray-400 uppercase tracking-widest px-1 font-bold">
-        <span>Menos</span>
-        <div className="flex gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-gray-100"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
+          <h4 className="text-sm font-serif font-bold text-slate-900 mb-2">{p.title}</h4>
+          <p className="text-xs text-slate-500 leading-relaxed font-light">{p.desc}</p>
         </div>
-        <span>Mais</span>
-      </div>
+      ))}
     </div>
   );
 }
@@ -95,26 +90,23 @@ const About: React.FC = () => {
             </Reveal>
           </div>
 
-          {/* Github Graph / Visual */}
+          {/* Philosophy Grid (Replaced Fake Graph) */}
           <div className="w-full lg:w-1/2 order-1 lg:order-2">
             <Reveal delay={150} width="100%">
-              <div className="bg-gray-50 p-8 md:p-10 border border-gray-100 rounded-[2.5rem] shadow-sm hover:shadow-md transition-shadow">
+              <div className="bg-white p-8 md:p-10 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                   <div>
-                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">
-                      Atividade de Código
+                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">
+                      Mindset
                      </h3>
-                     <span className="text-xl font-serif text-slate-900">Histórico de Contribuição</span>
-                  </div>
-                  <div className="px-3 py-1 bg-white border border-gray-200 rounded-full text-[10px] font-bold uppercase tracking-wider text-green-600 shadow-sm">
-                     Em Tempo Real
+                     <span className="text-xl font-serif text-slate-900">Filosofia de Engenharia</span>
                   </div>
                 </div>
                 
-                <ContributionGraph />
+                <PhilosophyGrid />
                 
-                <div className="mt-8 pt-6 border-t border-gray-200/50">
-                   <p className="text-sm text-gray-500 italic">
+                <div className="mt-8 pt-6 border-t border-gray-100">
+                   <p className="text-sm text-gray-400 italic text-center">
                       "Código consistente é o segredo para produtos digitais duradouros."
                    </p>
                 </div>

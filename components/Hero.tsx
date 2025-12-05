@@ -17,14 +17,15 @@ const Hero: React.FC = () => {
                  
                  {/* Main Image Container */}
                  <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-transform duration-700 hover:-translate-y-2 bg-slate-200">
+                   {/* Using a curated Unsplash image focused on Architecture/Minimalism instead of generic person */}
                    <img 
-                     src="https://picsum.photos/id/64/800/1000" 
-                     alt="Victor Cardoso" 
-                     className="w-full h-full object-cover grayscale contrast-[1.05] brightness-105 transition-all duration-700"
+                     src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800&h=1000" 
+                     alt="Minimalist Workspace Architecture" 
+                     className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105 transition-all duration-700"
                    />
                    
                    {/* Glass Overlay Gradient */}
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-transparent opacity-60"></div>
+                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent opacity-60"></div>
                  </div>
               </div>
             </Reveal>
@@ -33,10 +34,10 @@ const Hero: React.FC = () => {
           {/* Right Column: Text */}
           <div className="w-full lg:w-7/12 order-2 lg:order-2 text-center lg:text-left">
             
-            <div className="space-y-8">
+            <div className="space-y-8 max-w-2xl mx-auto lg:mx-0">
               
               {/* Personal Intro */}
-              <Reveal delay={100}>
+              <Reveal delay={100} width="100%">
                 <div className="space-y-4">
                   <span className="inline-block px-4 py-1.5 glass-panel rounded-full text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-slate-200/50">
                     Portfolio 2024
@@ -51,7 +52,7 @@ const Hero: React.FC = () => {
               </Reveal>
 
               {/* Main Headline */}
-              <Reveal delay={200}>
+              <Reveal delay={200} width="100%">
                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1] tracking-tight text-slate-900">
                   Criando soluções <br />
                   <span className="italic text-slate-500 font-serif">
@@ -60,14 +61,14 @@ const Hero: React.FC = () => {
                 </h1>
               </Reveal>
               
-              <Reveal delay={300}>
+              <Reveal delay={300} width="100%">
                 <p className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed mx-auto lg:mx-0 font-light glass-panel p-6 rounded-3xl border border-slate-100">
                   Combino a precisão da engenharia com a elegância do design para construir experiências digitais que não apenas funcionam, mas encantam.
                 </p>
               </Reveal>
 
               {/* CTAs */}
-              <Reveal delay={400}>
+              <Reveal delay={400} width="100%">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
                   <a href="#projects">
                     <Button variant="primary" size="lg" className="w-full sm:w-auto">
