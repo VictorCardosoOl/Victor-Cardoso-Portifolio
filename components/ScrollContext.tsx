@@ -11,14 +11,14 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    // Locomotive-like feel: Heavy inertia, smooth stop
+    // Fine-tuned for a natural, premium feel
     const lenisInstance = new Lenis({
-      duration: 1.5, // Increased duration for smoother/heavier feel
+      duration: 1.2, // Slightly reduced for better responsiveness while maintaining smoothness
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
+      wheelMultiplier: 0.9, // Slightly less sensitivity for "heavy" feel
       touchMultiplier: 2,
     });
 
