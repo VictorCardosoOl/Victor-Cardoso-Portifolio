@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="antialiased">
+<html lang="pt-BR" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,13 +30,17 @@
                 200: '#e2e8f0',
                 300: '#cbd5e1',
                 400: '#94a3b8',
-                500: '#64748b',
+                500: '#64748b', // Muted Blue Accent
                 600: '#475569',
                 700: '#334155',
                 800: '#1e293b',
                 900: '#0f172a',
                 950: '#020617',
               }
+            },
+            borderRadius: {
+              '4xl': '2.5rem',
+              '5xl': '3rem',
             },
             transitionTimingFunction: {
               'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
@@ -47,83 +51,54 @@
       }
     </script>
     <style>
-      html.lenis {
-        height: auto;
-      }
-      
-      .lenis.lenis-smooth {
-        scroll-behavior: auto;
-      }
-      
-      .lenis.lenis-smooth [data-lenis-prevent] {
-        overscroll-behavior: contain;
-      }
-      
-      .lenis.lenis-stopped {
-        overflow: hidden;
-      }
-      
-      .lenis.lenis-scrolling iframe {
-        pointer-events: none;
-      }
-
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        cursor: none; /* Hide default cursor for custom one */
+        /* Default cursor restored */
       }
       
-      /* Hide scrollbar for premium feel (Lenis handles momentum) */
+      /* Custom scrollbar */
       ::-webkit-scrollbar {
-        width: 0px;
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
         background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(100, 116, 139, 0.5);
+        border-radius: 10px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(100, 116, 139, 0.8);
       }
       
       /* Refined Glass Effect */
       .glass-panel {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         box-shadow: 
-          0 4px 30px rgba(0, 0, 0, 0.02),
-          inset 0 0 20px rgba(255, 255, 255, 0.02);
+          0 4px 30px rgba(0, 0, 0, 0.03),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.4);
       }
       
-      /* Noise Animation Keyframes */
-      @keyframes noise {
-        0% { transform: translate3d(0, 9rem, 0); }
-        10% { transform: translate3d(-1rem, -4rem, 0); }
-        20% { transform: translate3d(-8rem, 2rem, 0); }
-        30% { transform: translate3d(9rem, -9rem, 0); }
-        40% { transform: translate3d(-2rem, 7rem, 0); }
-        50% { transform: translate3d(-9rem, -4rem, 0); }
-        60% { transform: translate3d(2rem, 6rem, 0); }
-        70% { transform: translate3d(7rem, -8rem, 0); }
-        80% { transform: translate3d(-9rem, 1rem, 0); }
-        90% { transform: translate3d(6rem, -5rem, 0); }
-        100% { transform: translate3d(-7rem, 0, 0); }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 
+          0 4px 20px rgba(0, 0, 0, 0.02),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.3);
       }
 
-      .noise-bg {
-        position: fixed;
-        top: -10rem;
-        left: -10rem;
-        width: calc(100% + 20rem);
-        height: calc(100% + 20rem);
-        z-index: -1;
-        pointer-events: none;
-        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA5OTkAAAAAAAAAAABMTExERERmZmZnATESAAAACHRSTlMAMwA3M3MzM3Oz04UAAAAJcEhZcwAAHsEAAB7BAcNp1gAAAB3JREFUOMtjYBgFoyEwGgKjITAaAqMhMBrwAaoCAH15A/2Y3iEMAAAAAElFTkSuQmCC');
-        opacity: 0.04;
-        animation: noise 1s steps(2) infinite;
-      }
-      
-      /* Focus Ring */
+      /* Custom Focus Ring for A11y */
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 1px #0f172a;
+        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
+        border-radius: 4px;
       }
       
+      /* Selection Color */
       ::selection {
         background: #0f172a;
         color: #fff;
@@ -132,21 +107,17 @@
   <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@18.2.0",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
-    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "lucide-react": "https://esm.sh/lucide-react@0.294.0",
-    "clsx": "https://esm.sh/clsx@2.1.0",
-    "tailwind-merge": "https://esm.sh/tailwind-merge@2.2.1",
-    "framer-motion": "https://esm.sh/framer-motion@10.16.4",
-    "@studio-freight/lenis": "https://esm.sh/@studio-freight/lenis@1.0.42",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/"
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "clsx": "https://cdn.jsdelivr.net/npm/clsx@2.1.0/+esm",
+    "tailwind-merge": "https://cdn.jsdelivr.net/npm/tailwind-merge@2.2.1/+esm"
   }
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-slate-900 selection:text-white overflow-x-hidden">
+  <body class="bg-slate-50 text-slate-900 antialiased">
     <div id="root"></div>
   </body>
 </html>
