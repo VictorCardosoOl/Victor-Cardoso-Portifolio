@@ -1,10 +1,11 @@
 import React from 'react';
+import { Reveal } from './ui/Reveal';
 
 // Simulate GitHub Contribution Graph
 const ContributionGraph = () => {
-  const weeks = 40; // Reduced for cleaner mobile look
+  const weeks = 40; 
   const days = 7;
-  const levels = ['bg-gray-100', 'bg-gray-300', 'bg-gray-400', 'bg-offblack'];
+  const levels = ['bg-gray-100', 'bg-gray-300', 'bg-gray-400', 'bg-slate-900'];
   
   return (
     <div className="w-full overflow-hidden">
@@ -38,7 +39,7 @@ const ContributionGraph = () => {
           <div className="w-2.5 h-2.5 rounded-full bg-gray-100"></div>
           <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
           <div className="w-2.5 h-2.5 rounded-full bg-gray-400"></div>
-          <div className="w-2.5 h-2.5 rounded-full bg-offblack"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-slate-900"></div>
         </div>
         <span>Mais</span>
       </div>
@@ -54,63 +55,71 @@ const About: React.FC = () => {
           
           {/* Text Content */}
           <div className="w-full lg:w-1/2 order-2 lg:order-1">
-            <span className="inline-block px-3 py-1 bg-gray-100 text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-6 rounded-full">
-              O Desenvolvedor
-            </span>
-            <h2 className="text-3xl md:text-5xl font-serif font-medium mb-8 leading-tight text-offblack">
-              Obsessão por qualidade. <br />
-              Paixão por entrega.
-            </h2>
+            <Reveal>
+              <span className="inline-block px-3 py-1 bg-gray-100 text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-6 rounded-full">
+                O Desenvolvedor
+              </span>
+              <h2 className="text-3xl md:text-5xl font-serif font-medium mb-8 leading-tight text-slate-900 tracking-tight">
+                Obsessão por qualidade. <br />
+                Paixão por entrega.
+              </h2>
+            </Reveal>
             
-            <div className="space-y-6 text-gray-600 leading-relaxed text-base md:text-lg mb-12 font-light">
-              <p>
-                Não sou apenas um executor de tarefas. Sou um parceiro estratégico que entende como uma linha de código impacta a receita da sua empresa. Minha abordagem combina rigor técnico de engenharia com a sensibilidade estética de um designer.
-              </p>
-              <p>
-                Acredito na transparência radical e no aprendizado contínuo. Meu objetivo é eliminar a dívida técnica antes que ela nasça e construir sistemas que escalem junto com o seu sucesso.
-              </p>
-            </div>
+            <Reveal delay={100}>
+              <div className="space-y-6 text-gray-600 leading-relaxed text-base md:text-lg mb-12 font-light">
+                <p>
+                  Não sou apenas um executor de tarefas. Sou um parceiro estratégico que entende como uma linha de código impacta a receita da sua empresa. Minha abordagem combina rigor técnico de engenharia com a sensibilidade estética de um designer.
+                </p>
+                <p>
+                  Acredito na transparência radical e no aprendizado contínuo. Meu objetivo é eliminar a dívida técnica antes que ela nasça e construir sistemas que escalem junto com o seu sucesso.
+                </p>
+              </div>
+            </Reveal>
 
             {/* Stats */}
-             <div className="flex gap-12 border-t border-gray-100 pt-8">
-                 <div>
-                    <span className="block text-3xl font-serif font-medium text-offblack mb-1">5+</span>
-                    <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Anos Exp.</span>
-                 </div>
-                 <div>
-                    <span className="block text-3xl font-serif font-medium text-offblack mb-1">40+</span>
-                    <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Projetos</span>
-                 </div>
-                 <div>
-                    <span className="block text-3xl font-serif font-medium text-offblack mb-1">100%</span>
-                    <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Entregas</span>
-                 </div>
-              </div>
+            <Reveal delay={200}>
+               <div className="flex gap-12 border-t border-gray-100 pt-8">
+                   <div>
+                      <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">5+</span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Anos Exp.</span>
+                   </div>
+                   <div>
+                      <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">40+</span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Projetos</span>
+                   </div>
+                   <div>
+                      <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">100%</span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Entregas</span>
+                   </div>
+                </div>
+            </Reveal>
           </div>
 
           {/* Github Graph / Visual */}
           <div className="w-full lg:w-1/2 order-1 lg:order-2">
-            <div className="bg-gray-50 p-8 md:p-10 border border-gray-100 rounded-[2.5rem] shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
-                <div>
-                   <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">
-                    Atividade de Código
-                   </h3>
-                   <span className="text-xl font-serif text-offblack">Histórico de Contribuição</span>
+            <Reveal delay={150} width="100%">
+              <div className="bg-gray-50 p-8 md:p-10 border border-gray-100 rounded-[2.5rem] shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
+                  <div>
+                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-500 mb-1">
+                      Atividade de Código
+                     </h3>
+                     <span className="text-xl font-serif text-slate-900">Histórico de Contribuição</span>
+                  </div>
+                  <div className="px-3 py-1 bg-white border border-gray-200 rounded-full text-[10px] font-bold uppercase tracking-wider text-green-600 shadow-sm">
+                     Em Tempo Real
+                  </div>
                 </div>
-                <div className="px-3 py-1 bg-white border border-gray-200 rounded-full text-[10px] font-bold uppercase tracking-wider text-green-600 shadow-sm">
-                   Em Tempo Real
+                
+                <ContributionGraph />
+                
+                <div className="mt-8 pt-6 border-t border-gray-200/50">
+                   <p className="text-sm text-gray-500 italic">
+                      "Código consistente é o segredo para produtos digitais duradouros."
+                   </p>
                 </div>
               </div>
-              
-              <ContributionGraph />
-              
-              <div className="mt-8 pt-6 border-t border-gray-200/50">
-                 <p className="text-sm text-gray-500 italic">
-                    "Código consistente é o segredo para produtos digitais duradouros."
-                 </p>
-              </div>
-            </div>
+            </Reveal>
           </div>
 
         </div>

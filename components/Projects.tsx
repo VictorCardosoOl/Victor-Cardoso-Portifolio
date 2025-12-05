@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PROJECTS } from '../constants';
 import { ArrowUpRight, X, ChevronLeft, ChevronRight, Maximize2, BookOpen } from 'lucide-react';
+import { Reveal } from './ui/Reveal';
+import Button from './ui/Button';
 
 // Lazy Image Component
 const LazyImage: React.FC<{ src: string; alt: string; className?: string; onClick?: () => void }> = ({ src, alt, className, onClick }) => {
@@ -105,178 +107,172 @@ const Projects: React.FC = () => {
       <div className="container mx-auto px-6 md:px-12">
         
         {/* Header Compacto with Glass Card */}
-        <div className="mb-20 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Portfolio</span>
-            <h2 className="text-3xl md:text-5xl font-serif font-medium mb-8 text-slate-900">
-              Projetos Selecionados
-            </h2>
+        <div className="mb-24 text-center max-w-2xl mx-auto">
+            <Reveal>
+              <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Portfolio</span>
+              <h2 className="text-3xl md:text-5xl font-serif font-medium mb-8 text-slate-900 tracking-tight">
+                Projetos Selecionados
+              </h2>
+            </Reveal>
             
             {/* Filter Tabs */}
-            <div className="flex flex-wrap gap-3 justify-center">
-              {allTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => setActiveFilter(tag)}
-                  className={`px-5 py-2.5 text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 rounded-full border shadow-sm backdrop-blur-md ${
-                    activeFilter === tag 
-                      ? 'bg-slate-800 text-white border-slate-800 shadow-md' 
-                      : 'bg-white/40 text-slate-500 border-white/40 hover:border-slate-300 hover:text-slate-800 hover:bg-white/60'
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
+            <Reveal delay={100}>
+              <div className="inline-flex flex-wrap gap-2 justify-center glass-panel p-2 rounded-full">
+                {allTags.map((tag) => (
+                  <button
+                    key={tag}
+                    onClick={() => setActiveFilter(tag)}
+                    className={`px-6 py-3 text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 rounded-full ${
+                      activeFilter === tag 
+                        ? 'bg-slate-900 text-white shadow-lg' 
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/50'
+                    }`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </Reveal>
         </div>
 
-        {/* Projects List - Glass Cards ZigZag */}
-        <div className="flex flex-col gap-24 md:gap-32">
+        {/* Projects List - Borderless Glass ZigZag */}
+        <div className="flex flex-col gap-32">
           {visibleProjects.map((project, index) => {
             const isEven = index % 2 === 0;
 
             return (
-              <div 
-                key={`${project.title}-${index}`} 
-                className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-24 ${!isEven ? 'lg:flex-row-reverse' : ''}`}
-              >
-                {/* Visuals Section */}
-                <div className="w-full lg:w-1/2 group">
-                  {/* Main Image Compact with Glass Border */}
-                  <div 
-                    className="relative w-full aspect-[16/10] overflow-hidden cursor-pointer rounded-[2rem] shadow-2xl hover:shadow-[0_20px_50px_rgba(8,112,184,0.1)] transition-all duration-500 border-[6px] border-white/30"
-                    onClick={() => openLightbox(project, 0)}
-                  >
-                    <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-500 z-10 flex items-center justify-center">
-                      <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 glass-panel px-5 py-2.5 rounded-full flex items-center gap-2 shadow-lg text-slate-900">
-                        <Maximize2 className="w-3 h-3" />
-                        <span className="text-[10px] font-bold uppercase tracking-wider">Expandir</span>
+              <Reveal key={`${project.title}-${index}`} width="100%">
+                <div className={`flex flex-col lg:flex-row items-center gap-12 lg:gap-24 ${!isEven ? 'lg:flex-row-reverse' : ''}`}>
+                  {/* Visuals Section */}
+                  <div className="w-full lg:w-1/2 group perspective-1000">
+                    {/* Main Image */}
+                    <div 
+                      className="relative w-full aspect-[16/10] overflow-hidden cursor-pointer rounded-[2rem] shadow-[0_20px_50px_-15px_rgba(0,0,0,0.12)] hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.18)] transition-all duration-500 transform hover:-translate-y-1 bg-white"
+                      onClick={() => openLightbox(project, 0)}
+                    >
+                      <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-500 z-10 flex items-center justify-center">
+                        <div className="opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0 glass-panel px-6 py-3 rounded-full flex items-center gap-2 shadow-xl text-slate-900 backdrop-blur-md">
+                          <Maximize2 className="w-3 h-3" />
+                          <span className="text-[10px] font-bold uppercase tracking-wider">Expandir</span>
+                        </div>
                       </div>
+                      <LazyImage 
+                        src={project.image} 
+                        alt={project.title} 
+                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-1000"
+                      />
                     </div>
-                    <LazyImage 
-                      src={project.image} 
-                      alt={project.title} 
-                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
-                    />
+                    
+                    {/* Small Thumbs Row */}
+                    <div className={`flex gap-4 mt-6 ${!isEven ? 'justify-end' : ''}`}>
+                      {project.gallery.slice(0, 3).map((img, idx) => (
+                          <div key={idx} className="w-20 h-14 flex-shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-all duration-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md border border-white" onClick={() => openLightbox(project, idx)}>
+                            <img src={img} className="w-full h-full object-cover" alt="" />
+                          </div>
+                      ))}
+                    </div>
                   </div>
-                  
-                  {/* Small Thumbs Row */}
-                  <div className={`flex gap-4 mt-6 ${!isEven ? 'justify-end' : ''}`}>
-                     {project.gallery.slice(0, 3).map((img, idx) => (
-                        <div key={idx} className="w-24 h-16 flex-shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-all duration-300 rounded-2xl overflow-hidden shadow-sm hover:shadow-md border-2 border-white/50" onClick={() => openLightbox(project, idx)}>
-                           <img src={img} className="w-full h-full object-cover" alt="" />
-                        </div>
-                     ))}
+
+                  {/* Info Section */}
+                  <div className="w-full lg:w-1/2">
+                    <div className={`flex flex-col glass-card p-10 md:p-14 rounded-[2.5rem] ${!isEven ? 'lg:items-end lg:text-right' : 'lg:items-start lg:text-left'} border border-white/40 bg-white/40`}>
+                        <span className="inline-block px-4 py-1.5 bg-white text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-6 rounded-full border border-slate-100">
+                            {project.category}
+                          </span>
+                          
+                          <h3 className="text-3xl md:text-5xl font-serif font-medium mb-6 text-slate-900 leading-[1.1] tracking-tight">
+                            {project.title}
+                          </h3>
+                          
+                          <p className={`text-slate-600 leading-relaxed mb-10 text-base font-light max-w-lg ${!isEven ? 'lg:ml-auto' : ''}`}>
+                            {project.description}
+                          </p>
+                          
+                          <div className={`flex flex-wrap gap-2 mb-10 ${!isEven ? 'lg:justify-end' : ''}`}>
+                            {project.tags.map((tag, idx) => (
+                              <span key={idx} className="px-4 py-1.5 bg-white/50 text-[10px] text-slate-600 uppercase tracking-wider font-bold rounded-full border border-white/50">
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+
+                          <div className="flex flex-wrap items-center gap-4">
+                            <Button 
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openCaseStudy(project)}
+                              className="gap-2"
+                            >
+                              <BookOpen className="w-3 h-3" />
+                              Estudo de Caso
+                            </Button>
+                            
+                            <a href={project.link}>
+                              <Button variant="primary" size="sm" className="gap-2">
+                                Visitar Site
+                                <ArrowUpRight className="w-3 h-3" />
+                              </Button>
+                            </a>
+                          </div>
+                    </div>
                   </div>
                 </div>
-
-                {/* Info Section - Glass Background for Text */}
-                <div className="w-full lg:w-1/2">
-                   <div className={`flex flex-col glass-card p-8 md:p-12 rounded-[2.5rem] border-white/50 ${!isEven ? 'lg:items-end lg:text-right' : 'lg:items-start lg:text-left'}`}>
-                      <span className="inline-block px-4 py-1.5 bg-slate-100/50 text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-5 rounded-full border border-white/60">
-                          {project.category}
-                        </span>
-                        
-                        <h3 className="text-3xl md:text-5xl font-serif font-medium mb-5 text-slate-800 leading-tight">
-                          {project.title}
-                        </h3>
-                        
-                        <p className={`text-slate-600 leading-relaxed mb-8 text-base md:text-lg font-light max-w-lg ${!isEven ? 'lg:ml-auto' : ''}`}>
-                          {project.description}
-                        </p>
-                        
-                        <div className={`flex flex-wrap gap-2 mb-10 ${!isEven ? 'lg:justify-end' : ''}`}>
-                          {project.tags.map((tag, idx) => (
-                            <span key={idx} className="px-4 py-1.5 bg-white/60 text-[10px] text-slate-500 uppercase tracking-wider font-bold rounded-full border border-white/60 shadow-sm backdrop-blur-sm">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-
-                        <div className="flex flex-wrap items-center gap-4">
-                          <button 
-                            onClick={() => openCaseStudy(project)}
-                            className="px-6 py-3.5 border border-slate-200 hover:border-slate-800 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-all rounded-full group hover:bg-white"
-                          >
-                            <BookOpen className="w-4 h-4 text-slate-400 group-hover:text-slate-900 transition-colors" />
-                            Estudo de Caso
-                          </button>
-                          <a 
-                            href={project.link}
-                            className="px-6 py-3.5 bg-slate-800 text-white hover:bg-slate-700 text-xs font-bold uppercase tracking-widest flex items-center gap-2 transition-colors rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                          >
-                            Visitar Site
-                            <ArrowUpRight className="w-4 h-4" />
-                          </a>
-                        </div>
-                   </div>
-                </div>
-              </div>
+              </Reveal>
             );
           })}
         </div>
       </div>
 
-      {/* --- Lightbox Modal (Glass) --- */}
+      {/* --- Lightbox Modal --- */}
       {isLightboxOpen && currentProject && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-xl flex items-center justify-center animate-in fade-in duration-300 focus:outline-none" tabIndex={0}>
-          <div className="absolute top-6 right-6 z-50">
-             <button onClick={closeLightbox} className="bg-white/10 hover:bg-white/20 border border-white/10 text-white p-3 rounded-full transition-colors shadow-lg backdrop-blur-md"> <X size={24} /> </button>
+        <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-xl flex items-center justify-center animate-in fade-in duration-300 focus:outline-none" tabIndex={0}>
+          <div className="absolute top-8 right-8 z-50">
+             <button onClick={closeLightbox} className="bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-colors backdrop-blur-md border border-white/10"> <X size={24} /> </button>
           </div>
-          <button onClick={prevImage} className="hidden md:flex absolute left-8 bg-white/10 hover:bg-white/20 border border-white/10 text-white p-4 rounded-full shadow-lg transition-all hover:-translate-x-1 backdrop-blur-md"> <ChevronLeft size={24} /> </button>
-          <button onClick={nextImage} className="hidden md:flex absolute right-8 bg-white/10 hover:bg-white/20 border border-white/10 text-white p-4 rounded-full shadow-lg transition-all hover:translate-x-1 backdrop-blur-md"> <ChevronRight size={24} /> </button>
+          <button onClick={prevImage} className="hidden md:flex absolute left-8 bg-white/10 hover:bg-white/20 text-white p-5 rounded-full transition-all hover:-translate-x-1 backdrop-blur-md border border-white/10"> <ChevronLeft size={24} /> </button>
+          <button onClick={nextImage} className="hidden md:flex absolute right-8 bg-white/10 hover:bg-white/20 text-white p-5 rounded-full transition-all hover:translate-x-1 backdrop-blur-md border border-white/10"> <ChevronRight size={24} /> </button>
           
-          <div className="w-full h-full p-4 md:p-20 flex items-center justify-center">
-             <img src={currentProject.gallery[currentImageIndex]} alt="" className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl border-4 border-white/10" />
-          </div>
-          
-          {/* Caption */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 glass-panel px-6 py-3 rounded-full border border-white/30 shadow-lg">
-             <span className="text-xs font-bold uppercase tracking-widest text-slate-800">
-                {currentProject.title} &mdash; {currentImageIndex + 1} / {currentProject.gallery.length}
-             </span>
+          <div className="w-full h-full p-6 md:p-24 flex items-center justify-center">
+             <img src={currentProject.gallery[currentImageIndex]} alt="" className="max-w-full max-h-full object-contain rounded-lg shadow-2xl" />
           </div>
         </div>
       )}
 
-      {/* --- Case Study Modal (Glass) --- */}
+      {/* --- Case Study Modal --- */}
       {isCaseStudyOpen && currentCaseStudy && (
-         <div className="fixed inset-0 z-[90] bg-slate-900/40 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
-            <div className="glass-panel w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative flex flex-col border border-white/80">
-               <div className="p-8 border-b border-slate-100 sticky top-0 bg-white/80 backdrop-blur-xl z-10 flex justify-between items-center">
+         <div className="fixed inset-0 z-[90] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-300">
+            <div className="glass-panel w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative flex flex-col bg-white">
+               <div className="p-8 md:p-10 border-b border-slate-100 sticky top-0 bg-white/80 backdrop-blur-xl z-10 flex justify-between items-center">
                   <div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-1">Case Study</span>
-                      <h3 className="text-2xl font-serif font-medium text-slate-800">{currentCaseStudy.title}</h3>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-2">Case Study</span>
+                      <h3 className="text-2xl md:text-3xl font-serif font-medium text-slate-900">{currentCaseStudy.title}</h3>
                   </div>
-                  <button onClick={closeCaseStudy} className="p-2 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
+                  <button onClick={closeCaseStudy} className="p-3 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
                </div>
                
-               <div className="p-8 md:p-12 space-y-10 bg-white/40">
+               <div className="p-8 md:p-12 space-y-10 bg-slate-50/50">
                   <div className="grid md:grid-cols-2 gap-8">
-                      <div className="bg-red-50/50 p-8 rounded-[2rem] border border-red-100/50 backdrop-blur-sm">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-red-500 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span> O Desafio
+                      <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-red-400"></span> O Desafio
                         </h4>
-                        <p className="text-slate-700 leading-relaxed text-sm">{currentCaseStudy.caseStudy?.challenge}</p>
+                        <p className="text-slate-600 leading-relaxed text-sm">{currentCaseStudy.caseStudy?.challenge}</p>
                       </div>
-                      <div className="bg-blue-50/50 p-8 rounded-[2rem] border border-blue-100/50 backdrop-blur-sm">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-blue-500 mb-4 flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500"></span> A Solução
+                      <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
+                            <span className="w-2 h-2 rounded-full bg-blue-400"></span> A Solução
                         </h4>
-                        <p className="text-slate-700 leading-relaxed text-sm">{currentCaseStudy.caseStudy?.solution}</p>
+                        <p className="text-slate-600 leading-relaxed text-sm">{currentCaseStudy.caseStudy?.solution}</p>
                       </div>
                   </div>
                   
-                  <div className="bg-slate-800 text-white p-10 rounded-[2rem] shadow-xl relative overflow-hidden">
+                  <div className="bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-xl relative overflow-hidden">
                      {/* Decor */}
-                     <div className="absolute top-0 right-0 w-32 h-32 bg-slate-600 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
+                     <div className="absolute top-0 right-0 w-48 h-48 bg-slate-700 rounded-full blur-[60px] opacity-50 -translate-y-1/3 translate-x-1/3"></div>
                      
-                     <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 relative z-10">O Resultado</h4>
-                     <p className="text-xl md:text-2xl font-serif leading-relaxed relative z-10">"{currentCaseStudy.caseStudy?.result}"</p>
+                     <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 relative z-10">O Resultado</h4>
+                     <p className="text-xl md:text-3xl font-serif leading-relaxed relative z-10">"{currentCaseStudy.caseStudy?.result}"</p>
                   </div>
-               </div>
-               
-               <div className="p-6 border-t border-slate-100 bg-white/60 rounded-b-[2.5rem]">
-                  <button onClick={closeCaseStudy} className="w-full py-4 bg-white border border-slate-200 text-xs uppercase font-bold tracking-widest hover:bg-slate-800 hover:text-white hover:border-slate-800 transition-all rounded-2xl shadow-sm">Fechar Detalhes</button>
                </div>
             </div>
          </div>

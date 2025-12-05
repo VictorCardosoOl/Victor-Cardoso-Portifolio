@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfólio | Desenvolvedor Fullstack</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -15,8 +15,6 @@
               serif: ['Playfair Display', 'serif'],
             },
             colors: {
-              offblack: '#0f172a', // Changed to Slate-900 for blue tint
-              offwhite: '#f8fafc', // Changed to Slate-50
               slate: {
                 50: '#f8fafc',
                 100: '#f1f5f9',
@@ -34,16 +32,8 @@
               '4xl': '2.5rem',
               '5xl': '3rem',
             },
-            animation: {
-              'blob': 'blob 10s infinite',
-            },
-            keyframes: {
-              blob: {
-                '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                '100%': { transform: 'translate(0px, 0px) scale(1)' },
-              }
+            transitionTimingFunction: {
+              'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
             }
           }
         }
@@ -56,32 +46,36 @@
       }
       /* Custom scrollbar */
       ::-webkit-scrollbar {
-        width: 8px;
+        width: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: #f1f5f9;
+        background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: #94a3b8;
-        border-radius: 4px;
+        background: rgba(100, 116, 139, 0.5);
+        border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
+        background: rgba(100, 116, 139, 0.8);
       }
       
+      /* Refined Glass Effect */
       .glass-panel {
         background: rgba(255, 255, 255, 0.65);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 
+          0 4px 30px rgba(0, 0, 0, 0.03),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.4);
       }
       
       .glass-card {
         background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.6);
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        box-shadow: 
+          0 4px 20px rgba(0, 0, 0, 0.02),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.3);
       }
     </style>
   <script type="importmap">
@@ -90,7 +84,9 @@
     "react": "https://aistudiocdn.com/react@^19.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "clsx": "https://cdn.jsdelivr.net/npm/clsx@2.1.0/+esm",
+    "tailwind-merge": "https://cdn.jsdelivr.net/npm/tailwind-merge@2.2.1/+esm"
   }
 }
 </script>

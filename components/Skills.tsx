@@ -1,49 +1,71 @@
 import React from 'react';
 import { SKILLS } from '../constants';
+import { Reveal } from './ui/Reveal';
+import { ArrowUpRight } from 'lucide-react';
 
 const Skills: React.FC = () => {
   return (
     <section id="skills" className="py-24 md:py-32 relative z-10">
       <div className="container mx-auto px-6 md:px-12">
         <div className="text-center mb-20 max-w-2xl mx-auto">
-          <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Expertise</span>
-          <h2 className="text-3xl md:text-4xl font-serif font-medium mb-6 text-slate-800">
-            Como posso ajudar você?
-          </h2>
-          <p className="text-slate-500 leading-relaxed font-light text-lg">
-            Não vendo apenas código. Ofereço soluções completas que resolvem problemas reais. Traduzo complexidade técnica em valor tangível.
-          </p>
+          <Reveal>
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Expertise</span>
+            <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6 text-slate-900 tracking-tight">
+              Como posso agregar valor?
+            </h2>
+            <p className="text-slate-600 leading-relaxed font-light text-lg">
+              Soluções completas que resolvem problemas reais. Traduzo complexidade técnica em valor tangível.
+            </p>
+          </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+        {/* Bento Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-fr">
           {SKILLS.map((skill, index) => {
             const Icon = skill.icon;
+            // First item spans 2 cols, others 1. 
+            // NOTE: Adjusted logic to make layout interesting. 
+            // Item 0: Large (md:col-span-2)
+            // Item 1: Tall/Standard
+            // Item 2: Wide (md:col-span-3 or split?)
+            
+            const isLarge = index === 0;
+            const spanClass = isLarge ? "md:col-span-2" : "md:col-span-1";
+            
             return (
-              <div 
-                key={index} 
-                className="glass-card p-10 rounded-[2.5rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_50px_-10px_rgba(100,116,139,0.1)] transition-all duration-300 border-white/60 group hover:-translate-y-2 hover:bg-white/60"
-              >
-                <div className="w-14 h-14 bg-slate-50 text-slate-700 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-slate-800 group-hover:text-white transition-colors duration-300 shadow-inner">
-                   <Icon size={26} strokeWidth={1.5} />
-                </div>
-                
-                <h3 className="text-xl font-serif font-medium mb-4 text-slate-800">
-                  {skill.title}
-                </h3>
-                
-                <p className="text-sm text-slate-500 leading-relaxed mb-8 font-light">
-                  {skill.description}
-                </p>
+              <div key={index} className={`${spanClass} h-full`}>
+                <Reveal delay={index * 150} width="100%">
+                  <div 
+                    className="h-full glass-card p-10 rounded-[2.5rem] border border-slate-200/50 hover:border-slate-300 transition-all duration-500 hover:-translate-y-1 flex flex-col justify-between group bg-white/40"
+                  >
+                    <div>
+                      <div className="flex justify-between items-start mb-8">
+                        <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
+                          <Icon size={24} strokeWidth={1.5} />
+                        </div>
+                        <ArrowUpRight className="text-slate-300 group-hover:text-slate-900 transition-colors" />
+                      </div>
+                      
+                      <h3 className="text-2xl font-serif font-medium mb-4 text-slate-900">
+                        {skill.title}
+                      </h3>
+                      
+                      <p className="text-sm text-slate-600 leading-relaxed font-light mb-8 max-w-md">
+                        {skill.description}
+                      </p>
+                    </div>
 
-                <div className="border-t border-slate-100/50 pt-6">
-                  <div className="flex flex-wrap gap-2">
-                    {skill.items.map((item, idx) => (
-                      <span key={idx} className="px-3 py-1 bg-white/50 text-slate-500 text-[10px] uppercase font-bold tracking-wider rounded-full border border-white/50 group-hover:border-slate-200 transition-colors">
-                        {item}
-                      </span>
-                    ))}
+                    <div className="pt-6 border-t border-slate-200/50">
+                      <div className="flex flex-wrap gap-2">
+                        {skill.items.map((item, idx) => (
+                          <span key={idx} className="px-3 py-1 bg-white/60 text-slate-700 text-[10px] uppercase font-bold tracking-wider rounded-full border border-slate-100">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </Reveal>
               </div>
             );
           })}
