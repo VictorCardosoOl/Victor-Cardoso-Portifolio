@@ -1,16 +1,42 @@
 import React, { useState } from 'react';
 import { CONTACT_INFO } from '../constants';
-import { ArrowUpRight, Send } from 'lucide-react';
+import { ArrowUpRight, Send, Copy, Check, AlertCircle } from 'lucide-react';
 import Button from './ui/Button';
 import { Reveal } from './ui/Reveal';
 
 const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [copied, setCopied] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Professional form handling simulation
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Obrigado pelo contato! Retornarei em breve.');
-    setFormState({ name: '', email: '', message: '' });
+    if (!formState.name || !formState.email || !formState.message) return;
+    
+    setStatus('loading');
+    
+    try {
+      // Simulate network request
+      // In production, fetch your EmailJS or Serverless endpoint here
+      // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(formState) })
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      setStatus('success');
+      setFormState({ name: '', email: '', message: '' });
+      
+      // Reset success message after 5 seconds
+      setTimeout(() => setStatus('idle'), 5000);
+    } catch (error) {
+      setStatus('error');
+      setTimeout(() => setStatus('idle'), 5000);
+    }
+  };
+
+  const copyEmail = () => {
+    navigator.clipboard.writeText(CONTACT_INFO.email);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
@@ -38,9 +64,23 @@ const Contact: React.FC = () => {
               <Reveal delay={150}>
                 <div>
                   <h4 className="text-xs uppercase tracking-widest text-slate-400 mb-3 font-bold">Email</h4>
-                  <a href={`mailto:${CONTACT_INFO.email}`} className="text-xl md:text-2xl font-serif text-slate-900 border-b border-slate-200 hover:border-slate-900 transition-all pb-1">
-                    {CONTACT_INFO.email}
-                  </a>
+                  <div className="flex items-center gap-4 group">
+                    <a href={`mailto:${CONTACT_INFO.email}`} className="text-xl md:text-2xl font-serif text-slate-900 border-b border-slate-200 hover:border-slate-900 transition-all pb-1">
+                      {CONTACT_INFO.email}
+                    </a>
+                    <button 
+                      onClick={copyEmail}
+                      className="p-2 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors relative"
+                      title="Copiar Email"
+                    >
+                      {copied ? <Check size={18} className="text-green-500" /> : <Copy size={18} />}
+                      
+                      {/* Toast */}
+                      <span className={`absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[10px] font-bold py-1 px-2 rounded-md transition-all ${copied ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+                        Copiado!
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </Reveal>
               
@@ -84,7 +124,24 @@ const Contact: React.FC = () => {
 
           <div className="mt-8 lg:mt-0">
             <Reveal width="100%" delay={200}>
-              <div className="glass-panel p-10 md:p-14 rounded-[3rem] shadow-xl border border-white/50 bg-white/60">
+              <div className="glass-panel p-10 md:p-14 rounded-[3rem] shadow-xl border border-white/50 bg-white/60 relative overflow-hidden transition-all duration-500">
+                {/* Status Overlay */}
+                {status === 'success' && (
+                   <div className="absolute inset-0 bg-white/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in z-10">
+                      <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                        <Check size={32} />
+                      </div>
+                      <h3 className="text-2xl font-serif text-slate-900 mb-2">Mensagem Enviada!</h3>
+                      <p className="text-slate-500 text-sm">Obrigado pelo contato. Retornarei em breve.</p>
+                   </div>
+                )}
+                
+                {status === 'error' && (
+                   <div className="absolute inset-x-0 top-0 bg-red-50 p-4 flex items-center justify-center gap-2 text-red-600 text-sm font-medium animate-in slide-in-from-top">
+                      <AlertCircle size={16} /> Erro ao enviar. Tente novamente ou use o email direto.
+                   </div>
+                )}
+
                 <h3 className="text-3xl font-serif mb-10 text-slate-900">Envie uma mensagem</h3>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="group">
@@ -97,6 +154,7 @@ const Contact: React.FC = () => {
                       className="w-full bg-white/50 border-none py-5 px-8 rounded-3xl focus:bg-white focus:ring-1 focus:ring-slate-200 outline-none transition-all text-slate-900 placeholder-slate-400 backdrop-blur-sm shadow-inner"
                       placeholder="Seu nome completo"
                       required
+                      disabled={status === 'loading'}
                     />
                   </div>
                   <div>
@@ -109,6 +167,7 @@ const Contact: React.FC = () => {
                       className="w-full bg-white/50 border-none py-5 px-8 rounded-3xl focus:bg-white focus:ring-1 focus:ring-slate-200 outline-none transition-all text-slate-900 placeholder-slate-400 backdrop-blur-sm shadow-inner"
                       placeholder="seu@email.com"
                       required
+                      disabled={status === 'loading'}
                     />
                   </div>
                   <div>
@@ -121,11 +180,13 @@ const Contact: React.FC = () => {
                       className="w-full bg-white/50 border-none py-5 px-8 rounded-3xl focus:bg-white focus:ring-1 focus:ring-slate-200 outline-none transition-all text-slate-900 placeholder-slate-400 backdrop-blur-sm resize-none shadow-inner"
                       placeholder="Como posso te ajudar?"
                       required
+                      disabled={status === 'loading'}
                     ></textarea>
                   </div>
                   
-                  <Button type="submit" variant="primary" size="lg" className="w-full mt-4">
-                    Enviar Mensagem <Send size={16} className="ml-2" />
+                  <Button type="submit" variant="primary" size="lg" className="w-full mt-4" disabled={status === 'loading'}>
+                    {status === 'loading' ? 'Enviando...' : 'Enviar Mensagem'} 
+                    {status !== 'loading' && <Send size={16} className="ml-2" />}
                   </Button>
                 </form>
               </div>

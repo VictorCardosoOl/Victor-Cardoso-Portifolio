@@ -6,10 +6,17 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
+  const [readingProgress, setReadingProgress] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
+      
+      // Reading Progress Logic
+      const totalScroll = document.documentElement.scrollTop;
+      const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scroll = `${totalScroll / windowHeight}`;
+      setReadingProgress(Number(scroll));
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -38,6 +45,14 @@ const Navbar: React.FC = () => {
 
   return (
     <>
+      {/* Reading Progress Bar */}
+      <div className="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[100] pointer-events-none">
+        <div 
+          className="h-full bg-slate-900 transition-all duration-100 ease-out"
+          style={{ width: `${readingProgress * 100}%` }}
+        />
+      </div>
+
       <nav 
         className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-out 
           ${isScrolled 

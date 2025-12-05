@@ -2,13 +2,13 @@ import React from 'react';
 
 const GrainBackground = () => {
   return (
-    <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+    <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden transform-gpu">
       {/* Soft Gradients for Depth */}
       <div className="absolute top-[-20%] left-[-10%] w-[70vw] h-[70vw] bg-slate-200/40 rounded-full blur-[120px] mix-blend-multiply opacity-60" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-blue-100/30 rounded-full blur-[120px] mix-blend-multiply opacity-60" />
       
-      {/* Noise Texture */}
-      <div className="absolute inset-0 opacity-[0.035] mix-blend-overlay">
+      {/* Noise Texture - Optimized with will-change-transform */}
+      <div className="absolute inset-0 opacity-[0.035] mix-blend-overlay will-change-transform">
         <svg className='w-full h-full' xmlns='http://www.w3.org/2000/svg'>
           <filter id='noiseFilter'>
             <feTurbulence 
