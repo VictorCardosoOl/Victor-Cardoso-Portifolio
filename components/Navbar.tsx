@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { NAV_LINKS } from '../constants';
+import Magnetic from './ui/Magnetic';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -56,7 +57,7 @@ const Navbar: React.FC = () => {
       <nav 
         className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-out 
           ${isScrolled 
-            ? 'top-6 w-[85%] md:w-auto md:min-w-[650px] glass-panel rounded-full py-4 px-10 shadow-[0_8px_32px_rgba(0,0,0,0.04)]' 
+            ? 'top-6 w-[85%] md:w-auto md:min-w-[650px] glass-panel rounded-full py-4 px-10' 
             : 'top-8 w-full md:w-auto bg-transparent py-4 px-6 md:px-0'
           }`}
       >
@@ -71,32 +72,35 @@ const Navbar: React.FC = () => {
              {NAV_LINKS.map((link) => {
                 const isActive = activeSection === link.href.replace('#', '');
                 return (
-                    <a 
-                    key={link.name} 
-                    href={link.href}
-                    className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 ${
-                        isActive 
-                        ? 'text-slate-900 font-bold' 
-                        : 'text-slate-500 hover:text-slate-800'
-                    }`}
-                    >
-                    {link.name}
-                    {/* Active/Hover Dot */}
-                    <span className={`absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`}></span>
-                    </a>
+                    <Magnetic key={link.name} strength={0.2}>
+                        <a 
+                        href={link.href}
+                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 ${
+                            isActive 
+                            ? 'text-slate-900 font-bold' 
+                            : 'text-slate-500 hover:text-slate-800'
+                        }`}
+                        >
+                        {link.name}
+                        {/* Active/Hover Dot */}
+                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`}></span>
+                        </a>
+                    </Magnetic>
                 );
              })}
             
-             <a 
-              href="#contact" 
-              className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full hover:-translate-y-0.5 duration-300
-                ${isScrolled 
-                  ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-lg' 
-                  : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
-                }`}
-            >
-              Fale Comigo
-            </a>
+            <Magnetic strength={0.4}>
+                 <a 
+                  href="#contact" 
+                  className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block
+                    ${isScrolled 
+                      ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_5px_15px_rgba(15,23,42,0.2)]' 
+                      : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
+                    }`}
+                >
+                  Fale Comigo
+                </a>
+            </Magnetic>
           </div>
 
           {/* Mobile Menu Button */}

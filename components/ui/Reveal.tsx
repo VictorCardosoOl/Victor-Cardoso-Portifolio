@@ -1,63 +1,55 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 interface RevealProps {
   children: React.ReactNode;
-  delay?: number;
   width?: "fit-content" | "100%";
+  delay?: number; // in ms
+  duration?: number;
+  y?: number;
+  className?: string;
 }
 
-export const Reveal: React.FC<RevealProps> = ({ children, delay = 0, width = "fit-content" }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+export const Reveal: React.FC<RevealProps> = ({ 
+  children, 
+  width = "fit-content", 
+  delay = 0,
+  duration = 0.5,
+  y = 50,
+  className = ""
+}) => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-10%" });
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    // A11y: Check for reduced motion preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleMotionChange = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
-    mediaQuery.addEventListener('change', handleMotionChange);
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1, rootMargin: "0px 0px 0px 0px" }
-    );
-    
-    if (ref.current) observer.observe(ref.current);
-    
-    // Fallback: If observer fails or takes too long, show content after 500ms
-    const timeout = setTimeout(() => setIsVisible(true), 1000);
-
-    return () => {
-      observer.disconnect();
-      clearTimeout(timeout);
-      mediaQuery.removeEventListener('change', handleMotionChange);
-    };
+    const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', handler);
+    return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // If reduced motion is requested, render without animation styles
+  // Convert ms to s for framer-motion
+  const delaySec = delay / 1000;
+
   if (prefersReducedMotion) {
-    return <div style={{ width }}>{children}</div>;
+    return <div className={className} style={{ width }}>{children}</div>;
   }
 
-  const transitionDelay = `${delay}ms`;
-
   return (
-    <div ref={ref} style={{ width }} className="relative overflow-hidden">
-      <div 
-        className={`transition-all duration-1000 ease-out-expo transform will-change-transform ${
-          isVisible ? 'translate-y-0 opacity-100 blur-0' : 'translate-y-12 opacity-0 blur-sm'
-        }`}
-        style={{ transitionDelay }}
+    <div ref={ref} style={{ width }} className={`relative overflow-hidden ${className}`}>
+      <motion.div
+        variants={{
+          hidden: { opacity: 0, y: y },
+          visible: { opacity: 1, y: 0 }
+        }}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
+        transition={{ duration, delay: delaySec, ease: "easeOut" }}
       >
         {children}
-      </div>
+      </motion.div>
     </div>
   );
 };

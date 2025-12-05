@@ -3,6 +3,7 @@ import { CONTACT_INFO } from '../constants';
 import { ArrowUpRight, Send, Copy, Check, AlertCircle } from 'lucide-react';
 import Button from './ui/Button';
 import { Reveal } from './ui/Reveal';
+import Magnetic from './ui/Magnetic';
 
 const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
@@ -18,8 +19,6 @@ const Contact: React.FC = () => {
     
     try {
       // Simulate network request
-      // In production, fetch your EmailJS or Serverless endpoint here
-      // await fetch('/api/contact', { method: 'POST', body: JSON.stringify(formState) })
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       setStatus('success');
@@ -107,14 +106,15 @@ const Contact: React.FC = () => {
                   <h4 className="text-xs uppercase tracking-widest text-slate-400 mb-5 font-bold">Redes Sociais</h4>
                   <div className="flex gap-4">
                     {CONTACT_INFO.socials.map((social, idx) => (
-                      <a 
-                        key={idx} 
-                        href={social.url} 
-                        className="px-6 py-3 bg-white border border-slate-200 rounded-full flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all group shadow-sm hover:shadow-lg"
-                      >
-                        {social.name}
-                        <ArrowUpRight className="w-3 h-3 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                      </a>
+                      <Magnetic key={idx} strength={0.2}>
+                          <a 
+                            href={social.url} 
+                            className="px-6 py-3 bg-white border border-slate-200 rounded-full flex items-center gap-2 text-xs font-bold uppercase tracking-wider hover:bg-slate-900 hover:text-white transition-all group shadow-sm hover:shadow-lg"
+                          >
+                            {social.name}
+                            <ArrowUpRight className="w-3 h-3 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                          </a>
+                      </Magnetic>
                     ))}
                   </div>
                 </div>
@@ -124,7 +124,7 @@ const Contact: React.FC = () => {
 
           <div className="mt-8 lg:mt-0">
             <Reveal width="100%" delay={200}>
-              <div className="glass-panel p-10 md:p-14 rounded-[3rem] shadow-xl border border-white/50 bg-white/60 relative overflow-hidden transition-all duration-500">
+              <div className="glass-panel p-10 md:p-14 rounded-[3rem] transition-all duration-500 relative overflow-hidden">
                 {/* Status Overlay */}
                 {status === 'success' && (
                    <div className="absolute inset-0 bg-white/90 backdrop-blur-md flex flex-col items-center justify-center animate-in fade-in z-10">
@@ -184,10 +184,12 @@ const Contact: React.FC = () => {
                     ></textarea>
                   </div>
                   
-                  <Button type="submit" variant="primary" size="lg" className="w-full mt-4" disabled={status === 'loading'}>
-                    {status === 'loading' ? 'Enviando...' : 'Enviar Mensagem'} 
-                    {status !== 'loading' && <Send size={16} className="ml-2" />}
-                  </Button>
+                  <Magnetic strength={0.4}>
+                    <Button type="submit" variant="primary" size="lg" className="w-full mt-4" disabled={status === 'loading'}>
+                        {status === 'loading' ? 'Enviando...' : 'Enviar Mensagem'} 
+                        {status !== 'loading' && <Send size={16} className="ml-2" />}
+                    </Button>
+                  </Magnetic>
                 </form>
               </div>
             </Reveal>

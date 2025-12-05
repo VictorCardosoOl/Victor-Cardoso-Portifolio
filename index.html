@@ -54,7 +54,6 @@
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        /* Default cursor restored */
       }
       
       /* Custom scrollbar */
@@ -72,23 +71,39 @@
         background: rgba(100, 116, 139, 0.8);
       }
       
-      /* Refined Glass Effect */
+      /* Refined Glass Effect (Light) */
       .glass-panel {
-        background: rgba(255, 255, 255, 0.65);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(24px) saturate(180%);
+        -webkit-backdrop-filter: blur(24px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         box-shadow: 
-          0 4px 30px rgba(0, 0, 0, 0.03),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+          0 8px 40px rgba(0, 0, 0, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8),
+          inset 0 0 20px rgba(255, 255, 255, 0.2);
       }
       
+      /* Standard Glass Card (Light) */
       .glass-card {
-        background: rgba(255, 255, 255, 0.4);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
         box-shadow: 
-          0 4px 20px rgba(0, 0, 0, 0.02),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+          0 4px 24px rgba(0, 0, 0, 0.02),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      }
+
+      /* Refined Glass Effect (Dark) */
+      .glass-panel-dark {
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(24px) saturate(120%);
+        -webkit-backdrop-filter: blur(24px) saturate(120%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 
+          0 8px 40px rgba(0, 0, 0, 0.2),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1),
+          inset 0 0 20px rgba(0, 0, 0, 0.2);
       }
 
       /* Custom Focus Ring for A11y */
@@ -103,6 +118,23 @@
         background: #0f172a;
         color: #fff;
       }
+
+      /* Lenis Recommended CSS */
+      html.lenis, html.lenis body {
+        height: auto;
+      }
+      .lenis.lenis-smooth {
+        scroll-behavior: auto !important;
+      }
+      .lenis.lenis-smooth [data-lenis-prevent] {
+        overscroll-behavior: contain;
+      }
+      .lenis.lenis-stopped {
+        overflow: hidden;
+      }
+      .lenis.lenis-scrolling iframe {
+        pointer-events: none;
+      }
     </style>
   <script type="importmap">
 {
@@ -112,7 +144,9 @@
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
     "clsx": "https://cdn.jsdelivr.net/npm/clsx@2.1.0/+esm",
-    "tailwind-merge": "https://cdn.jsdelivr.net/npm/tailwind-merge@2.2.1/+esm"
+    "tailwind-merge": "https://cdn.jsdelivr.net/npm/tailwind-merge@2.2.1/+esm",
+    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.20/+esm",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.16.0"
   }
 }
 </script>

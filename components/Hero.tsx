@@ -1,9 +1,15 @@
 import React from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { Reveal } from './ui/Reveal';
+import { TextReveal } from './ui/TextReveal';
 import Button from './ui/Button';
+import Magnetic from './ui/Magnetic';
 
 const Hero: React.FC = () => {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 1000], [0, 300]); // Parallax effect
+
   return (
     <section id="hero" className="min-h-screen flex items-center pt-32 pb-20 relative overflow-hidden">
       
@@ -12,20 +18,23 @@ const Hero: React.FC = () => {
           
           {/* Left Column: Photo (Shifted Left for Asymmetry) */}
           <div className="w-full lg:w-5/12 order-1 lg:order-1 flex justify-center lg:justify-start lg:-ml-12">
-            <Reveal>
+            <Reveal width="100%">
               <div className="relative w-full max-w-md aspect-[3/4] group select-none">
                  
-                 {/* Main Image Container */}
-                 <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-transform duration-700 hover:-translate-y-2 bg-slate-200">
+                 {/* Main Image Container with Parallax */}
+                 <motion.div 
+                   style={{ y }}
+                   className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] bg-slate-200"
+                 >
                    <img 
                      src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800&h=1000" 
                      alt="Minimalist Workspace Architecture" 
-                     className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105 transition-all duration-700 hover:scale-105"
+                     className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105"
                    />
                    
                    {/* Glass Overlay Gradient */}
                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent opacity-60"></div>
-                 </div>
+                 </motion.div>
               </div>
             </Reveal>
           </div>
@@ -36,22 +45,22 @@ const Hero: React.FC = () => {
             <div className="space-y-8 max-w-3xl mx-auto lg:mx-0">
               
               {/* Personal Intro */}
-              <Reveal delay={100} width="100%">
-                <div className="space-y-6">
+              <div className="space-y-6">
+                <Reveal width="100%">
                   <span className="inline-block px-4 py-1.5 glass-panel rounded-full text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-slate-200/50">
                     Portfolio 2024
                   </span>
-                  
-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[0.95] tracking-tight text-slate-900">
-                    Criando soluções <br />
-                    <span className="italic text-slate-500 font-serif">
-                      significativas.
-                    </span>
-                  </h1>
+                </Reveal>
+                
+                <div className="overflow-hidden">
+                   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[0.95] tracking-tight text-slate-900">
+                     <TextReveal delay={100}>Criando soluções</TextReveal>
+                     <TextReveal delay={200} className="italic text-slate-500 font-serif">significativas.</TextReveal>
+                   </h1>
                 </div>
-              </Reveal>
+              </div>
               
-              <Reveal delay={200} width="100%">
+              <Reveal delay={300} width="100%">
                 <div className="space-y-4 pt-4">
                   <h2 className="text-lg md:text-xl font-medium text-slate-900">
                     Prazer, sou o Victor Cardoso.
@@ -62,25 +71,30 @@ const Hero: React.FC = () => {
                 </div>
               </Reveal>
               
-              <Reveal delay={300} width="100%">
+              <Reveal delay={400} width="100%">
                 <p className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed mx-auto lg:mx-0 font-light glass-panel p-6 rounded-3xl border border-slate-100/60 mt-6 shadow-sm">
                   Combino a precisão da engenharia com a elegância do design para construir experiências digitais que não apenas funcionam, mas encantam.
                 </p>
               </Reveal>
 
               {/* CTAs */}
-              <Reveal delay={400} width="100%">
+              <Reveal delay={500} width="100%">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
-                  <a href="#projects">
-                    <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/20">
-                      Ver Projetos <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </a>
-                  <a href="#contact">
-                    <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white/50 backdrop-blur-md">
-                      Fale Comigo
-                    </Button>
-                  </a>
+                  <Magnetic strength={0.5}>
+                      <a href="#projects" className="block">
+                        <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/20">
+                          Ver Projetos <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </a>
+                  </Magnetic>
+                  
+                  <Magnetic strength={0.5}>
+                      <a href="#contact" className="block">
+                        <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white/50 backdrop-blur-md">
+                          Fale Comigo
+                        </Button>
+                      </a>
+                  </Magnetic>
                 </div>
               </Reveal>
             </div>
@@ -90,10 +104,16 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 animate-bounce duration-[2000ms] z-20 opacity-40 hover:opacity-100 transition-opacity cursor-pointer" onClick={() => document.getElementById('projects')?.scrollIntoView({behavior: 'smooth'})}>
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 0.4, y: 0 }}
+        transition={{ delay: 1, duration: 1, repeat: Infinity, repeatType: "reverse" }}
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 hover:opacity-100 transition-opacity cursor-pointer" 
+        onClick={() => document.getElementById('projects')?.scrollIntoView({behavior: 'smooth'})}
+      >
         <span className="text-[10px] uppercase tracking-widest font-bold">Scroll</span>
         <ChevronDown className="text-slate-900" size={20} />
-      </div>
+      </motion.div>
     </section>
   );
 };

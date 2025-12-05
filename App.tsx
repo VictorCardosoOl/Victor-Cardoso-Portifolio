@@ -11,25 +11,28 @@ import Education from './components/Education';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import GrainBackground from './components/GrainBackground';
+import { ScrollProvider } from './components/ScrollContext';
 
 const App: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-slate-900 selection:text-white">
-      <GrainBackground />
-      <Navbar />
-      <main className="flex-grow">
-        <Hero />
-        <Projects />
-        <Services />
-        <Lab />
-        <Writing />
-        <Skills />
-        <About />
-        <Education />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <ScrollProvider>
+      <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-slate-900 selection:text-white">
+        <GrainBackground />
+        <Navbar />
+        <main className="flex-grow">
+          <Hero />
+          <Projects />
+          <Services />
+          <Lab />
+          <Writing />
+          <Skills />
+          <About />
+          <Education />
+          <Contact />
+        </main>
+        <Footer />
+      </div>
+    </ScrollProvider>
   );
 };
 
