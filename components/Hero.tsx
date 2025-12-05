@@ -5,23 +5,22 @@ import Button from './ui/Button';
 
 const Hero: React.FC = () => {
   return (
-    <section id="hero" className="min-h-screen flex items-center pt-32 pb-20 relative">
+    <section id="hero" className="min-h-screen flex items-center pt-32 pb-20 relative overflow-hidden">
       
       <div className="container mx-auto px-6 md:px-12 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-32">
+        <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           
-          {/* Left Column: Photo */}
-          <div className="w-full lg:w-5/12 order-1 lg:order-1 flex justify-center lg:justify-end">
+          {/* Left Column: Photo (Shifted Left for Asymmetry) */}
+          <div className="w-full lg:w-5/12 order-1 lg:order-1 flex justify-center lg:justify-start lg:-ml-12">
             <Reveal>
               <div className="relative w-full max-w-md aspect-[3/4] group select-none">
                  
                  {/* Main Image Container */}
                  <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] transition-transform duration-700 hover:-translate-y-2 bg-slate-200">
-                   {/* Using a curated Unsplash image focused on Architecture/Minimalism instead of generic person */}
                    <img 
                      src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800&h=1000" 
                      alt="Minimalist Workspace Architecture" 
-                     className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105 transition-all duration-700"
+                     className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105 transition-all duration-700 hover:scale-105"
                    />
                    
                    {/* Glass Overlay Gradient */}
@@ -31,52 +30,54 @@ const Hero: React.FC = () => {
             </Reveal>
           </div>
 
-          {/* Right Column: Text */}
+          {/* Right Column: Text (Aligned consecutivelly) */}
           <div className="w-full lg:w-7/12 order-2 lg:order-2 text-center lg:text-left">
             
-            <div className="space-y-8 max-w-2xl mx-auto lg:mx-0">
+            <div className="space-y-8 max-w-3xl mx-auto lg:mx-0">
               
               {/* Personal Intro */}
               <Reveal delay={100} width="100%">
-                <div className="space-y-4">
+                <div className="space-y-6">
                   <span className="inline-block px-4 py-1.5 glass-panel rounded-full text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-slate-200/50">
                     Portfolio 2024
                   </span>
-                  <h2 className="text-xl md:text-2xl font-serif text-slate-600">
-                    Prazer, sou o <span className="text-slate-900 font-semibold">Victor Cardoso</span>.
+                  
+                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[0.95] tracking-tight text-slate-900">
+                    Criando soluções <br />
+                    <span className="italic text-slate-500 font-serif">
+                      significativas.
+                    </span>
+                  </h1>
+                </div>
+              </Reveal>
+              
+              <Reveal delay={200} width="100%">
+                <div className="space-y-4 pt-4">
+                  <h2 className="text-lg md:text-xl font-medium text-slate-900">
+                    Prazer, sou o Victor Cardoso.
                   </h2>
-                  <p className="text-sm uppercase tracking-widest text-slate-400 font-bold">
-                    Software Developer & Computer Engineering Student
+                  <p className="text-sm md:text-base uppercase tracking-widest text-slate-500 font-bold border-l-2 border-slate-200 pl-4">
+                    Software Developer & <br className="hidden md:block"/> Computer Engineering Student
                   </p>
                 </div>
               </Reveal>
-
-              {/* Main Headline */}
-              <Reveal delay={200} width="100%">
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1] tracking-tight text-slate-900">
-                  Criando soluções <br />
-                  <span className="italic text-slate-500 font-serif">
-                    significativas.
-                  </span>
-                </h1>
-              </Reveal>
               
               <Reveal delay={300} width="100%">
-                <p className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed mx-auto lg:mx-0 font-light glass-panel p-6 rounded-3xl border border-slate-100">
+                <p className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed mx-auto lg:mx-0 font-light glass-panel p-6 rounded-3xl border border-slate-100/60 mt-6 shadow-sm">
                   Combino a precisão da engenharia com a elegância do design para construir experiências digitais que não apenas funcionam, mas encantam.
                 </p>
               </Reveal>
 
               {/* CTAs */}
               <Reveal delay={400} width="100%">
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
                   <a href="#projects">
-                    <Button variant="primary" size="lg" className="w-full sm:w-auto">
+                    <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/20">
                       Ver Projetos <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                   </a>
                   <a href="#contact">
-                    <Button variant="secondary" size="lg" className="w-full sm:w-auto">
+                    <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white/50 backdrop-blur-md">
                       Fale Comigo
                     </Button>
                   </a>

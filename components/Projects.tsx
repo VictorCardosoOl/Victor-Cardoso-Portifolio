@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, X, ChevronLeft, ChevronRight, Maximize2, BookOpen, RotateCcw } from 'lucide-react';
+import { ArrowUpRight, X, ChevronLeft, ChevronRight, Maximize2, RotateCcw, ChevronDown } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 
@@ -27,6 +27,11 @@ const useScrollLock = () => {
 const LazyImage: React.FC<{ src: string; alt: string; className?: string; onClick?: () => void }> = ({ src, alt, className, onClick }) => {
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // Update load state when src changes
+  useEffect(() => {
+    setIsLoaded(false);
+  }, [src]);
+
   return (
     <div className={`relative overflow-hidden bg-slate-100 ${className}`} onClick={onClick}>
       <img
@@ -46,36 +51,17 @@ const Projects: React.FC = () => {
   const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const [visibleProjects, setVisibleProjects] = useState(PROJECTS);
   
-  // Unified Modal State
+  // State for preview images (mapped by project index)
+  const [previewImages, setPreviewImages] = useState<{[key: number]: string}>({});
+
+  // State for Lightbox only
   const [lightboxProject, setLightboxProject] = useState<{ project: typeof PROJECTS[0], index: number } | null>(null);
-  const [caseStudyProject, setCaseStudyProject] = useState<typeof PROJECTS[0] | null>(null);
+  
+  // State for Inline Expansion (Case Study)
+  const [expandedProjectId, setExpandedProjectId] = useState<string | null>(null);
 
   const { lock, unlock } = useScrollLock();
   const uniqueTags = Array.from(new Set(PROJECTS.flatMap(p => p.tags))).sort();
-
-  // URL Deep Linking Logic
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const caseSlug = params.get('case');
-    
-    if (caseSlug) {
-      const found = PROJECTS.find(p => toSlug(p.title) === caseSlug);
-      if (found) {
-        setCaseStudyProject(found);
-        lock();
-      }
-    }
-  }, [lock]);
-
-  const updateUrl = (key: string, value: string | null) => {
-    const url = new URL(window.location.href);
-    if (value) {
-      url.searchParams.set(key, value);
-    } else {
-      url.searchParams.delete(key);
-    }
-    window.history.pushState({}, '', url);
-  };
 
   useEffect(() => {
     if (activeFilters.length === 0) {
@@ -97,22 +83,8 @@ const Projects: React.FC = () => {
 
   const clearFilters = () => setActiveFilters([]);
 
-  // Keyboard Navigation
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (lightboxProject) {
-        if (e.key === 'Escape') closeLightbox();
-        if (e.key === 'ArrowRight') nextImage(e as any);
-        if (e.key === 'ArrowLeft') prevImage(e as any);
-      }
-      if (caseStudyProject && e.key === 'Escape') closeCaseStudy();
-    };
+  // --- Lightbox Logic ---
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxProject, caseStudyProject]);
-
-  // --- Lightbox Functions ---
   const openLightbox = (project: typeof PROJECTS[0], index: number = 0) => {
     setLightboxProject({ project, index });
     lock();
@@ -123,40 +95,69 @@ const Projects: React.FC = () => {
     unlock();
   };
 
-  const nextImage = (e: React.MouseEvent) => {
-    e?.stopPropagation();
+  const nextImage = useCallback(() => {
     if (lightboxProject) {
       const nextIndex = (lightboxProject.index + 1) % lightboxProject.project.gallery.length;
       setLightboxProject({ ...lightboxProject, index: nextIndex });
     }
-  };
+  }, [lightboxProject]);
 
-  const prevImage = (e: React.MouseEvent) => {
-    e?.stopPropagation();
+  const prevImage = useCallback(() => {
     if (lightboxProject) {
       const prevIndex = (lightboxProject.index - 1 + lightboxProject.project.gallery.length) % lightboxProject.project.gallery.length;
       setLightboxProject({ ...lightboxProject, index: prevIndex });
     }
+  }, [lightboxProject]);
+
+  // Handle Wheel Scroll for Lightbox
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      if (lightboxProject) {
+        // Simple debounce could be added here if needed, but for now specific threshold helps
+        if (e.deltaY > 50) {
+          nextImage();
+        } else if (e.deltaY < -50) {
+          prevImage();
+        }
+      }
+    };
+
+    if (lightboxProject) {
+      window.addEventListener('wheel', handleWheel);
+    }
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [lightboxProject, nextImage, prevImage]);
+
+  // Keyboard Navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (lightboxProject) {
+        if (e.key === 'Escape') closeLightbox();
+        if (e.key === 'ArrowRight') nextImage();
+        if (e.key === 'ArrowLeft') prevImage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxProject, nextImage, prevImage]);
+
+
+  // --- Case Study Toggle ---
+  const toggleCaseStudy = (title: string) => {
+    setExpandedProjectId(prev => prev === title ? null : title);
+  }
+
+  // Handle Thumbnail Hover to update Preview
+  const handleThumbnailHover = (projectIndex: number, imgUrl: string) => {
+    setPreviewImages(prev => ({...prev, [projectIndex]: imgUrl}));
   };
-
-  // --- Case Study Functions ---
-  const openCaseStudy = (project: typeof PROJECTS[0]) => {
-    setCaseStudyProject(project);
-    updateUrl('case', toSlug(project.title));
-    lock();
-  }
-
-  const closeCaseStudy = () => {
-    setCaseStudyProject(null);
-    updateUrl('case', null);
-    unlock();
-  }
 
   return (
     <section id="projects" className="py-16 md:py-24 relative z-20">
       <div className="container mx-auto px-6 md:px-12">
         
-        {/* Header - Fixed Alignment with width="100%" */}
+        {/* Header */}
         <div className="mb-12 text-center max-w-3xl mx-auto flex flex-col items-center">
             <Reveal width="100%">
               <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Portfolio</span>
@@ -201,37 +202,37 @@ const Projects: React.FC = () => {
             </Reveal>
         </div>
 
-        {/* Projects List - Reduced Gap */}
-        <div className="flex flex-col gap-16 lg:gap-24">
+        {/* Projects List */}
+        <div className="flex flex-col gap-16 lg:gap-20">
           {visibleProjects.length > 0 ? (
             visibleProjects.map((project, index) => {
               const isEven = index % 2 === 0;
+              const isExpanded = expandedProjectId === project.title;
+              const currentImage = previewImages[index] || project.image;
 
               return (
                 <Reveal key={`${project.title}-${index}`} width="100%">
-                  <div className={`group flex flex-col lg:flex-row items-center gap-6 lg:gap-12 ${!isEven ? 'lg:flex-row-reverse' : ''}`}>
+                  <div className={`group flex flex-col lg:flex-row items-start gap-6 lg:gap-12 ${!isEven ? 'lg:flex-row-reverse' : ''}`}>
                     
-                    {/* Visuals - Heavy Inertia Animation */}
-                    <div className="w-full lg:w-[55%] perspective-1000">
+                    {/* Visuals */}
+                    <div className="w-full lg:w-[50%] perspective-1000 sticky top-24">
+                      {/* Main Image */}
                       <div 
-                        className="relative w-full aspect-[16/10] overflow-hidden cursor-pointer rounded-[2rem] 
+                        className="relative w-full aspect-[16/11] overflow-hidden cursor-pointer rounded-[2rem] 
                         shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] 
                         transition-all duration-[800ms] ease-[cubic-bezier(0.2,0,0,1)] 
                         transform hover:-translate-y-2 bg-slate-100 border border-white/40
                         group-hover:shadow-[0_25px_50px_-12px_rgba(99,102,241,0.15)]"
                         onClick={() => openLightbox(project, 0)}
                       >
-                        {/* Glow Effect on Hover */}
-                        <div className="absolute inset-0 z-0 bg-indigo-500/0 group-hover:bg-indigo-500/5 transition-colors duration-700 pointer-events-none"></div>
-
-                        <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-[800ms] z-10 flex items-center justify-center pointer-events-none">
+                        <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/5 transition-colors duration-[800ms] z-10 flex items-center justify-center pointer-events-none">
                           <div className="opacity-0 group-hover:opacity-100 transition-all duration-[600ms] ease-[cubic-bezier(0.2,0,0,1)] transform translate-y-8 group-hover:translate-y-0 glass-panel px-6 py-3 rounded-full flex items-center gap-2 shadow-2xl text-slate-900 backdrop-blur-md border border-white/40">
                             <Maximize2 className="w-3 h-3" />
                             <span className="text-[10px] font-bold uppercase tracking-wider">Expandir</span>
                           </div>
                         </div>
                         <LazyImage 
-                          src={project.image} 
+                          src={currentImage} 
                           alt={project.title} 
                           className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-[1500ms] ease-[cubic-bezier(0.2,0,0,1)]"
                         />
@@ -239,27 +240,31 @@ const Projects: React.FC = () => {
                       
                       {/* Thumbnails */}
                       <div className={`flex gap-3 mt-4 ${!isEven ? 'justify-end' : ''}`}>
-                        {project.gallery.slice(0, 3).map((img, idx) => (
-                            <div key={idx} className="w-16 h-12 md:w-20 md:h-14 flex-shrink-0 cursor-pointer opacity-70 hover:opacity-100 transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-white/40 hover:border-indigo-200 hover:-translate-y-1" onClick={() => openLightbox(project, idx)}>
+                        {project.gallery.map((img, idx) => (
+                            <div 
+                                key={idx} 
+                                className={`w-16 h-12 md:w-24 md:h-16 flex-shrink-0 cursor-pointer transition-all duration-500 ease-[cubic-bezier(0.2,0,0,1)] rounded-xl overflow-hidden shadow-sm hover:shadow-lg border border-white/40 hover:border-indigo-200 hover:-translate-y-1 ${currentImage === img ? 'ring-2 ring-indigo-500/50 opacity-100' : 'opacity-60 hover:opacity-100'}`}
+                                onMouseEnter={() => handleThumbnailHover(index, img)}
+                                onClick={() => openLightbox(project, idx)}
+                            >
                               <img src={img} className="w-full h-full object-cover" alt="" />
                             </div>
                         ))}
                       </div>
                     </div>
 
-                    {/* Info - Refined "Liquid Glass" Glassmorphism with Glow */}
-                    <div className="w-full lg:w-[45%]">
+                    {/* Info Card */}
+                    <div className="w-full lg:w-[50%]">
                       <div className={`flex flex-col relative overflow-hidden
-                        bg-white/30 backdrop-blur-xl
+                        bg-white/40 backdrop-blur-xl
                         p-8 md:p-10 rounded-[2.5rem] 
-                        border border-white/40
+                        border border-white/50
                         shadow-[0_8px_32px_0_rgba(31,38,135,0.05)]
-                        hover:shadow-[0_15px_45px_0_rgba(31,38,135,0.1)]
-                        hover:bg-white/40 hover:border-white/60
+                        group-hover:shadow-[0_0_40px_-5px_rgba(99,102,241,0.1)]
+                        group-hover:border-indigo-500/10
                         transition-all duration-[800ms] ease-[cubic-bezier(0.2,0,0,1)]
                         ${!isEven ? 'lg:items-end lg:text-right' : 'lg:items-start lg:text-left'} 
                       `}>
-                          {/* Inner Shine/Gloss Effect - subtle highlight */}
                           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/80 to-transparent opacity-50"></div>
 
                           <span className="relative inline-block px-4 py-1.5 bg-white/40 text-[10px] font-bold tracking-widest text-slate-500 uppercase mb-5 rounded-full border border-white/30 backdrop-blur-sm">
@@ -289,15 +294,15 @@ const Projects: React.FC = () => {
                               ))}
                             </div>
 
-                            <div className="relative flex flex-wrap items-center gap-3">
+                            <div className="relative flex flex-wrap items-center gap-3 mb-6">
                               <Button 
                                 variant="outline"
                                 size="sm"
-                                onClick={() => openCaseStudy(project)}
-                                className="gap-2 bg-white/20 hover:bg-white/80 border-white/40 hover:border-white/80"
+                                onClick={() => toggleCaseStudy(project.title)}
+                                className={`gap-2 bg-white/20 hover:bg-white/80 border-white/40 hover:border-white/80 transition-all ${isExpanded ? 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800' : ''}`}
                               >
-                                <BookOpen className="w-3 h-3" />
-                                Estudo de Caso
+                                {isExpanded ? 'Fechar Detalhes' : 'Ver Estudo de Caso'}
+                                <ChevronDown className={`w-3 h-3 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
                               </Button>
                               
                               <a href={project.link}>
@@ -306,6 +311,30 @@ const Projects: React.FC = () => {
                                   <ArrowUpRight className="w-3 h-3" />
                                 </Button>
                               </a>
+                            </div>
+
+                            {/* Expanded Case Study Content (Inline) */}
+                            <div 
+                              className={`w-full overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.2,0,0,1)] ${isExpanded ? 'max-h-[800px] opacity-100' : 'max-h-0 opacity-0'}`}
+                            >
+                                <div className={`pt-6 border-t border-slate-200/50 space-y-6 ${!isEven ? 'text-right' : 'text-left'}`}>
+                                    <div>
+                                       <h4 className={`text-[10px] font-bold uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2 ${!isEven ? 'justify-end' : ''}`}>
+                                           <span className="w-1.5 h-1.5 rounded-full bg-red-400"></span> Desafio
+                                       </h4>
+                                       <p className="text-xs text-slate-600 leading-relaxed font-light">{project.caseStudy?.challenge}</p>
+                                    </div>
+                                    <div>
+                                       <h4 className={`text-[10px] font-bold uppercase tracking-widest text-slate-900 mb-2 flex items-center gap-2 ${!isEven ? 'justify-end' : ''}`}>
+                                           <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Solução
+                                       </h4>
+                                       <p className="text-xs text-slate-600 leading-relaxed font-light">{project.caseStudy?.solution}</p>
+                                    </div>
+                                    <div className="bg-slate-900/5 p-4 rounded-xl border border-slate-900/5">
+                                       <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">Resultado</h4>
+                                       <p className="text-sm font-serif font-medium text-slate-900">{project.caseStudy?.result}</p>
+                                    </div>
+                                </div>
                             </div>
                       </div>
                     </div>
@@ -324,61 +353,39 @@ const Projects: React.FC = () => {
         </div>
       </div>
 
-      {/* --- Lightbox Modal --- */}
+      {/* --- Modern Lightbox Modal --- */}
       {lightboxProject && (
-        <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-2xl flex items-center justify-center animate-in fade-in duration-500 focus:outline-none" tabIndex={0}>
-          <div className="absolute top-8 right-8 z-50">
-             <button onClick={closeLightbox} className="bg-white/10 hover:bg-white/20 text-white p-4 rounded-full transition-colors backdrop-blur-md border border-white/10"> <X size={24} /> </button>
+        <div 
+            className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-2xl flex items-center justify-center animate-in fade-in duration-300 focus:outline-none" 
+            tabIndex={0}
+            onClick={(e) => {
+                // Close if clicking the backdrop (not the image or buttons)
+                if (e.target === e.currentTarget) closeLightbox();
+            }}
+        >
+          <div className="absolute top-0 w-full p-6 flex justify-between items-center z-50 pointer-events-none">
+             <span className="text-white/50 text-xs uppercase tracking-widest font-bold ml-2">
+                {lightboxProject.index + 1} / {lightboxProject.project.gallery.length}
+             </span>
+             <button onClick={closeLightbox} className="pointer-events-auto bg-white/10 hover:bg-white/20 text-white p-3 rounded-full transition-colors backdrop-blur-md border border-white/10"> <X size={20} /> </button>
           </div>
-          <button onClick={prevImage} className="hidden md:flex absolute left-8 bg-white/10 hover:bg-white/20 text-white p-5 rounded-full transition-all hover:-translate-x-1 backdrop-blur-md border border-white/10"> <ChevronLeft size={24} /> </button>
-          <button onClick={nextImage} className="hidden md:flex absolute right-8 bg-white/10 hover:bg-white/20 text-white p-5 rounded-full transition-all hover:translate-x-1 backdrop-blur-md border border-white/10"> <ChevronRight size={24} /> </button>
           
-          <div className="w-full h-full p-6 md:p-24 flex items-center justify-center">
-             <img src={lightboxProject.project.gallery[lightboxProject.index]} alt="" className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-500 ease-out" />
+          <button onClick={prevImage} className="hidden md:flex absolute left-8 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white p-6 rounded-full transition-all hover:-translate-x-1 backdrop-blur-md border border-white/5 z-50"> <ChevronLeft size={32} strokeWidth={1} /> </button>
+          <button onClick={nextImage} className="hidden md:flex absolute right-8 bg-white/5 hover:bg-white/10 text-white/70 hover:text-white p-6 rounded-full transition-all hover:translate-x-1 backdrop-blur-md border border-white/5 z-50"> <ChevronRight size={32} strokeWidth={1} /> </button>
+          
+          <div className="w-full h-full p-4 md:p-12 flex items-center justify-center pointer-events-none">
+             <img 
+                src={lightboxProject.project.gallery[lightboxProject.index]} 
+                alt="" 
+                className="pointer-events-auto max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-500 ease-[cubic-bezier(0.2,0,0,1)] select-none" 
+                onClick={(e) => e.stopPropagation()} 
+             />
+          </div>
+
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/40 text-[10px] uppercase tracking-widest hidden md:block">
+            Use Scroll ou Setas para navegar
           </div>
         </div>
-      )}
-
-      {/* --- Case Study Modal --- */}
-      {caseStudyProject && (
-         <div className="fixed inset-0 z-[90] bg-slate-900/60 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-500">
-            <div 
-              className="glass-panel w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-[2.5rem] shadow-2xl relative flex flex-col bg-white animate-in slide-in-from-bottom-10 duration-500 ease-[cubic-bezier(0.2,0,0,1)]"
-              onClick={(e) => e.stopPropagation()}
-            >
-               <div className="p-8 md:p-10 border-b border-slate-100 sticky top-0 bg-white/90 backdrop-blur-xl z-10 flex justify-between items-center">
-                  <div>
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block mb-2">Case Study</span>
-                      <h3 className="text-2xl md:text-3xl font-serif font-medium text-slate-900">{caseStudyProject.title}</h3>
-                  </div>
-                  <button onClick={closeCaseStudy} className="p-3 hover:bg-slate-100 rounded-full transition-colors"><X size={24} /></button>
-               </div>
-               
-               <div className="p-8 md:p-12 space-y-10 bg-slate-50/50">
-                  <div className="grid md:grid-cols-2 gap-8">
-                      <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.5)]"></span> O Desafio
-                        </h4>
-                        <p className="text-slate-600 leading-relaxed text-sm">{caseStudyProject.caseStudy?.challenge}</p>
-                      </div>
-                      <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
-                        <h4 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-blue-400 shadow-[0_0_10px_rgba(96,165,250,0.5)]"></span> A Solução
-                        </h4>
-                        <p className="text-slate-600 leading-relaxed text-sm">{caseStudyProject.caseStudy?.solution}</p>
-                      </div>
-                  </div>
-                  
-                  <div className="bg-slate-900 text-white p-10 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-                     {/* Animated glow inside result card */}
-                     <div className="absolute top-0 right-0 w-64 h-64 bg-slate-700 rounded-full blur-[80px] opacity-50 -translate-y-1/3 translate-x-1/3 group-hover:scale-125 transition-transform duration-[1500ms]"></div>
-                     <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 relative z-10">O Resultado</h4>
-                     <p className="text-xl md:text-3xl font-serif leading-relaxed relative z-10">"{caseStudyProject.caseStudy?.result}"</p>
-                  </div>
-               </div>
-            </div>
-         </div>
       )}
 
     </section>

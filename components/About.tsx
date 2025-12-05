@@ -1,29 +1,29 @@
 import React from 'react';
 import { Reveal } from './ui/Reveal';
-import { Layers, Zap, Shield, Users } from 'lucide-react';
+import { Layers, Zap, Shield, Users, GitCommit } from 'lucide-react';
 
-// Philosophy Grid instead of fake github graph
+// Philosophy Grid
 const PhilosophyGrid = () => {
   const principles = [
     {
       icon: Layers,
       title: "Arquitetura Escalável",
-      desc: "Código desacoplado e modular. Penso em como o sistema vai se comportar daqui a 2 anos, não apenas hoje."
+      desc: "Código desacoplado e modular. Penso em como o sistema vai se comportar daqui a 2 anos."
     },
     {
       icon: Zap,
       title: "Performance First",
-      desc: "Otimização crítica de renderização e carregamento. Cada milissegundo conta para a conversão do usuário."
+      desc: "Otimização crítica. Cada milissegundo conta para a conversão e retenção do usuário."
     },
     {
       icon: Shield,
       title: "Robustez & Tipagem",
-      desc: "TypeScript rigoroso e testes automatizados. Erros devem ser pegos em build-time, não em produção."
+      desc: "TypeScript rigoroso. Erros devem ser pegos em build-time, não em produção."
     },
     {
       icon: Users,
       title: "Empatia pelo Usuário",
-      desc: "Acessibilidade (a11y) não é opcional. Crio interfaces inclusivas e navegáveis por todos."
+      desc: "Acessibilidade (a11y) não é opcional. Crio interfaces inclusivas e navegáveis."
     }
   ];
 
@@ -42,13 +42,52 @@ const PhilosophyGrid = () => {
   );
 }
 
+// Simulated GitHub Activity Graph (Visual Representation)
+const ActivityGraph = () => {
+  // Generate a visual pattern that looks like a busy dev
+  const weeks = 20;
+  const days = 7;
+  
+  return (
+    <div className="mt-8 p-6 glass-panel rounded-3xl border border-slate-200/50 bg-white/40 shadow-sm hover:shadow-md transition-shadow duration-500">
+      <div className="flex items-center gap-3 mb-4">
+        <GitCommit size={16} className="text-slate-400" />
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Atividade de Código (GitHub)</span>
+      </div>
+      
+      <div className="flex gap-1 justify-between opacity-80 mask-image-gradient">
+        {Array.from({ length: weeks }).map((_, w) => (
+          <div key={w} className="flex flex-col gap-1">
+            {Array.from({ length: days }).map((_, d) => {
+              // Randomize intensity for visual effect
+              const intensity = Math.random();
+              let bgClass = "bg-slate-100"; // Empty
+              if (intensity > 0.85) bgClass = "bg-slate-900"; // High
+              else if (intensity > 0.6) bgClass = "bg-slate-600"; // Med
+              else if (intensity > 0.3) bgClass = "bg-slate-300"; // Low
+
+              return (
+                <div key={d} className={`w-2 h-2 md:w-3 md:h-3 rounded-sm ${bgClass}`} />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <div className="flex justify-between items-center mt-3 text-[10px] text-slate-400 font-medium uppercase tracking-wider">
+         <span>Menos</span>
+         <span>Mais</span>
+      </div>
+    </div>
+  );
+}
+
 const About: React.FC = () => {
   return (
     <section id="about" className="py-24 md:py-32 bg-white relative">
       <div className="container mx-auto px-6 md:px-12">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
           
-          {/* Text Content */}
+          {/* Left Column: Text, Stats & GitHub */}
           <div className="w-full lg:w-1/2 order-2 lg:order-1">
             <Reveal>
               <span className="inline-block px-3 py-1 bg-gray-100 text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-6 rounded-full">
@@ -73,7 +112,7 @@ const About: React.FC = () => {
 
             {/* Stats */}
             <Reveal delay={200}>
-               <div className="flex gap-12 border-t border-gray-100 pt-8">
+               <div className="flex gap-8 md:gap-12 border-t border-gray-100 pt-8">
                    <div>
                       <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">5+</span>
                       <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Anos Exp.</span>
@@ -88,12 +127,17 @@ const About: React.FC = () => {
                    </div>
                 </div>
             </Reveal>
+
+            {/* GitHub Activity Integration (Positioned right below stats) */}
+            <Reveal delay={300}>
+               <ActivityGraph />
+            </Reveal>
           </div>
 
-          {/* Philosophy Grid (Replaced Fake Graph) */}
+          {/* Right Column: Philosophy Grid */}
           <div className="w-full lg:w-1/2 order-1 lg:order-2">
             <Reveal delay={150} width="100%">
-              <div className="bg-white p-8 md:p-10 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50">
+              <div className="bg-white p-8 md:p-10 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-24">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                   <div>
                      <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">
