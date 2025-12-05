@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const Cursor: React.FC = () => {
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -11,11 +12,15 @@ const Cursor: React.FC = () => {
       setIsHidden(false);
       
       const target = e.target as HTMLElement;
-      setIsPointer(
+      // Check deeper in tree for links/buttons
+      const isClickable = 
         window.getComputedStyle(target).cursor === 'pointer' || 
         target.tagName === 'A' || 
-        target.tagName === 'BUTTON'
-      );
+        target.tagName === 'BUTTON' ||
+        target.closest('a') !== null ||
+        target.closest('button') !== null;
+        
+      setIsPointer(!!isClickable);
     };
 
     const handleMouseLeave = () => setIsHidden(true);
@@ -32,7 +37,6 @@ const Cursor: React.FC = () => {
     };
   }, []);
 
-  // Hide custom cursor on mobile/touch devices via CSS media query check in JS
   const isTouchDevice = () => {
     return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0));
   };
@@ -40,18 +44,26 @@ const Cursor: React.FC = () => {
   if (isTouchDevice()) return null;
 
   return (
-    <div 
-      className={`fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference transition-transform duration-100 ease-out ${isHidden ? 'opacity-0' : 'opacity-100'}`}
-      style={{ 
-        transform: `translate(${position.x}px, ${position.y}px)` 
+    <motion.div 
+      className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+      animate={{ 
+        x: position.x - (isPointer ? 32 : 12),
+        y: position.y - (isPointer ? 32 : 12),
+        scale: isHidden ? 0 : 1,
+        opacity: isHidden ? 0 : 1
       }}
+      transition={{ type: "tween", ease: "backOut", duration: 0.15 }}
     >
-      <div 
-        className={`bg-white rounded-full transition-all duration-300 ease-out -translate-x-1/2 -translate-y-1/2 ${
-          isPointer ? 'w-8 h-8 opacity-50' : 'w-4 h-4 opacity-100'
-        }`}
+      <motion.div 
+        className="bg-white rounded-full"
+        animate={{ 
+          width: isPointer ? 64 : 24, 
+          height: isPointer ? 64 : 24,
+          opacity: isPointer ? 0.3 : 1
+        }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       />
-    </div>
+    </motion.div>
   );
 };
 
