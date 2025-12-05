@@ -63,7 +63,7 @@ const Navbar: React.FC = () => {
       >
         <div className={`flex justify-between items-center ${!isScrolled ? 'container mx-auto md:px-12' : 'w-full'}`}>
           
-          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-12`}>
+          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-12 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg p-1`}>
             V<span className="text-slate-400">.</span>DEV
           </a>
 
@@ -75,7 +75,7 @@ const Navbar: React.FC = () => {
                     <Magnetic key={link.name} strength={0.2}>
                         <a 
                         href={link.href}
-                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 ${
+                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg ${
                             isActive 
                             ? 'text-slate-900 font-bold' 
                             : 'text-slate-500 hover:text-slate-800'
@@ -92,7 +92,7 @@ const Navbar: React.FC = () => {
             <Magnetic strength={0.4}>
                  <a 
                   href="#contact" 
-                  className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block
+                  className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
                     ${isScrolled 
                       ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_5px_15px_rgba(15,23,42,0.2)]' 
                       : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
@@ -105,8 +105,9 @@ const Navbar: React.FC = () => {
 
           {/* Mobile Menu Button */}
           <button 
-            className="md:hidden p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors"
+            className="md:hidden p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-slate-900"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label="Toggle Menu"
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -121,7 +122,7 @@ const Navbar: React.FC = () => {
                 <a 
                   key={link.name} 
                   href={link.href}
-                  className={`text-4xl font-serif font-medium transition-all ${
+                  className={`text-4xl font-serif font-medium transition-all p-2 rounded-xl focus-visible:ring-2 focus-visible:ring-slate-900 ${
                     isActive ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}

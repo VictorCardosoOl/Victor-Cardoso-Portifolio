@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, X, ChevronLeft, ChevronRight, RotateCcw, ChevronDown, Terminal } from 'lucide-react';
+import { ArrowUpRight, X, ChevronLeft, ChevronRight, RotateCcw, ChevronDown, Terminal, Check } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 import { useLenis } from './ScrollContext';
@@ -172,13 +172,22 @@ const Projects: React.FC = () => {
                       <button
                         key={tag}
                         onClick={() => toggleFilter(tag)}
-                        className={`px-5 py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 rounded-full flex items-center gap-2 border ${
+                        className={`px-5 py-2 text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 rounded-full flex items-center gap-2 border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 focus:outline-none ${
                           isActive 
-                            ? 'bg-slate-900 text-white border-slate-900 shadow-md' 
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-md pl-4 pr-5' 
                             : 'bg-transparent text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-900'
                         }`}
+                        aria-pressed={isActive}
                       >
-                        {isActive && <motion.span layoutId="activeTag" className="w-1.5 h-1.5 rounded-full bg-green-400"></motion.span>}
+                        {isActive && (
+                          <motion.span 
+                            initial={{ scale: 0 }} 
+                            animate={{ scale: 1 }} 
+                            className="text-green-400"
+                          >
+                            <Check size={14} strokeWidth={3} />
+                          </motion.span>
+                        )}
                         {tag}
                       </button>
                     );
@@ -189,7 +198,7 @@ const Projects: React.FC = () => {
                 <div className={`overflow-hidden transition-all duration-300 ${activeFilters.length > 0 ? 'max-h-10 opacity-100' : 'max-h-0 opacity-0'}`}>
                    <button 
                     onClick={clearFilters}
-                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors px-4 py-2"
+                    className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors px-4 py-2 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-red-500 rounded-lg focus:outline-none"
                   >
                     <RotateCcw size={12} /> Limpar Filtros
                   </button>
@@ -224,8 +233,13 @@ const Projects: React.FC = () => {
                         shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)] 
                         transition-all duration-700 ease-heavy
                         transform hover:-translate-y-1 bg-slate-50 border border-slate-100
-                        group-hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.15)]"
+                        group-hover:shadow-[0_20px_40px_-10px_rgba(99,102,241,0.15)]
+                        focus-visible:ring-4 focus-visible:ring-slate-900/20 outline-none"
                         onClick={() => openLightbox(project, 0)}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                           if(e.key === 'Enter') openLightbox(project, 0);
+                        }}
                       >
                         {/* Black & White Gradient Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-tr from-slate-900/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-10 pointer-events-none"></div>
@@ -246,14 +260,15 @@ const Projects: React.FC = () => {
                       {/* Thumbnails */}
                       <div className={`flex gap-3 mt-4 ${!isEven ? 'justify-end' : ''}`}>
                         {project.gallery.map((img, idx) => (
-                            <div 
+                            <button 
                                 key={idx} 
-                                className={`w-16 h-12 md:w-20 md:h-14 flex-shrink-0 cursor-pointer transition-all duration-300 rounded-xl overflow-hidden border ${currentImage === img ? 'border-slate-900 opacity-100 ring-1 ring-slate-900/20' : 'border-transparent opacity-60 hover:opacity-100 hover:-translate-y-1'}`}
+                                className={`w-16 h-12 md:w-20 md:h-14 flex-shrink-0 cursor-pointer transition-all duration-300 rounded-xl overflow-hidden border focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 ${currentImage === img ? 'border-slate-900 opacity-100 ring-1 ring-slate-900/20' : 'border-transparent opacity-60 hover:opacity-100 hover:-translate-y-1'}`}
                                 onMouseEnter={() => handleThumbnailHover(index, img)}
                                 onClick={() => openLightbox(project, idx)}
+                                aria-label={`View image ${idx + 1} of ${project.title}`}
                             >
                               <img src={img} className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-500" alt="" />
-                            </div>
+                            </button>
                         ))}
                       </div>
                     </div>
@@ -386,7 +401,7 @@ const Projects: React.FC = () => {
           <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }}
               className="fixed inset-0 z-[100] bg-white/95 backdrop-blur-xl flex items-center justify-center focus:outline-none" 
               tabIndex={0}
               onClick={(e) => { if (e.target === e.currentTarget) closeLightbox(); }}
@@ -396,11 +411,29 @@ const Projects: React.FC = () => {
               <span className="text-slate-900 text-xs uppercase tracking-widest font-bold ml-2 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
                   {lightboxProject.index + 1} / {lightboxProject.project.gallery.length}
               </span>
-              <button onClick={closeLightbox} className="pointer-events-auto bg-white hover:bg-slate-50 text-slate-900 p-3 rounded-full transition-colors border border-slate-200 shadow-sm"> <X size={20} /> </button>
+              <button 
+                onClick={closeLightbox} 
+                className="pointer-events-auto bg-white hover:bg-slate-50 text-slate-900 p-3 rounded-full transition-colors border border-slate-200 shadow-sm focus-visible:ring-2 focus-visible:ring-slate-900"
+              > 
+                <X size={20} /> 
+              </button>
             </div>
             
-            <button onClick={prevImage} className="hidden md:flex absolute left-8 bg-white hover:bg-slate-50 text-slate-900 p-6 rounded-full transition-all hover:-translate-x-1 border border-slate-100 shadow-xl z-50"> <ChevronLeft size={24} strokeWidth={1.5} /> </button>
-            <button onClick={nextImage} className="hidden md:flex absolute right-8 bg-white hover:bg-slate-50 text-slate-900 p-6 rounded-full transition-all hover:translate-x-1 border border-slate-100 shadow-xl z-50"> <ChevronRight size={24} strokeWidth={1.5} /> </button>
+            <button 
+                onClick={prevImage} 
+                className="hidden md:flex absolute left-8 bg-white hover:bg-slate-50 text-slate-900 p-6 rounded-full transition-all hover:-translate-x-1 border border-slate-100 shadow-xl z-50 focus-visible:ring-2 focus-visible:ring-slate-900"
+                aria-label="Previous Image"
+            > 
+                <ChevronLeft size={24} strokeWidth={1.5} /> 
+            </button>
+            
+            <button 
+                onClick={nextImage} 
+                className="hidden md:flex absolute right-8 bg-white hover:bg-slate-50 text-slate-900 p-6 rounded-full transition-all hover:translate-x-1 border border-slate-100 shadow-xl z-50 focus-visible:ring-2 focus-visible:ring-slate-900"
+                aria-label="Next Image"
+            > 
+                <ChevronRight size={24} strokeWidth={1.5} /> 
+            </button>
             
             {/* Main Image */}
             <div className="w-full h-full p-4 md:p-12 flex items-center justify-center pointer-events-none">
