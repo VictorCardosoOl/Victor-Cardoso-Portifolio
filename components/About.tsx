@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Reveal } from './ui/Reveal';
 import { Layers, Zap, Shield, Users, GitCommit } from 'lucide-react';
@@ -7,23 +8,23 @@ const PhilosophyGrid = () => {
   const principles = [
     {
       icon: Layers,
-      title: "Arquitetura Escalável",
-      desc: "Código desacoplado e modular. Penso em como o sistema vai se comportar daqui a 2 anos."
+      title: "Visão de Negócio",
+      desc: "Não entrego apenas código. Entrego soluções que resolvem dores reais e trazem retorno sobre o investimento."
     },
     {
       icon: Zap,
       title: "Performance First",
-      desc: "Otimização crítica. Cada milissegundo conta para a conversão e retenção do usuário."
+      desc: "Otimização crítica. Cada segundo a menos no carregamento do site aumenta sua taxa de conversão."
     },
     {
       icon: Shield,
-      title: "Robustez & Tipagem",
-      desc: "TypeScript rigoroso. Erros devem ser pegos em build-time, não em produção."
+      title: "Segurança e Estabilidade",
+      desc: "Sistemas robustos que não caem. Arquitetura pensada para crescer junto com sua empresa."
     },
     {
       icon: Users,
-      title: "Empatia pelo Usuário",
-      desc: "Acessibilidade (a11y) não é opcional. Crio interfaces inclusivas e navegáveis."
+      title: "Autonomia do Cliente",
+      desc: "Desenvolvo painéis administrativos fáceis de usar. Você não fica refém do desenvolvedor para mudar um texto."
     }
   ];
 
@@ -52,7 +53,7 @@ const ActivityGraph = () => {
     <div className="mt-8 p-6 glass-panel rounded-3xl border border-slate-200/50 bg-white/40 shadow-sm hover:shadow-md transition-shadow duration-500">
       <div className="flex items-center gap-3 mb-4">
         <GitCommit size={16} className="text-slate-400" />
-        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Atividade de Código (GitHub)</span>
+        <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Consistência de Entrega</span>
       </div>
       
       <div className="flex gap-1 justify-between opacity-80 mask-image-gradient">
@@ -74,8 +75,7 @@ const ActivityGraph = () => {
         ))}
       </div>
       <div className="flex justify-between items-center mt-3 text-[10px] text-slate-400 font-medium uppercase tracking-wider">
-         <span>Menos</span>
-         <span>Mais</span>
+         <span>Comprometimento diário</span>
       </div>
     </div>
   );
@@ -91,21 +91,21 @@ const About: React.FC = () => {
           <div className="w-full lg:w-1/2 order-2 lg:order-1">
             <Reveal>
               <span className="inline-block px-3 py-1 bg-gray-100 text-[10px] font-bold tracking-widest text-gray-500 uppercase mb-6 rounded-full">
-                O Desenvolvedor
+                Parceiro Estratégico
               </span>
               <h2 className="text-3xl md:text-5xl font-serif font-medium mb-8 leading-tight text-slate-900 tracking-tight">
-                Obsessão por qualidade. <br />
-                Paixão por entrega.
+                Mais do que código. <br />
+                Compromisso com o resultado.
               </h2>
             </Reveal>
             
             <Reveal delay={100}>
               <div className="space-y-6 text-gray-600 leading-relaxed text-base md:text-lg mb-12 font-light">
                 <p>
-                  Não sou apenas um executor de tarefas. Sou um parceiro estratégico que entende como uma linha de código impacta a receita da sua empresa. Minha abordagem combina rigor técnico de engenharia com a sensibilidade estética de um designer.
+                  Meu objetivo é simples: eliminar a barreira técnica entre a sua ideia e o mercado. Atuo como um parceiro de tecnologia para empresas que buscam modernização e eficiência.
                 </p>
                 <p>
-                  Acredito na transparência radical e no aprendizado contínuo. Meu objetivo é eliminar a dívida técnica antes que ela nasça e construir sistemas que escalem junto com o seu sucesso.
+                  Combino a segurança da engenharia de software com a agilidade necessária para negócios digitais. Seja criando uma plataforma do zero ou otimizando um sistema existente, meu foco é sempre o impacto no seu faturamento e na experiência do seu cliente.
                 </p>
               </div>
             </Reveal>
@@ -114,16 +114,12 @@ const About: React.FC = () => {
             <Reveal delay={200}>
                <div className="flex gap-8 md:gap-12 border-t border-gray-100 pt-8">
                    <div>
-                      <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">5+</span>
-                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Anos Exp.</span>
-                   </div>
-                   <div>
-                      <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">40+</span>
-                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Projetos</span>
-                   </div>
-                   <div>
                       <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">100%</span>
-                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Entregas</span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Prazos Cumpridos</span>
+                   </div>
+                   <div>
+                      <span className="block text-3xl font-serif font-medium text-slate-900 mb-1">24/7</span>
+                      <span className="text-[10px] uppercase tracking-wider text-gray-400 font-bold">Monitoramento</span>
                    </div>
                 </div>
             </Reveal>
@@ -143,7 +139,7 @@ const About: React.FC = () => {
                      <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">
                       Mindset
                      </h3>
-                     <span className="text-xl font-serif text-slate-900">Filosofia de Engenharia</span>
+                     <span className="text-xl font-serif text-slate-900">Como agrego valor</span>
                   </div>
                 </div>
                 
@@ -151,7 +147,7 @@ const About: React.FC = () => {
                 
                 <div className="mt-8 pt-6 border-t border-gray-100">
                    <p className="text-sm text-gray-400 italic text-center">
-                      "Código consistente é o segredo para produtos digitais duradouros."
+                      "Tecnologia deve ser um acelerador de negócios, não um custo."
                    </p>
                 </div>
               </div>

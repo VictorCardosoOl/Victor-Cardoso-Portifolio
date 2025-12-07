@@ -2,10 +2,12 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import Services from './components/Services';
 import Projects from './components/Projects';
 import Lab from './components/Lab';
 import Writing from './components/Writing';
 import Skills from './components/Skills';
+import Education from './components/Education';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
@@ -22,8 +24,11 @@ const App: React.FC = () => {
         <Navbar />
         <main className="flex-grow">
           <Hero />
+          <Services />
           <Projects />
+          <Skills />
           <About />
+          <Education />
           <Lab />
           <Writing />
           <Contact />

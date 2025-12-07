@@ -1,22 +1,66 @@
 
-import { Monitor, Code, Layout, Database, Smartphone, Globe } from 'lucide-react';
+import { Monitor, Code, Layout, Database, Smartphone, Globe, Search, Rocket, Settings, MessageSquare, PenTool, CheckCircle } from 'lucide-react';
 
 export const NAV_LINKS = [
   { name: 'Início', href: '#hero' },
+  { name: 'Soluções', href: '#services' },
   { name: 'Projetos', href: '#projects' },
   { name: 'Sobre', href: '#about' },
-  { name: 'Lab', href: '#lab' },
   { name: 'Artigos', href: '#writing' },
   { name: 'Contato', href: '#contact' },
+];
+
+export const SERVICES = [
+  {
+    title: 'Sistemas Web & Dashboards',
+    description: 'Transformo processos manuais e planilhas em software de gestão eficiente. Automação, controle de dados e painéis administrativos que dão autonomia ao seu negócio.',
+    icon: Database,
+    tags: ['SaaS', 'Automação', 'Gestão']
+  },
+  {
+    title: 'Landing Pages de Alta Conversão',
+    description: 'Páginas desenvolvidas para vender. Foco total em velocidade de carregamento (SEO), design persuasivo e integração direta com suas ferramentas de marketing.',
+    icon: Rocket,
+    tags: ['Vendas', 'Performance', 'SEO']
+  },
+  {
+    title: 'Otimização & Performance',
+    description: 'Seu site está lento? Clientes desistem se a página demora mais de 3 segundos. Faço auditoria técnica e otimização para recuperar essas vendas perdidas.',
+    icon: Settings,
+    tags: ['Speed', 'Audit', 'Core Web Vitals']
+  }
+];
+
+export const PROCESS_STEPS = [
+  {
+    title: 'Descoberta',
+    description: 'Entendo o seu modelo de negócio, dores e objetivos. Não escrevo uma linha de código sem saber onde você quer chegar.',
+    icon: Search
+  },
+  {
+    title: 'Estratégia & Design',
+    description: 'Definimos a arquitetura da solução e o visual. Você aprova o protótipo antes do desenvolvimento começar.',
+    icon: PenTool
+  },
+  {
+    title: 'Desenvolvimento',
+    description: 'Construção utilizando tecnologias modernas (React/Node) garantindo segurança, velocidade e escalabilidade.',
+    icon: Code
+  },
+  {
+    title: 'Entrega & Suporte',
+    description: 'Treinamento para uso da plataforma e garantia técnica. Não te abandono após a entrega.',
+    icon: CheckCircle
+  }
 ];
 
 export const PROJECTS = [
   {
     title: 'Lumina Architecture',
-    category: 'Web Design',
+    category: 'Plataforma Institucional',
     year: '2024',
-    description: 'Plataforma imersiva para arquitetura com foco em galeria visual fluida.',
-    tags: ['React', 'Motion', 'Tailwind'],
+    description: 'Solução digital completa para escritório de arquitetura, focada em captação de clientes de alto padrão.',
+    tags: ['React', 'SEO Técnico', 'Lead Generation'],
     image: 'https://picsum.photos/id/10/1200/800',
     gallery: [
       'https://picsum.photos/id/10/1200/800',
@@ -26,17 +70,17 @@ export const PROJECTS = [
     ],
     link: '#',
     caseStudy: {
-      challenge: 'O cliente precisava traduzir a sensação física de visitar uma exposição de arte para o ambiente digital, sem comprometer a acessibilidade e o SEO.',
-      solution: 'Desenvolvi um ambiente com transições de página (SPA) que elimina o "piscar" da tela branca. Utilizei carregamento inteligente de imagens para garantir performance.',
-      result: 'Aumento de 300% no tempo médio de permanência na página.'
+      challenge: 'O cliente possuía um portfólio em PDF difícil de atualizar e que não indexava no Google, perdendo oportunidades orgânicas.',
+      solution: 'Desenvolvi um CMS personalizado (Painel Administrativo) onde o próprio arquiteto atualiza os projetos. Otimização técnica de SEO para termos locais.',
+      result: 'Primeira página do Google em 3 meses e aumento de 40% nos pedidos de orçamento.'
     }
   },
   {
     title: 'Apex Finance',
-    category: 'Fintech',
+    category: 'SaaS / Dashboard',
     year: '2023',
-    description: 'Dashboard administrativo para gestão de ativos em tempo real.',
-    tags: ['Next.js', 'TypeScript', 'D3.js'],
+    description: 'Sistema de gestão financeira para pequenas empresas, substituindo planilhas complexas de Excel.',
+    tags: ['Node.js', 'Automação', 'SaaS'],
     image: 'https://picsum.photos/id/160/1200/800',
     gallery: [
       'https://picsum.photos/id/160/1200/800',
@@ -45,17 +89,17 @@ export const PROJECTS = [
     ],
     link: '#',
     caseStudy: {
-      challenge: 'Usuários reclamavam da lentidão ao carregar grandes volumes de dados financeiros.',
-      solution: 'Implementei renderização do lado do servidor (SSR) com Next.js e otimizei as queries. Gráficos interativos leves que não travam o navegador.',
-      result: 'Tempo de carregamento reduzido de 4s para 0.8s.'
+      challenge: 'O cliente perdia horas semanais consolidando dados financeiros manualmente, gerando erros de caixa.',
+      solution: 'Plataforma centralizada com gráficos em tempo real e relatórios automáticos. Interface simplificada para usuários não-técnicos.',
+      result: 'Redução de 15 horas mensais em tarefas operacionais para a equipe financeira.'
     }
   },
   {
     title: 'Velvet Store',
     category: 'E-commerce',
     year: '2023',
-    description: 'Boutique online com experiência de compra personalizada.',
-    tags: ['Shopify', 'React', 'AWS'],
+    description: 'Loja virtual de alta performance integrada com sistemas de pagamento e logística.',
+    tags: ['Shopify Headless', 'Conversão', 'React'],
     image: 'https://picsum.photos/id/338/1200/800',
     gallery: [
       'https://picsum.photos/id/338/1200/800',
@@ -64,135 +108,102 @@ export const PROJECTS = [
     ],
     link: '#',
     caseStudy: {
-      challenge: 'A plataforma anterior caía durante picos de acesso e tinha design genérico.',
-      solution: 'Arquitetura "Headless", separando o visual do sistema de vendas. Liberdade total de design.',
-      result: 'Aumento de 25% na conversão mobile.'
+      challenge: 'A loja antiga travava durante picos de acesso (lançamentos) e tinha um checkout complicado, gerando abandono de carrinho.',
+      solution: 'Implementação de arquitetura Headless para carregamento instantâneo. Redesenho do fluxo de checkout para compra em 3 cliques.',
+      result: 'Aumento de 25% na taxa de conversão e zero quedas durante a Black Friday.'
     }
-  }
-];
-
-export const CASE_STUDIES = [
-  {
-    client: 'Nexus Fin',
-    title: 'High-Performance Dashboard',
-    tech: ['React', 'D3.js', 'TypeScript'],
-    challenge: 'Renderização lenta de datasets complexos (>50k registros) causava travamentos no navegador dos analistas.',
-    solution: 'Implementação de virtualização (windowing), memoização agressiva e Web Workers para processamento off-main-thread.',
-    result: 'Tempo de interação reduzido em 90%.'
-  },
-  {
-    client: 'Global Shop',
-    title: 'Escalabilidade para E-commerce',
-    tech: ['Next.js', 'Redis', 'AWS'],
-    challenge: 'Infraestrutura não suportava picos de acesso repentinos, resultando em downtime durante lançamentos.',
-    solution: 'Migração para arquitetura Serverless com estratégias de Edge Caching e Database Read Replicas.',
-    result: 'Zero downtime na Black Friday com 5x mais tráfego.'
-  },
-  {
-    client: 'Civic App',
-    title: 'Acessibilidade em Governo Digital',
-    tech: ['Vue.js', 'WCAG', 'A11y'],
-    challenge: 'O portal de serviços públicos era inacessível para usuários com deficiência visual ou motora.',
-    solution: 'Reconstrução completa seguindo diretrizes WCAG 2.1 AA, incluindo navegação por teclado e suporte a leitores de tela.',
-    result: 'Acesso universal garantido e conformidade legal atingida.'
   }
 ];
 
 export const ARCHIVE_PROJECTS = [
   {
     title: 'Neon Banking App',
-    category: 'Mobile App',
+    category: 'Fintech Mobile',
     tech: 'React Native',
     image: 'https://picsum.photos/id/445/800/600',
     link: '#'
   },
   {
     title: 'Urban Mobility',
-    category: 'Public Sector',
-    tech: 'Vue.js',
+    category: 'Gestão de Frotas',
+    tech: 'Vue.js Dashboard',
     image: 'https://picsum.photos/id/188/800/600',
     link: '#'
   },
   {
     title: 'Alpha Health',
-    category: 'MedTech',
-    tech: 'Angular',
+    category: 'Agendamento Médico',
+    tech: 'Angular / Node',
     image: 'https://picsum.photos/id/201/800/600',
     link: '#'
   },
   {
     title: 'Kroma Design System',
-    category: 'Internal Tool',
+    category: 'Ferramenta Interna',
     tech: 'Storybook',
     image: 'https://picsum.photos/id/3/800/600',
     link: '#'
   }
 ];
 
+export const EDUCATION = [
+  {
+    period: '2019 - 2023',
+    degree: 'Ciência da Computação',
+    institution: 'Universidade de São Paulo (USP)',
+    description: 'Ênfase em Engenharia de Software e Inteligência Artificial. Participação em grupos de pesquisa focados em sistemas distribuídos.'
+  },
+  {
+    period: '2022',
+    degree: 'Full Stack Web Development',
+    institution: 'Le Wagon',
+    description: 'Bootcamp intensivo focado em desenvolvimento de produtos digitais com Ruby on Rails, React e prototipagem.'
+  }
+];
+
 export const WRITING = [
   {
-    title: "Otimizando React com Intersection Observer",
+    title: "Como um site lento custa dinheiro para sua empresa",
     date: "Mar 2024",
     readTime: "5 min",
-    category: "Performance",
+    category: "Negócios",
     link: "#"
   },
   {
-    title: "Arquitetura Headless com Shopify & Next.js",
+    title: "SaaS vs Planilhas: Quando migrar sua operação?",
     date: "Fev 2024",
     readTime: "8 min",
-    category: "Arquitetura",
+    category: "Gestão",
     link: "#"
   },
   {
-    title: "Por que uso Tailwind CSS em projetos Enterprise",
+    title: "A importância do SEO Técnico para negócios locais",
     date: "Jan 2024",
     readTime: "6 min",
-    category: "CSS",
+    category: "Marketing",
     link: "#"
   }
 ];
 
 export const SKILLS = [
   { 
-    title: 'Experiência do Usuário (Frontend)',
-    description: 'Crio interfaces que as pessoas gostam de usar. Foco em movimentos suaves, acessibilidade e designs que funcionam em qualquer dispositivo.',
+    title: 'Desenvolvimento Frontend',
+    description: 'Interfaces rápidas, responsivas e focadas na experiência do seu cliente. O site funciona perfeitamente no celular e no computador.',
     icon: Layout,
-    items: ['React.js', 'TypeScript', 'Tailwind CSS', 'Next.js'] 
+    items: ['React.js', 'Next.js', 'Tailwind CSS', 'Mobile First'] 
   },
   { 
-    title: 'Lógica e Performance (Backend)',
-    description: 'Construo a "mágica" que acontece nos bastidores. Garanto que seus dados estejam seguros e que o sistema seja rápido.',
+    title: 'Soluções Backend & API',
+    description: 'A inteligência por trás do sistema. Integrações com pagamentos, gestão de banco de dados e segurança da informação.',
     icon: Database,
-    items: ['Node.js', 'Python', 'PostgreSQL', 'API REST'] 
+    items: ['Node.js', 'API Integrações', 'PostgreSQL', 'Segurança'] 
   },
   { 
-    title: 'Estratégia Visual (Design)',
-    description: 'Não apenas codifico, eu ajudo a desenhar a solução. Transformo ideias vagas em protótipos funcionais e bonitos.',
+    title: 'Estratégia & Design',
+    description: 'Mais que código, entrego o produto visual. Prototipagem e estratégia de usuário para garantir que o sistema seja fácil de usar.',
     icon: Monitor,
-    items: ['Figma', 'Prototipagem', 'UI/UX Design', 'Design Systems'] 
+    items: ['UI/UX Design', 'Figma', 'Prototipagem', 'Arquitetura de Info'] 
   },
-];
-
-export const EDUCATION = [
-  {
-    degree: 'Bacharelado em Ciência da Computação',
-    institution: 'Universidade Federal de Tecnologia',
-    period: '2019 - 2023',
-    description: 'Foco em Engenharia de Software e Inteligência Artificial. Graduado com honras.'
-  },
-  {
-    degree: 'Especialização em User Experience',
-    institution: 'Escola Superior de Design',
-    period: '2023 - 2024',
-    description: 'Aprofundamento em psicologia cognitiva e design centrado no usuário.'
-  },
-  {
-    degree: 'Certificação Fullstack Advanced',
-    institution: 'Tech Institute Global',
-    period: '2022',
-    description: 'Bootcamp intensivo focado em arquiteturas de microsserviços e React avançado.'
-  }
 ];
 
 export const CONTACT_INFO = {

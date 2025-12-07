@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -48,14 +49,14 @@ const Hero: React.FC = () => {
               <div className="space-y-6">
                 <Reveal width="100%">
                   <span className="inline-block px-4 py-1.5 glass-panel rounded-full text-[10px] font-bold tracking-widest uppercase text-slate-500 border border-slate-200/50">
-                    Portfolio 2024
+                    Disponível para novos projetos
                   </span>
                 </Reveal>
                 
                 <div className="overflow-hidden">
                    <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[0.95] tracking-tight text-slate-900">
-                     <TextReveal delay={100}>Criando soluções</TextReveal>
-                     <TextReveal delay={200} className="italic text-slate-500 font-serif">significativas.</TextReveal>
+                     <TextReveal delay={100}>Transformo ideias em</TextReveal>
+                     <TextReveal delay={200} className="italic text-slate-500 font-serif">negócios digitais.</TextReveal>
                    </h1>
                 </div>
               </div>
@@ -63,17 +64,17 @@ const Hero: React.FC = () => {
               <Reveal delay={300} width="100%">
                 <div className="space-y-4 pt-4">
                   <h2 className="text-lg md:text-xl font-medium text-slate-900">
-                    Prazer, sou o Victor Cardoso.
+                    Olá, sou o Victor Cardoso.
                   </h2>
                   <p className="text-sm md:text-base uppercase tracking-widest text-slate-500 font-bold border-l-2 border-slate-200 pl-4">
-                    Software Developer & <br className="hidden md:block"/> Computer Engineering Student
+                    Desenvolvedor Full Stack & <br className="hidden md:block"/> Consultor de Tecnologia
                   </p>
                 </div>
               </Reveal>
               
               <Reveal delay={400} width="100%">
                 <p className="text-base md:text-lg text-slate-600 max-w-lg leading-relaxed mx-auto lg:mx-0 font-light glass-panel p-6 rounded-3xl border border-slate-100/60 mt-6 shadow-sm">
-                  Combino a precisão da engenharia com a elegância do design para construir experiências digitais que não apenas funcionam, mas encantam.
+                  Ajudo empresas e empreendedores a escalar suas operações com aplicações web rápidas, modernas e focadas em conversão.
                 </p>
               </Reveal>
 
@@ -81,17 +82,17 @@ const Hero: React.FC = () => {
               <Reveal delay={500} width="100%">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
                   <Magnetic strength={0.5}>
-                      <a href="#projects" className="block">
+                      <a href="#contact" className="block">
                         <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/20">
-                          Ver Projetos <ArrowRight className="w-4 h-4 ml-2" />
+                          Solicitar Orçamento <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                       </a>
                   </Magnetic>
                   
                   <Magnetic strength={0.5}>
-                      <a href="#contact" className="block">
+                      <a href="#projects" className="block">
                         <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white/50 backdrop-blur-md">
-                          Fale Comigo
+                          Ver Portfolio
                         </Button>
                       </a>
                   </Magnetic>
@@ -109,7 +110,7 @@ const Hero: React.FC = () => {
         animate={{ opacity: 0.4, y: 0 }}
         transition={{ delay: 1, duration: 1, repeat: Infinity, repeatType: "reverse" }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 hover:opacity-100 transition-opacity cursor-pointer" 
-        onClick={() => document.getElementById('projects')?.scrollIntoView({behavior: 'smooth'})}
+        onClick={() => document.getElementById('services')?.scrollIntoView({behavior: 'smooth'})}
       >
         <span className="text-[10px] uppercase tracking-widest font-bold">Scroll</span>
         <ChevronDown className="text-slate-900" size={20} />
