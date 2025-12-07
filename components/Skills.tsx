@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { SKILLS } from '../constants';
 import { Reveal } from './ui/Reveal';
@@ -34,7 +35,7 @@ const Skills: React.FC = () => {
                   >
                     {/* Header */}
                     <div className="mb-6">
-                      <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:scale-110 transition-transform duration-500 border border-slate-100">
+                      <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 border border-slate-100">
                         <Icon size={24} strokeWidth={1.5} />
                       </div>
                       
