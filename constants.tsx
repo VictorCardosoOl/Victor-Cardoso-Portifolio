@@ -3,8 +3,8 @@ import { Monitor, Code, Layout, Database, Smartphone, Globe, Search, Rocket, Set
 
 export const NAV_LINKS = [
   { name: 'Início', href: '#hero' },
-  { name: 'Soluções', href: '#services' },
   { name: 'Projetos', href: '#projects' },
+  { name: 'Soluções', href: '#services' },
   { name: 'Sobre', href: '#about' },
   { name: 'Artigos', href: '#writing' },
   { name: 'Contato', href: '#contact' },

@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
@@ -50,7 +51,7 @@ export const TextReveal: React.FC<TextRevealProps> = ({ children, className = ""
       variants={container}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      className={className}
+      className={`${className} pb-2`} // Added pb-2 to prevent clipping of descenders
     >
       {words.map((word, index) => (
         <span key={index} className="overflow-hidden inline-block mr-[0.25em] -mb-2 pb-2">

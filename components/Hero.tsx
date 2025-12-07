@@ -14,7 +14,7 @@ const Hero: React.FC = () => {
   return (
     <section id="hero" className="min-h-screen flex items-center pt-32 pb-20 relative overflow-hidden">
       
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           
           {/* Left Column: Photo (Shifted Left for Asymmetry) */}
@@ -53,8 +53,8 @@ const Hero: React.FC = () => {
                   </span>
                 </Reveal>
                 
-                <div className="overflow-hidden">
-                   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[0.95] tracking-tight text-slate-900">
+                <div className="overflow-visible pb-2"> {/* overflow-visible to help with descenders */}
+                   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] md:leading-[1] tracking-tight text-slate-900">
                      <TextReveal delay={100}>Transformo ideias em</TextReveal>
                      <TextReveal delay={200} className="italic text-slate-500 font-serif">negócios digitais.</TextReveal>
                    </h1>
@@ -110,7 +110,7 @@ const Hero: React.FC = () => {
         animate={{ opacity: 0.4, y: 0 }}
         transition={{ delay: 1, duration: 1, repeat: Infinity, repeatType: "reverse" }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 hover:opacity-100 transition-opacity cursor-pointer" 
-        onClick={() => document.getElementById('services')?.scrollIntoView({behavior: 'smooth'})}
+        onClick={() => document.getElementById('projects')?.scrollIntoView({behavior: 'smooth'})}
       >
         <span className="text-[10px] uppercase tracking-widest font-bold">Scroll</span>
         <ChevronDown className="text-slate-900" size={20} />

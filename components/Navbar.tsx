@@ -25,6 +25,8 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    // Using rootMargin to create a "sweet spot" in the middle of the screen.
+    // The observer only triggers when an element intersects this narrow horizontal band.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -33,7 +35,9 @@ const Navbar: React.FC = () => {
           }
         });
       },
-      { threshold: 0.3 } 
+      { 
+        rootMargin: "-45% 0px -45% 0px" // Only trigger when element is in the vertical center 10% of the screen
+      } 
     );
 
     NAV_LINKS.forEach((link) => {
@@ -76,7 +80,7 @@ const Navbar: React.FC = () => {
                     <Magnetic key={link.name} strength={0.2}>
                         <a 
                         href={link.href}
-                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg ${
+                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 ${
                             isActive 
                             ? 'text-slate-900 font-bold' 
                             : 'text-slate-500 hover:text-slate-800'

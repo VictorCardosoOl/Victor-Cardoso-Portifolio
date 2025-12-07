@@ -43,27 +43,27 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
 
   return (
-    <div ref={containerRef} className="group py-20 lg:py-32 border-b border-slate-200 last:border-0 relative">
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+    <div ref={containerRef} className="group py-12 md:py-20 lg:py-32 border-b border-slate-200 last:border-0 relative">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 lg:gap-20 items-start">
         
         {/* Left Column: Sticky Details */}
-        <div className="lg:col-span-5 lg:sticky lg:top-32 flex flex-col h-full justify-between">
+        <div className="lg:col-span-5 lg:sticky lg:top-32 flex flex-col h-full justify-between order-2 lg:order-1">
           <Reveal width="100%">
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center gap-4 mb-4 md:mb-6">
               <span className="text-xs font-bold font-sans text-slate-400">0{index + 1}</span>
               <div className="h-px w-12 bg-slate-300"></div>
               <span className="text-xs font-bold font-sans uppercase tracking-widest text-slate-500">{project.category}</span>
             </div>
 
-            <h3 className="text-5xl md:text-6xl lg:text-7xl font-serif font-medium text-slate-900 mb-8 leading-[0.9]">
+            <h3 className="text-4xl md:text-5xl lg:text-7xl font-serif font-medium text-slate-900 mb-6 md:mb-8 leading-[1]">
               {project.title}
             </h3>
 
-            <p className="text-slate-500 font-light leading-relaxed max-w-sm mb-10 text-lg">
+            <p className="text-slate-500 font-light leading-relaxed max-w-sm mb-8 text-base md:text-lg">
               {project.description}
             </p>
 
-            <div className="flex flex-wrap gap-2 mb-10">
+            <div className="flex flex-wrap gap-2 mb-8 md:mb-10">
               {project.tags.map((tag, i) => (
                 <span key={i} className="px-3 py-1 border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   {tag}
@@ -71,27 +71,27 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
               ))}
             </div>
 
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                <button 
                  onClick={toggleCaseStudy}
-                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn"
+                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn py-2 md:py-0"
                >
                  {isExpanded ? <Minus size={16} /> : <Plus size={16} />}
-                 {isExpanded ? 'Fechar Detalhes' : 'Ver Case Study'}
+                 {isExpanded ? 'Fechar Detalhes' : 'Ler Case Study'}
                </button>
                
-               <a href={project.link} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors">
-                 Live Project <ArrowUpRight size={16} />
+               <a href={project.link} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors py-2 md:py-0">
+                 Ver Projeto Real <ArrowUpRight size={16} />
                </a>
             </div>
           </Reveal>
         </div>
 
         {/* Right Column: Image & Case Study */}
-        <div className="lg:col-span-7 relative">
+        <div className="lg:col-span-7 relative order-1 lg:order-2">
             {/* Main Image Container */}
             <div 
-              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-sm cursor-none"
+              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-sm cursor-pointer lg:cursor-none shadow-lg md:shadow-none"
               onClick={openLightbox}
             >
                <motion.div style={{ y, scale }} className="w-full h-full">
@@ -103,8 +103,13 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                   />
                </motion.div>
 
-               {/* Custom Cursor Text Indicator */}
-               <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
+               {/* Mobile Tap Hint */}
+               <div className="absolute bottom-4 right-4 bg-black/50 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full backdrop-blur-md lg:hidden z-20">
+                 Toque para ampliar
+               </div>
+
+               {/* Custom Cursor Text Indicator (Desktop Only) */}
+               <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none hidden lg:flex">
                   <div className="w-24 h-24 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-slate-900">Expandir</span>
                   </div>
@@ -121,18 +126,18 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                   transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                   className="overflow-hidden"
                 >
-                  <div className="pt-12 pl-0 lg:pl-12">
-                     <div className="bg-slate-50 p-8 md:p-12 border-l-2 border-slate-900">
+                  <div className="pt-8 md:pt-12 pl-0 lg:pl-12">
+                     <div className="bg-slate-50 p-6 md:p-12 border-l-2 border-slate-900 rounded-r-2xl md:rounded-none">
                         <h4 className="font-serif text-2xl text-slate-900 mb-6 italic">O Processo</h4>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                            <div>
                               <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Desafio</span>
-                              <p className="text-slate-700 font-light leading-relaxed">{project.caseStudy?.challenge}</p>
+                              <p className="text-slate-700 font-light leading-relaxed text-sm md:text-base">{project.caseStudy?.challenge}</p>
                            </div>
                            <div>
                               <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Solução</span>
-                              <p className="text-slate-700 font-light leading-relaxed">{project.caseStudy?.solution}</p>
+                              <p className="text-slate-700 font-light leading-relaxed text-sm md:text-base">{project.caseStudy?.solution}</p>
                            </div>
                         </div>
                         
@@ -223,7 +228,7 @@ const Projects: React.FC = () => {
     <section id="projects" className="relative z-20 bg-white">
       
       {/* Intro Header */}
-      <div className="container mx-auto px-6 md:px-12 pt-32 pb-16">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 pt-32 pb-16">
         <Reveal width="100%">
           <div className="border-b border-slate-900 pb-8 flex flex-col md:flex-row justify-between items-end">
              <h2 className="text-6xl md:text-8xl font-serif font-medium text-slate-900 leading-none tracking-tight">
@@ -239,7 +244,7 @@ const Projects: React.FC = () => {
       </div>
 
       {/* Main Projects List */}
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20">
          {PROJECTS.map((project, index) => (
             <ProjectRow 
                key={project.title}
@@ -254,7 +259,7 @@ const Projects: React.FC = () => {
 
       {/* Archive Section (Table Style) */}
       <div className="bg-slate-50 py-32 mt-20 border-t border-slate-200">
-         <div className="container mx-auto px-6 md:px-12">
+         <div className="container mx-auto px-6 md:px-12 xl:px-20">
             <Reveal>
               <div className="mb-16 flex justify-between items-end">
                 <div>
@@ -292,7 +297,7 @@ const Projects: React.FC = () => {
                </motion.div>
 
                {/* Table Header */}
-               <div className="grid grid-cols-12 gap-4 pb-4 border-b border-slate-300 text-xs font-bold uppercase tracking-widest text-slate-400">
+               <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-slate-300 text-xs font-bold uppercase tracking-widest text-slate-400">
                   <div className="col-span-1">Ano</div>
                   <div className="col-span-5">Projeto</div>
                   <div className="col-span-3">Categoria</div>
@@ -304,16 +309,22 @@ const Projects: React.FC = () => {
                   {ARCHIVE_PROJECTS.map((project, idx) => (
                     <div 
                       key={idx}
-                      className="group grid grid-cols-12 gap-4 py-6 items-center cursor-pointer transition-colors hover:bg-white relative z-10"
+                      className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 py-6 items-center cursor-pointer transition-colors hover:bg-white relative z-10"
                       onMouseEnter={() => setHoveredArchiveId(idx)}
                       onMouseLeave={() => setHoveredArchiveId(null)}
                     >
-                       <div className="col-span-1 text-xs font-mono text-slate-400">2023</div>
-                       <div className="col-span-5 text-lg font-serif font-medium text-slate-900 group-hover:translate-x-2 transition-transform duration-300">
-                         {project.title}
+                       <div className="hidden md:block col-span-1 text-xs font-mono text-slate-400">2023</div>
+                       
+                       {/* Mobile View Structure */}
+                       <div className="col-span-1 md:col-span-5 flex flex-col md:block">
+                           <span className="md:hidden text-[10px] text-slate-400 font-mono mb-1">2023</span>
+                           <span className="text-lg font-serif font-medium text-slate-900 group-hover:translate-x-0 md:group-hover:translate-x-2 transition-transform duration-300">
+                             {project.title}
+                           </span>
                        </div>
-                       <div className="col-span-3 text-xs uppercase tracking-wide text-slate-500">{project.category}</div>
-                       <div className="col-span-3 text-right text-xs font-mono text-slate-400 group-hover:text-slate-900 transition-colors">
+
+                       <div className="col-span-1 md:col-span-3 text-xs uppercase tracking-wide text-slate-500">{project.category}</div>
+                       <div className="col-span-1 md:col-span-3 md:text-right text-xs font-mono text-slate-400 group-hover:text-slate-900 transition-colors">
                          {project.tech}
                        </div>
                     </div>
@@ -340,7 +351,7 @@ const Projects: React.FC = () => {
                  <h3 className="text-2xl font-serif mb-1">{lightboxProject.project.title}</h3>
                  <div className="flex gap-4 text-[10px] uppercase tracking-widest text-slate-400">
                     <span>{lightboxProject.index + 1} / {lightboxProject.project.gallery.length}</span>
-                    <span>Scroll or Key to Navigate</span>
+                    <span className="hidden md:inline">Scroll or Key to Navigate</span>
                  </div>
               </div>
               <button 
@@ -371,12 +382,12 @@ const Projects: React.FC = () => {
             </div>
 
             {/* Navigation Arrows (Floating) */}
-            <div className="absolute inset-x-8 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
-                <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="pointer-events-auto p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
-                   <ChevronLeft size={48} strokeWidth={1} />
+            <div className="absolute inset-x-4 md:inset-x-8 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
+                <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
+                   <ChevronLeft size={32} md:size={48} strokeWidth={1} />
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="pointer-events-auto p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
-                   <ChevronRight size={48} strokeWidth={1} />
+                <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
+                   <ChevronRight size={32} md:size={48} strokeWidth={1} />
                 </button>
             </div>
 

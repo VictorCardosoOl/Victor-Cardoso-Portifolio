@@ -29,14 +29,14 @@ const PhilosophyGrid = () => {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       {principles.map((p, i) => (
         <div key={i} className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 hover:border-slate-200 transition-colors">
-          <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm mb-4 text-slate-900">
-            <p.icon size={18} strokeWidth={1.5} />
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-5 text-slate-900">
+            <p.icon size={22} strokeWidth={1.5} />
           </div>
-          <h4 className="text-sm font-serif font-bold text-slate-900 mb-2">{p.title}</h4>
-          <p className="text-xs text-slate-500 leading-relaxed font-light">{p.desc}</p>
+          <h4 className="text-lg font-serif font-bold text-slate-900 mb-3">{p.title}</h4>
+          <p className="text-sm text-slate-600 leading-relaxed font-light">{p.desc}</p>
         </div>
       ))}
     </div>
@@ -56,9 +56,9 @@ const ActivityGraph = () => {
         <span className="text-xs font-bold uppercase tracking-widest text-slate-500">Consistência de Entrega</span>
       </div>
       
-      <div className="flex gap-1 justify-between opacity-80 mask-image-gradient">
+      <div className="flex gap-1 justify-between opacity-80 mask-image-gradient overflow-x-auto pb-2 md:pb-0">
         {Array.from({ length: weeks }).map((_, w) => (
-          <div key={w} className="flex flex-col gap-1">
+          <div key={w} className="flex flex-col gap-1 min-w-[10px]">
             {Array.from({ length: days }).map((_, d) => {
               // Randomize intensity for visual effect
               const intensity = Math.random();
@@ -84,7 +84,7 @@ const ActivityGraph = () => {
 const About: React.FC = () => {
   return (
     <section id="about" className="py-24 md:py-32 bg-white relative">
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20">
         <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
           
           {/* Left Column: Text, Stats & GitHub */}
@@ -136,10 +136,10 @@ const About: React.FC = () => {
               <div className="bg-white p-8 md:p-10 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-24">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                   <div>
-                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">
+                     <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
                       Mindset
                      </h3>
-                     <span className="text-xl font-serif text-slate-900">Como agrego valor</span>
+                     <span className="text-3xl font-serif font-medium text-slate-900">Como agrego valor</span>
                   </div>
                 </div>
                 

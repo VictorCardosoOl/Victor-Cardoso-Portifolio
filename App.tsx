@@ -24,8 +24,8 @@ const App: React.FC = () => {
         <Navbar />
         <main className="flex-grow">
           <Hero />
-          <Services />
           <Projects />
+          <Services />
           <Skills />
           <About />
           <Education />

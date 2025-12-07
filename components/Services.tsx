@@ -11,7 +11,7 @@ const Services: React.FC = () => {
       <div className="absolute top-0 left-0 w-full h-full bg-[#050505]"></div>
       <div className="absolute top-[-20%] right-0 w-[600px] h-[600px] bg-slate-800/20 rounded-full blur-[150px] pointer-events-none mix-blend-screen opacity-50"></div>
       
-      <div className="container mx-auto px-6 md:px-12 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
         
         {/* Services Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20">
@@ -42,7 +42,7 @@ const Services: React.FC = () => {
             return (
               <Reveal key={index} delay={index * 150} width="100%">
                   <div className="h-full glass-panel-dark p-8 rounded-[2rem] hover:bg-slate-900 transition-all duration-300 border border-white/10 group hover:-translate-y-2">
-                     <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-white group-hover:bg-white group-hover:text-black transition-colors">
+                     <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-white transition-colors">
                         <Icon size={24} strokeWidth={1.5} />
                      </div>
                      <h3 className="text-xl font-serif font-medium mb-4 text-white">{service.title}</h3>

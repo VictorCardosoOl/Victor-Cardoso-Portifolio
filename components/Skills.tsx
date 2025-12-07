@@ -7,7 +7,7 @@ import { CheckCircle2 } from 'lucide-react';
 const Skills: React.FC = () => {
   return (
     <section id="skills" className="py-24 md:py-32 relative z-10">
-      <div className="container mx-auto px-6 md:px-12">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20">
         
         {/* Header Section */}
         <div className="text-center mb-20 max-w-2xl mx-auto">
@@ -31,11 +31,11 @@ const Skills: React.FC = () => {
               <div key={index} className="h-full">
                 <Reveal delay={index * 150} width="100%">
                   <div 
-                    className="h-full glass-card p-8 md:p-10 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 hover:-translate-y-2 flex flex-col group bg-white/40 shadow-sm hover:shadow-xl"
+                    className="h-full glass-card p-8 md:p-10 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 hover:-translate-y-2 flex flex-col bg-white/40 shadow-sm hover:shadow-xl"
                   >
                     {/* Header */}
                     <div className="mb-6">
-                      <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-500 border border-slate-100">
+                      <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-slate-100">
                         <Icon size={24} strokeWidth={1.5} />
                       </div>
                       

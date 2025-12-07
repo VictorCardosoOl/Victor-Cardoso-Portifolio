@@ -24,9 +24,17 @@ const Contact: React.FC = () => {
     if (!formState.email.trim()) {
       newErrors.email = 'Email é obrigatório';
       isValid = false;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email)) {
-      newErrors.email = 'Formato de email inválido';
-      isValid = false;
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const domainRegex = /^[^\s@]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      
+      if (!emailRegex.test(formState.email)) {
+        newErrors.email = 'Formato de email inválido (ex: nome@empresa.com)';
+        isValid = false;
+      } else if (!domainRegex.test(formState.email)) {
+        newErrors.email = 'Domínio de email inválido';
+        isValid = false;
+      }
     }
 
     if (!formState.message.trim()) {
@@ -90,27 +98,29 @@ const Contact: React.FC = () => {
             }}
             onFocus={() => setFocusedField(id)}
             onBlur={() => setFocusedField(null)}
-            className={`w-full bg-transparent border-b py-3 text-base text-slate-900 placeholder-slate-300 focus:outline-none transition-colors duration-300 ${
-              hasError ? 'border-red-500' : 'border-slate-200'
+            className={`w-full bg-transparent border-b py-3 px-2 text-base text-slate-900 placeholder-slate-300 focus:outline-none transition-all duration-300 rounded-t-md ${
+              hasError 
+                ? 'border-red-400 bg-red-50/50' 
+                : 'border-slate-200 hover:bg-slate-50'
             }`}
             placeholder={placeholder}
             disabled={status === 'loading'}
           />
           {/* Animated Bottom Line (Focus) */}
           <div 
-            className={`absolute bottom-0 left-0 h-[1px] bg-slate-900 transition-all duration-500 ease-out ${
+            className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${
               focusedField === id && !hasError ? 'w-full' : 'w-0'
             }`}
           />
           {/* Animated Bottom Line (Error) */}
           <div 
-            className={`absolute bottom-0 left-0 h-[1px] bg-red-500 transition-all duration-500 ease-out ${
+            className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${
               hasError ? 'w-full' : 'w-0'
             }`}
           />
         </div>
         {hasError && (
-          <div className="absolute bottom-0 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
+          <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
              <AlertCircle size={10} /> {errors[id]}
           </div>
         )}
@@ -124,7 +134,7 @@ const Contact: React.FC = () => {
       {/* Abstract Background Element */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-white/40 skew-x-12 translate-x-32 z-0 hidden lg:block" />
 
-      <div className="container relative z-10 mx-auto px-6 md:px-12 h-full flex flex-col justify-center">
+      <div className="container relative z-10 mx-auto px-6 md:px-12 xl:px-20 h-full flex flex-col justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           
           {/* Left Column: Info & Typography */}
@@ -263,27 +273,29 @@ const Contact: React.FC = () => {
                           }}
                           onFocus={() => setFocusedField('message')}
                           onBlur={() => setFocusedField(null)}
-                          className={`w-full bg-transparent border-b py-3 text-base text-slate-900 placeholder-slate-300 focus:outline-none transition-colors duration-300 resize-none ${
-                             errors.message ? 'border-red-500' : 'border-slate-200'
+                          className={`w-full bg-transparent border-b py-3 px-2 text-base text-slate-900 placeholder-slate-300 focus:outline-none transition-all duration-300 resize-none rounded-t-md ${
+                             errors.message 
+                               ? 'border-red-400 bg-red-50/50' 
+                               : 'border-slate-200 hover:bg-slate-50'
                           }`}
                           placeholder="Como posso ajudar?"
                           disabled={status === 'loading'}
                         />
                          {/* Animated Bottom Line (Focus) */}
                         <div 
-                          className={`absolute bottom-0 left-0 h-[1px] bg-slate-900 transition-all duration-500 ease-out ${
+                          className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${
                              focusedField === 'message' && !errors.message ? 'w-full' : 'w-0'
                           }`}
                         />
                         {/* Animated Bottom Line (Error) */}
                         <div 
-                          className={`absolute bottom-0 left-0 h-[1px] bg-red-500 transition-all duration-500 ease-out ${
+                          className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${
                              errors.message ? 'w-full' : 'w-0'
                           }`}
                         />
                       </div>
                       {errors.message && (
-                        <div className="absolute bottom-0 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
+                        <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
                            <AlertCircle size={10} /> {errors.message}
                         </div>
                       )}
