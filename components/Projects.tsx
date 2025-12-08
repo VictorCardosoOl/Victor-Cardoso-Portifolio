@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PROJECTS, ARCHIVE_PROJECTS } from '../constants';
 import { ArrowUpRight, ArrowRight, X, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react';
@@ -42,46 +43,45 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
 
   return (
-    <div ref={containerRef} className="group py-16 md:py-32 border-b border-slate-200 last:border-0 relative">
+    <div ref={containerRef} className="group py-12 md:py-20 lg:py-32 border-b border-slate-200 last:border-0 relative">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 lg:gap-20 items-start">
         
         {/* Left Column: Sticky Details */}
         <div className="lg:col-span-5 lg:sticky lg:top-32 flex flex-col h-full justify-between order-2 lg:order-1">
           <Reveal width="100%">
-            <div className="flex items-center gap-4 mb-6 md:mb-8">
-              <span className="text-[10px] font-bold font-sans text-slate-400">0{index + 1}</span>
-              <div className="h-px w-8 bg-slate-300"></div>
-              <span className="text-[10px] font-bold font-sans uppercase tracking-widest text-slate-500">{project.category}</span>
+            <div className="flex items-center gap-4 mb-4 md:mb-6">
+              <span className="text-xs font-bold font-sans text-slate-400">0{index + 1}</span>
+              <div className="h-px w-12 bg-slate-300"></div>
+              <span className="text-xs font-bold font-sans uppercase tracking-widest text-slate-500">{project.category}</span>
             </div>
 
-            {/* Massive Typography for Project Title */}
-            <h3 className="text-5xl md:text-7xl lg:text-8xl xl:text-9xl font-serif font-medium text-slate-900 mb-8 md:mb-12 leading-[0.9] -ml-1 tracking-tighter">
+            <h3 className="text-4xl md:text-5xl lg:text-7xl font-serif font-medium text-slate-900 mb-6 md:mb-8 leading-[1]">
               {project.title}
             </h3>
 
-            <p className="text-slate-500 font-light leading-relaxed max-w-sm mb-10 text-base md:text-lg">
+            <p className="text-slate-500 font-light leading-relaxed max-w-sm mb-8 text-base md:text-lg">
               {project.description}
             </p>
 
-            <div className="flex flex-wrap gap-2 mb-10 md:mb-12">
+            <div className="flex flex-wrap gap-2 mb-8 md:mb-10">
               {project.tags.map((tag, i) => (
-                <span key={i} className="px-4 py-1.5 border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-50">
+                <span key={i} className="px-3 py-1 border border-slate-200 rounded-full text-[10px] font-bold uppercase tracking-widest text-slate-500">
                   {tag}
                 </span>
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                <button 
                  onClick={toggleCaseStudy}
-                 className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn py-2 md:py-0"
+                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn py-2 md:py-0"
                >
-                 {isExpanded ? <Minus size={14} /> : <Plus size={14} />}
+                 {isExpanded ? <Minus size={16} /> : <Plus size={16} />}
                  {isExpanded ? 'Fechar Detalhes' : 'Ler Case Study'}
                </button>
                
-               <a href={project.link} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors py-2 md:py-0">
-                 Ver Projeto Real <ArrowUpRight size={14} />
+               <a href={project.link} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors py-2 md:py-0">
+                 Ver Projeto Real <ArrowUpRight size={16} />
                </a>
             </div>
           </Reveal>
@@ -91,7 +91,7 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
         <div className="lg:col-span-7 relative order-1 lg:order-2">
             {/* Main Image Container */}
             <div 
-              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-[2rem] md:rounded-sm cursor-pointer lg:cursor-none shadow-2xl md:shadow-none bg-slate-100"
+              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-sm cursor-pointer lg:cursor-none shadow-lg md:shadow-none"
               onClick={openLightbox}
             >
                <motion.div style={{ y, scale }} className="w-full h-full">
@@ -99,18 +99,18 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                   <img 
                     src={project.image} 
                     alt={project.title} 
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-out grayscale-[10%] group-hover:grayscale-0"
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-out"
                   />
                </motion.div>
 
                {/* Mobile Tap Hint */}
-               <div className="absolute bottom-4 right-4 bg-white/10 backdrop-blur-md text-white border border-white/20 text-[10px] uppercase font-bold px-4 py-2 rounded-full lg:hidden z-20">
+               <div className="absolute bottom-4 right-4 bg-black/50 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full backdrop-blur-md lg:hidden z-20">
                  Toque para ampliar
                </div>
 
                {/* Custom Cursor Text Indicator (Desktop Only) */}
                <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none hidden lg:flex">
-                  <div className="w-32 h-32 bg-white/80 backdrop-blur-xl rounded-full flex items-center justify-center">
+                  <div className="w-24 h-24 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-slate-900">Expandir</span>
                   </div>
                </div>
@@ -127,24 +127,24 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                   className="overflow-hidden"
                 >
                   <div className="pt-8 md:pt-12 pl-0 lg:pl-12">
-                     <div className="glass-panel p-6 md:p-12 rounded-[2rem]">
-                        <h4 className="font-serif text-3xl text-slate-900 mb-8 italic">O Processo</h4>
+                     <div className="bg-slate-50 p-6 md:p-12 border-l-2 border-slate-900 rounded-r-2xl md:rounded-none">
+                        <h4 className="font-serif text-2xl text-slate-900 mb-6 italic">O Processo</h4>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                            <div>
-                              <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Desafio</span>
+                              <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Desafio</span>
                               <p className="text-slate-700 font-light leading-relaxed text-sm md:text-base">{project.caseStudy?.challenge}</p>
                            </div>
                            <div>
-                              <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Solução</span>
+                              <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Solução</span>
                               <p className="text-slate-700 font-light leading-relaxed text-sm md:text-base">{project.caseStudy?.solution}</p>
                            </div>
                         </div>
                         
-                        <div className="pt-6 border-t border-slate-200/50 flex justify-between items-center">
+                        <div className="pt-6 border-t border-slate-200 flex justify-between items-center">
                            <div>
-                              <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">Impacto</span>
-                              <span className="font-serif text-2xl md:text-3xl text-slate-900">{project.caseStudy?.result}</span>
+                              <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Impacto</span>
+                              <span className="font-serif text-xl text-slate-900">{project.caseStudy?.result}</span>
                            </div>
                         </div>
                      </div>
@@ -228,14 +228,14 @@ const Projects: React.FC = () => {
     <section id="projects" className="relative z-20 bg-white">
       
       {/* Intro Header */}
-      <div className="container mx-auto px-6 md:px-12 xl:px-20 pt-40 pb-16">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 pt-32 pb-16">
         <Reveal width="100%">
-          <div className="border-b border-slate-900 pb-12 flex flex-col md:flex-row justify-between items-end">
-             <h2 className="text-7xl md:text-9xl font-serif font-medium text-slate-900 leading-[0.85] tracking-tighter">
+          <div className="border-b border-slate-900 pb-8 flex flex-col md:flex-row justify-between items-end">
+             <h2 className="text-6xl md:text-8xl font-serif font-medium text-slate-900 leading-none tracking-tight">
                Projetos <br /> <span className="text-slate-300 italic">Selecionados</span>
              </h2>
              <div className="mb-2 md:mb-4 text-right">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
                   Curadoria 2023 — 2024
                 </p>
              </div>
@@ -263,10 +263,10 @@ const Projects: React.FC = () => {
             <Reveal>
               <div className="mb-16 flex justify-between items-end">
                 <div>
-                   <h3 className="text-5xl font-serif font-medium text-slate-900 mb-4">Arquivo</h3>
+                   <h3 className="text-4xl font-serif font-medium text-slate-900 mb-4">Arquivo</h3>
                    <p className="text-slate-500 font-light">Experimentos, ferramentas internas e conceitos.</p>
                 </div>
-                <ArrowRight className="text-slate-300 w-16 h-16" strokeWidth={0.5} />
+                <ArrowRight className="text-slate-300 w-12 h-12" strokeWidth={1} />
               </div>
             </Reveal>
 
@@ -297,7 +297,7 @@ const Projects: React.FC = () => {
                </motion.div>
 
                {/* Table Header */}
-               <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-slate-300 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+               <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-slate-300 text-xs font-bold uppercase tracking-widest text-slate-400">
                   <div className="col-span-1">Ano</div>
                   <div className="col-span-5">Projeto</div>
                   <div className="col-span-3">Categoria</div>
@@ -309,7 +309,7 @@ const Projects: React.FC = () => {
                   {ARCHIVE_PROJECTS.map((project, idx) => (
                     <div 
                       key={idx}
-                      className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 py-8 items-center cursor-pointer transition-colors hover:bg-white relative z-10"
+                      className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 py-6 items-center cursor-pointer transition-colors hover:bg-white relative z-10"
                       onMouseEnter={() => setHoveredArchiveId(idx)}
                       onMouseLeave={() => setHoveredArchiveId(null)}
                     >
@@ -318,13 +318,13 @@ const Projects: React.FC = () => {
                        {/* Mobile View Structure */}
                        <div className="col-span-1 md:col-span-5 flex flex-col md:block">
                            <span className="md:hidden text-[10px] text-slate-400 font-mono mb-1">2023</span>
-                           <span className="text-xl md:text-2xl font-serif font-medium text-slate-900 group-hover:translate-x-0 md:group-hover:translate-x-2 transition-transform duration-300">
+                           <span className="text-lg font-serif font-medium text-slate-900 group-hover:translate-x-0 md:group-hover:translate-x-2 transition-transform duration-300">
                              {project.title}
                            </span>
                        </div>
 
-                       <div className="col-span-1 md:col-span-3 text-[10px] uppercase tracking-wide text-slate-500">{project.category}</div>
-                       <div className="col-span-1 md:col-span-3 md:text-right text-[10px] font-mono text-slate-400 group-hover:text-slate-900 transition-colors">
+                       <div className="col-span-1 md:col-span-3 text-xs uppercase tracking-wide text-slate-500">{project.category}</div>
+                       <div className="col-span-1 md:col-span-3 md:text-right text-xs font-mono text-slate-400 group-hover:text-slate-900 transition-colors">
                          {project.tech}
                        </div>
                     </div>
@@ -348,7 +348,7 @@ const Projects: React.FC = () => {
             {/* Top Bar */}
             <div className="absolute top-0 left-0 w-full p-8 flex justify-between items-start z-[110] pointer-events-none">
               <div className="text-white pointer-events-auto">
-                 <h3 className="text-3xl font-serif mb-2">{lightboxProject.project.title}</h3>
+                 <h3 className="text-2xl font-serif mb-1">{lightboxProject.project.title}</h3>
                  <div className="flex gap-4 text-[10px] uppercase tracking-widest text-slate-400">
                     <span>{lightboxProject.index + 1} / {lightboxProject.project.gallery.length}</span>
                     <span className="hidden md:inline">Scroll or Key to Navigate</span>
@@ -356,9 +356,9 @@ const Projects: React.FC = () => {
               </div>
               <button 
                 onClick={closeLightbox} 
-                className="group pointer-events-auto w-14 h-14 flex items-center justify-center rounded-full border border-white/20 hover:bg-white hover:text-black text-white transition-all"
+                className="group pointer-events-auto w-12 h-12 flex items-center justify-center rounded-full border border-white/20 hover:bg-white hover:text-black text-white transition-all"
               > 
-                <X size={28} /> 
+                <X size={24} /> 
               </button>
             </div>
             
@@ -370,7 +370,7 @@ const Projects: React.FC = () => {
                  animate={{ opacity: 1, scale: 1 }}
                  exit={{ opacity: 0, scale: 0.95 }}
                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                 className="relative max-w-[90vw] max-h-[85vh] overflow-hidden shadow-2xl rounded-sm"
+                 className="relative max-w-[90vw] max-h-[85vh] overflow-hidden shadow-2xl"
                  onClick={(e) => e.stopPropagation()}
                >
                   <img 
@@ -384,10 +384,10 @@ const Projects: React.FC = () => {
             {/* Navigation Arrows (Floating) */}
             <div className="absolute inset-x-4 md:inset-x-8 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
                 <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
-                   <ChevronLeft size={40} md:size={56} strokeWidth={0.5} />
+                   <ChevronLeft size={32} md:size={48} strokeWidth={1} />
                 </button>
                 <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
-                   <ChevronRight size={40} md:size={56} strokeWidth={0.5} />
+                   <ChevronRight size={32} md:size={48} strokeWidth={1} />
                 </button>
             </div>
 

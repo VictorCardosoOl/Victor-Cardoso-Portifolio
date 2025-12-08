@@ -13,27 +13,25 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     // Locomotive-like feel: Heavy inertia, smooth stop
     const lenisInstance = new Lenis({
-      duration: 1.0, // Reduced from 1.5 to 1.0 for more direct control
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.5, // Increased duration for smoother/heavier feel
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.8, // Reduced for finer control
-      touchMultiplier: 1.5, // Less sensitive on touch
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
     });
 
     setLenis(lenisInstance);
 
-    let rafId: number;
     function raf(time: number) {
       lenisInstance.raf(time);
-      rafId = requestAnimationFrame(raf);
+      requestAnimationFrame(raf);
     }
 
-    rafId = requestAnimationFrame(raf);
+    requestAnimationFrame(raf);
 
     return () => {
-      cancelAnimationFrame(rafId);
       lenisInstance.destroy();
     };
   }, []);
