@@ -60,12 +60,12 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
             {/* Tilt Wrapper - Ajustado para ser sutil e elegante */}
             <Tilt strength={4} perspective={1200} className="w-full h-full transform-gpu">
                 <button
-                  className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-[2rem] cursor-zoom-in shadow-sm hover:shadow-2xl transition-shadow duration-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-slate-900/20 group/img"
+                  className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-[2rem] cursor-zoom-in shadow-[0_20px_40px_-12px_rgba(0,0,0,0.12)] hover:shadow-[0_30px_60px_-12px_rgba(0,0,0,0.25)] transition-shadow duration-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-slate-900/20 group/img bg-slate-100"
                   onClick={openLightbox}
                   aria-label={`Ver galeria do projeto ${project.title}`}
                   type="button"
                 >
-                  <motion.div style={{ y, scale }} className="w-full h-full bg-slate-100">
+                  <motion.div style={{ y, scale }} className="w-full h-full">
                       {/* Overlay Cinematográfico */}
                       <div className="absolute inset-0 bg-slate-900/0 group-hover/img:bg-slate-900/5 transition-colors duration-700 z-10"></div>
                       
@@ -116,11 +116,11 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
               ))}
             </div>
 
-            {/* Action Buttons - Stacked on Mobile, Inline on Desktop */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full">
+            {/* Action Buttons - Optimized for Mobile Block / Desktop Inline */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
                <button 
                  onClick={toggleCaseStudy}
-                 className={`flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 py-4 px-6 rounded-xl border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
+                 className={`flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 py-4 px-6 rounded-xl border focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 w-full sm:w-auto
                     ${isExpanded 
                         ? 'bg-slate-100 text-slate-900 border-slate-200' 
                         : 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800 hover:-translate-y-0.5 shadow-lg shadow-slate-900/10'
@@ -133,7 +133,7 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                
                <a 
                  href={project.link} 
-                 className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all duration-300 py-4 px-6 rounded-xl border border-slate-200 hover:border-slate-300"
+                 className="flex items-center justify-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all duration-300 py-4 px-6 rounded-xl border border-slate-200 hover:border-slate-300 w-full sm:w-auto"
                >
                  Visitar Site <ArrowUpRight size={14} />
                </a>
@@ -152,7 +152,7 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                   className="overflow-hidden"
                 >
                   <div className="pt-8 w-full">
-                     <div className="bg-slate-50/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-slate-200/60">
+                     <div className="bg-slate-50/80 backdrop-blur-sm p-6 md:p-8 rounded-2xl border border-slate-200/60 shadow-inner">
                         <div className="flex items-center gap-2 mb-6">
                             <div className="w-2 h-2 rounded-full bg-slate-900"></div>
                             <h4 className="font-serif text-xl text-slate-900 italic">Bastidores do Projeto</h4>

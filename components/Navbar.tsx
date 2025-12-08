@@ -152,16 +152,16 @@ const Navbar: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + (index * 0.05), type: "spring", stiffness: 300, damping: 30 }}
                     whileTap={{ scale: 0.95 }}
-                    className={`relative w-64 text-center text-2xl font-serif font-medium py-4 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                    className={`relative w-64 text-center text-2xl font-serif font-medium py-4 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-slate-900 border ${
                       isActive 
-                        ? 'bg-slate-100 text-slate-900 shadow-sm' 
-                        : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                        ? 'bg-slate-50 text-slate-900 border-slate-200 shadow-sm' 
+                        : 'text-slate-400 border-transparent hover:text-slate-800 hover:bg-slate-50 hover:border-slate-100'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {/* Active Indicator Dot for Mobile */}
+                    {/* Active Indicator Dot for Mobile - Refined */}
                     {isActive && (
-                      <span className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-slate-900" />
+                      <span className="absolute left-6 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-slate-900 shadow-[0_0_10px_rgba(15,23,42,0.3)]" />
                     )}
                     {link.name}
                   </motion.a>
