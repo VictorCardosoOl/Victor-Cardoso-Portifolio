@@ -21,12 +21,13 @@ const App: React.FC = () => {
   return (
     <GamificationProvider>
       <ScrollProvider>
-        <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-slate-900 selection:text-white">
+        {/* Main Wrapper - Removed overflow-x-hidden to fix scroll hijacking issues */}
+        <div className="flex flex-col min-h-screen relative selection:bg-slate-900 selection:text-white">
           <GrainBackground />
-          
+
           {/* Gamification Layer (Always on top) */}
           <Gamification />
-          
+
           <Navbar />
           <main className="flex-grow">
             <Hero />
@@ -40,15 +41,15 @@ const App: React.FC = () => {
             <Contact />
           </main>
           <Footer />
-          
+
           {/* Floating WhatsApp Button */}
-          <div className="fixed bottom-8 right-8 z-40">
+          <div className="fixed bottom-8 right-8 z-40 print:hidden">
             <Magnetic strength={0.3}>
-              <a 
-                href="https://wa.me/5511999999999" 
-                target="_blank" 
+              <a
+                href="https://wa.me/5511999999999"
+                target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_25px_rgba(37,211,102,0.6)] transition-all hover:scale-110"
+                className="flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-[0_4px_20px_rgba(37,211,102,0.4)] hover:shadow-[0_4px_25px_rgba(37,211,102,0.6)] transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2"
                 aria-label="Contato via WhatsApp"
               >
                 <MessageCircle size={28} fill="white" className="text-white" />
