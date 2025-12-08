@@ -24,7 +24,7 @@ interface GamificationContextType {
   sectionTimes: SectionTime;
   quests: Quest[];
   completeQuest: (id: string) => void;
-  unlockAchievement: (label: string) => void;
+  unlockAchievement: (label: string) => void; 
   notification: { message: string; visible: boolean; type?: Rank } | null;
   hideNotification: () => void;
   currentSection: string;
@@ -63,57 +63,56 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Derived State
-  const xp = React.useMemo(() => quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0), [quests]);
-
+  const xp = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
+  
   // Level Calculation: Simple linear progression
-  const level = React.useMemo(() => Math.floor(xp / 25) + 1, [xp]);
+  const level = Math.floor(xp / 25) + 1;
 
   // Rank Calculation based on Level
-  const getRank = React.useCallback((lvl: number): Rank => {
+  const getRank = (lvl: number): Rank => {
     if (lvl >= 5) return 'Ouro';
     if (lvl >= 3) return 'Prata';
     return 'Bronze';
-  }, []);
-
-  const rank = React.useMemo(() => getRank(level), [level, getRank]);
+  };
+  const rank = getRank(level);
 
   // --- Logic ---
 
-  const triggerNotification = React.useCallback((message: string, rankType: Rank) => {
-    setNotification({ message, visible: true, type: rankType });
-
-    // Auto hide
-    setTimeout(() => {
-      setNotification(prev => (prev?.message === message ? null : prev));
-    }, 4500);
-  }, []);
-
-  const completeQuest = React.useCallback((id: string) => {
+  const completeQuest = (id: string) => {
     setQuests(prev => {
       const idx = prev.findIndex(q => q.id === id);
       if (idx === -1 || prev[idx].completed) return prev;
 
       const newQuests = [...prev];
       newQuests[idx] = { ...newQuests[idx], completed: true };
-
+      
       // Calculate potential new rank for notification style
       const newXp = newQuests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
       const newLevel = Math.floor(newXp / 25) + 1;
-      const newRank = newLevel >= 5 ? 'Ouro' : newLevel >= 3 ? 'Prata' : 'Bronze';
+      const newRank = getRank(newLevel);
 
       triggerNotification(`Conquista: ${newQuests[idx].label}`, newRank);
       return newQuests;
     });
-  }, [triggerNotification]);
+  };
 
-  const unlockAchievement = React.useCallback((message: string) => {
+  const unlockAchievement = (message: string) => {
     triggerNotification(message, rank);
-  }, [triggerNotification, rank]);
+  };
 
-  const hideNotification = React.useCallback(() => setNotification(null), []);
+  const triggerNotification = (message: string, rankType: Rank) => {
+    setNotification({ message, visible: true, type: rankType });
+    
+    // Auto hide
+    setTimeout(() => {
+        setNotification(prev => (prev?.message === message ? null : prev));
+    }, 4500);
+  };
 
-  const openModal = React.useCallback(() => setIsModalOpen(true), []);
-  const closeModal = React.useCallback(() => setIsModalOpen(false), []);
+  const hideNotification = () => setNotification(null);
+  
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   // --- Timers & Section Tracking ---
 
@@ -139,12 +138,12 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       clearInterval(globalTimer);
       clearInterval(sectionTimer);
     };
-  }, [currentSection, completeQuest]);
+  }, [currentSection]);
 
-  // 3. Section detection maintained as is...
+  // 3. Section Detection (Intersection Observer)
   useEffect(() => {
     const sections = ['hero', 'projects', 'services', 'skills', 'about', 'education', 'lab', 'writing', 'contact'];
-
+    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -153,7 +152,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 } 
     );
 
     sections.forEach(id => {
@@ -164,25 +163,23 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     return () => observer.disconnect();
   }, []);
 
-  const contextValue = React.useMemo(() => ({
-    xp,
-    level,
-    rank,
-    totalTime,
-    sectionTimes,
-    quests,
-    completeQuest,
-    unlockAchievement,
-    notification,
-    hideNotification,
-    currentSection,
-    isModalOpen,
-    openModal,
-    closeModal
-  }), [xp, level, rank, totalTime, sectionTimes, quests, completeQuest, unlockAchievement, notification, hideNotification, currentSection, isModalOpen, openModal, closeModal]);
-
   return (
-    <GamificationContext.Provider value={contextValue}>
+    <GamificationContext.Provider value={{
+      xp,
+      level,
+      rank,
+      totalTime,
+      sectionTimes,
+      quests,
+      completeQuest,
+      unlockAchievement,
+      notification,
+      hideNotification,
+      currentSection,
+      isModalOpen,
+      openModal,
+      closeModal
+    }}>
       {children}
     </GamificationContext.Provider>
   );
