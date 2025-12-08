@@ -13,7 +13,7 @@ export const Magnetic: React.FC<MagneticProps> = ({ children, strength = 0.3 }) 
   const handleMouse = (e: React.MouseEvent<HTMLDivElement>) => {
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current?.getBoundingClientRect() || { height: 0, width: 0, left: 0, top: 0 };
-    
+
     const middleX = clientX - (left + width / 2);
     const middleY = clientY - (top + height / 2);
 
@@ -25,9 +25,9 @@ export const Magnetic: React.FC<MagneticProps> = ({ children, strength = 0.3 }) 
   };
 
   const { x, y } = position;
-  
-  // Smooth spring physics
-  const springConfig = { damping: 15, stiffness: 150, mass: 0.1 };
+
+  // Smooth spring physics - Tuned for "emotional" responsiveness
+  const springConfig = { damping: 20, stiffness: 300, mass: 0.5 };
   const motionX = useSpring(x, springConfig);
   const motionY = useSpring(y, springConfig);
 

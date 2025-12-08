@@ -1,157 +1,163 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- SEO & Open Graph -->
-    <title>Victor Cardoso | Desenvolvedor Full Stack & Soluções Digitais</title>
-    <meta name="description" content="Especialista em React e Node.js. Ajudo empresas a escalar operações com software sob medida, landing pages de alta conversão e arquitetura robusta." />
-    <meta property="og:title" content="Victor Cardoso | Soluções Digitais de Alta Performance" />
-    <meta property="og:description" content="Transformo ideias em negócios digitais. Desenvolvimento web focado em resultados, velocidade e experiência do usuário." />
-    <meta property="og:image" content="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" />
-    <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#0f172a" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['Inter', 'sans-serif'],
-              serif: ['Playfair Display', 'serif'],
-            },
-            colors: {
-              slate: {
-                50: '#f8fafc',
-                100: '#f1f5f9',
-                200: '#e2e8f0',
-                300: '#cbd5e1',
-                400: '#94a3b8',
-                500: '#64748b', // Muted Blue Accent
-                600: '#475569',
-                700: '#334155',
-                800: '#1e293b',
-                900: '#0f172a',
-                950: '#020617',
-              }
-            },
-            borderRadius: {
-              '4xl': '2.5rem',
-              '5xl': '3rem',
-            },
-            transitionTimingFunction: {
-              'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
-              'heavy': 'cubic-bezier(0.2, 0, 0, 1)',
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO & Open Graph -->
+  <title>Victor Cardoso | Desenvolvedor Full Stack & Soluções Digitais</title>
+  <meta name="description"
+    content="Especialista em React e Node.js. Ajudo empresas a escalar operações com software sob medida, landing pages de alta conversão e arquitetura robusta." />
+  <meta property="og:title" content="Victor Cardoso | Soluções Digitais de Alta Performance" />
+  <meta property="og:description"
+    content="Transformo ideias em negócios digitais. Desenvolvimento web focado em resultados, velocidade e experiência do usuário." />
+  <meta property="og:image"
+    content="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#0f172a" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Playfair Display', 'serif'],
+          },
+          colors: {
+            slate: {
+              50: '#f8fafc',
+              100: '#f1f5f9',
+              200: '#e2e8f0',
+              300: '#cbd5e1',
+              400: '#94a3b8',
+              500: '#64748b', // Muted Blue Accent
+              600: '#475569',
+              700: '#334155',
+              800: '#1e293b',
+              900: '#0f172a',
+              950: '#020617',
             }
+          },
+          borderRadius: {
+            '4xl': '2.5rem',
+            '5xl': '3rem',
+          },
+          transitionTimingFunction: {
+            'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
+            'heavy': 'cubic-bezier(0.2, 0, 0, 1)',
           }
         }
       }
-    </script>
-    <style>
-      body {
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: rgba(100, 116, 139, 0.5);
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: rgba(100, 116, 139, 0.8);
-      }
-      
-      /* Refined Glass Effect (Light) */
-      .glass-panel {
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(24px) saturate(180%);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 
-          0 8px 40px rgba(0, 0, 0, 0.04),
-          inset 0 1px 0 rgba(255, 255, 255, 0.8),
-          inset 0 0 20px rgba(255, 255, 255, 0.2);
-      }
-      
-      /* Standard Glass Card (Light) */
-      .glass-card {
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        box-shadow: 
-          0 4px 24px rgba(0, 0, 0, 0.02),
-          inset 0 1px 0 rgba(255, 255, 255, 0.5);
-      }
+    }
+  </script>
+  <style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-      /* Refined Glass Effect (Dark) */
-      .glass-panel-dark {
-        background: rgba(15, 23, 42, 0.65);
-        backdrop-filter: blur(24px) saturate(120%);
-        -webkit-backdrop-filter: blur(24px) saturate(120%);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        box-shadow: 
-          0 8px 40px rgba(0, 0, 0, 0.2),
-          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-          inset 0 0 20px rgba(0, 0, 0, 0.2);
-      }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
 
-      /* Custom Focus Ring for A11y */
-      :focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
-        border-radius: 4px;
-      }
-      
-      /* Selection Color */
-      ::selection {
-        background: #0f172a;
-        color: #fff;
-      }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
 
-      /* Lenis Recommended CSS */
-      html.lenis, html.lenis body {
-        height: auto;
-      }
-      .lenis.lenis-smooth {
-        scroll-behavior: auto !important;
-      }
-      .lenis.lenis-smooth [data-lenis-prevent] {
-        overscroll-behavior: contain;
-      }
-      .lenis.lenis-stopped {
-        overflow: hidden;
-      }
-      .lenis.lenis-scrolling iframe {
-        pointer-events: none;
-      }
-    </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react": "https://aistudiocdn.com/react@^19.2.1",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
-    "react/": "https://aistudiocdn.com/react@^19.2.1/",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "clsx": "https://cdn.jsdelivr.net/npm/clsx@2.1.0/+esm",
-    "tailwind-merge": "https://cdn.jsdelivr.net/npm/tailwind-merge@2.2.1/+esm",
-    "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.20/+esm",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^11.16.0"
-  }
-}
-</script>
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5);
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.8);
+    }
+
+    /* Refined Glass Effect (Light) */
+    /* Refined Glass Effect (Light) */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.65);
+      backdrop-filter: blur(32px) saturate(180%);
+      -webkit-backdrop-filter: blur(32px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Standard Glass Card (Light) */
+    /* Standard Glass Card (Light) */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.03),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+
+    /* Refined Glass Effect (Dark) */
+    .glass-panel-dark {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(24px) saturate(120%);
+      -webkit-backdrop-filter: blur(24px) saturate(120%);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow:
+        0 8px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Custom Focus Ring for A11y */
+    :focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
+      border-radius: 4px;
+    }
+
+    /* Selection Color */
+    ::selection {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    /* Lenis Recommended CSS */
+    html.lenis,
+    html.lenis body {
+      height: auto;
+    }
+
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
+    .lenis.lenis-scrolling iframe {
+      pointer-events: none;
+    }
+  </style>
+
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
-    <div id="root"></div>
-  </body>
+
+<body class="bg-slate-50 text-slate-900 antialiased">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>

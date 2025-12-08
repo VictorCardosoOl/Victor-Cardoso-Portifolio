@@ -13,7 +13,7 @@ const Navbar: React.FC = () => {
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
-      
+
       // Reading Progress Logic
       const totalScroll = document.documentElement.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -35,9 +35,9 @@ const Navbar: React.FC = () => {
           }
         });
       },
-      { 
+      {
         rootMargin: "-45% 0px -45% 0px" // Only trigger when element is in the vertical center 10% of the screen
-      } 
+      }
     );
 
     NAV_LINKS.forEach((link) => {
@@ -53,88 +53,90 @@ const Navbar: React.FC = () => {
     <>
       {/* Reading Progress Bar - Z-index fixed to not overlap lightbox */}
       <div className="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[49] pointer-events-none">
-        <div 
+        <div
           className="h-full bg-slate-900 transition-all duration-100 ease-out"
           style={{ width: `${readingProgress * 100}%` }}
         />
       </div>
 
-      <nav 
+      <nav
         className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-out 
-          ${isScrolled 
-            ? 'top-6 w-[85%] md:w-auto md:min-w-[650px] glass-panel rounded-full py-4 px-10' 
+          ${isScrolled
+            ? 'top-6 w-[85%] md:w-auto md:min-w-[650px] glass-panel rounded-full py-4 px-10'
             : 'top-8 w-full md:w-auto bg-transparent py-4 px-6 md:px-0'
           }`}
       >
         <div className={`flex justify-between items-center ${!isScrolled ? 'container mx-auto md:px-12' : 'w-full'}`}>
-          
-          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-12 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg p-1`}>
-            V<span className="text-slate-400">.</span>DEV
-          </a>
+
+          <Magnetic strength={0.2}>
+            <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-12 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg p-1`}>
+              V<span className="text-slate-400">.</span>DEV
+            </a>
+          </Magnetic>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center gap-8">
-             {NAV_LINKS.map((link) => {
-                const isActive = activeSection === link.href.replace('#', '');
-                return (
-                    <Magnetic key={link.name} strength={0.2}>
-                        <a 
-                        href={link.href}
-                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 ${
-                            isActive 
-                            ? 'text-slate-900 font-bold' 
-                            : 'text-slate-500 hover:text-slate-800'
-                        }`}
-                        >
-                        {link.name}
-                        {/* Active/Hover Dot */}
-                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`}></span>
-                        </a>
-                    </Magnetic>
-                );
-             })}
-            
+            {NAV_LINKS.map((link) => {
+              const isActive = activeSection === link.href.replace('#', '');
+              return (
+                <Magnetic key={link.name} strength={0.2}>
+                  <a
+                    href={link.href}
+                    className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 ${isActive
+                        ? 'text-slate-900 font-bold'
+                        : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                  >
+                    {link.name}
+                    {/* Active/Hover Dot */}
+                    <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`}></span>
+                  </a>
+                </Magnetic>
+              );
+            })}
+
             <Magnetic strength={0.4}>
-                 <a 
-                  href="#contact" 
-                  className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
-                    ${isScrolled 
-                      ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_5px_15px_rgba(15,23,42,0.2)]' 
-                      : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
-                    }`}
-                >
-                  Fale Comigo
-                </a>
+              <a
+                href="#contact"
+                className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
+                    ${isScrolled
+                    ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_5px_15px_rgba(15,23,42,0.2)]'
+                    : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
+                  }`}
+              >
+                Fale Comigo
+              </a>
             </Magnetic>
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-slate-900"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle Menu"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          <Magnetic strength={0.2}>
+            <button
+              className="md:hidden p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-slate-900"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </Magnetic>
         </div>
 
         {/* Mobile Menu Overlay with Glass Effect */}
         {isMobileMenuOpen && (
           <div className="fixed inset-0 bg-white/60 backdrop-blur-2xl z-40 flex flex-col justify-center items-center space-y-10 animate-in fade-in duration-300">
             {NAV_LINKS.map((link) => {
-               const isActive = activeSection === link.href.replace('#', '');
-               return (
-                <a 
-                  key={link.name} 
+              const isActive = activeSection === link.href.replace('#', '');
+              return (
+                <a
+                  key={link.name}
                   href={link.href}
-                  className={`text-4xl font-serif font-medium transition-all p-2 rounded-xl focus-visible:ring-2 focus-visible:ring-slate-900 ${
-                    isActive ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'
-                  }`}
+                  className={`text-4xl font-serif font-medium transition-all p-2 rounded-xl focus-visible:ring-2 focus-visible:ring-slate-900 ${isActive ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                    }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}
                 </a>
-               )
+              )
             })}
           </div>
         )}
