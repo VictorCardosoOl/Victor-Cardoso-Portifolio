@@ -140,7 +140,7 @@ const Navbar: React.FC = () => {
               animate={{ opacity: 1, backdropFilter: "blur(16px)" }}
               exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
               transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-white/95 z-40 flex flex-col justify-center items-center space-y-8"
+              className="fixed inset-0 bg-white/95 z-40 flex flex-col justify-center items-center space-y-4"
             >
               {NAV_LINKS.map((link, index) => {
                  const isActive = activeSection === link.href.replace('#', '');
@@ -151,12 +151,18 @@ const Navbar: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + (index * 0.05), type: "spring", stiffness: 300, damping: 30 }}
-                    whileTap={{ scale: 0.9, opacity: 0.7 }}
-                    className={`text-3xl md:text-4xl font-serif font-medium py-6 px-8 rounded-full focus-visible:ring-2 focus-visible:ring-slate-900 ${
-                      isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-400'
+                    whileTap={{ scale: 0.95 }}
+                    className={`relative w-64 text-center text-2xl font-serif font-medium py-4 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                      isActive 
+                        ? 'bg-slate-100 text-slate-900 shadow-sm' 
+                        : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
+                    {/* Active Indicator Dot for Mobile */}
+                    {isActive && (
+                      <span className="absolute left-6 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-slate-900" />
+                    )}
                     {link.name}
                   </motion.a>
                  )

@@ -54,7 +54,7 @@ const Hero: React.FC = () => {
                 </Reveal>
                 
                 <div className="overflow-visible pb-2"> {/* overflow-visible to help with descenders */}
-                   <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] md:leading-[1] tracking-tight text-slate-900">
+                   <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-medium leading-[1.1] md:leading-[1] tracking-tight text-slate-900">
                      <TextReveal delay={100}>Transformo ideias em</TextReveal>
                      <TextReveal delay={200} className="italic text-slate-500 font-serif">negócios digitais.</TextReveal>
                    </h1>
