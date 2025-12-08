@@ -1,369 +1,355 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowRight, ChevronRight, Lock, Unlock } from 'lucide-react';
+import { Trophy, CheckCircle2, Circle, X, Map, Star, ArrowRight } from 'lucide-react';
 import Button from './ui/Button';
 
-// --- Assets & Icons ---
+// --- Types & Constants ---
 
-const Laurels = ({ className = "", color = "currentColor" }: { className?: string, color?: string }) => (
-  <svg viewBox="0 0 100 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 15C50 15 55 25 65 25C75 25 85 15 85 30C85 45 70 55 60 70C55 77.5 52 85 50 90" stroke={color} strokeWidth="3" strokeLinecap="round" />
-    <path d="M50 15C50 15 45 25 35 25C25 25 15 15 15 30C15 45 30 55 40 70C45 77.5 48 85 50 90" stroke={color} strokeWidth="3" strokeLinecap="round" />
-    <path d="M65 25C65 25 70 30 75 40" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <path d="M35 25C35 25 30 30 25 40" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <path d="M60 70C60 70 65 65 75 60" stroke={color} strokeWidth="2" strokeLinecap="round" />
-    <path d="M40 70C40 70 35 65 25 60" stroke={color} strokeWidth="2" strokeLinecap="round" />
-  </svg>
-);
-
-const MedalIcon = ({ rank }: { rank: RankTier }) => {
-  const colors = {
-    bronze: "text-amber-700 bg-amber-100 border-amber-200",
-    silver: "text-slate-400 bg-slate-100 border-slate-300",
-    gold: "text-yellow-600 bg-yellow-50 border-yellow-200",
-    locked: "text-slate-300 bg-slate-50 border-slate-100"
-  };
-
-  const current = rank === 'none' ? colors.locked : colors[rank];
-
-  return (
-    <div className={`w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-sm ${current}`}>
-      <Laurels className="w-8 h-8" />
-    </div>
-  );
-};
-
-// --- Types & Config ---
-
-type QuestId = 'scroll_hero' | 'scroll_deep' | 'click_project' | 'click_github' | 'click_contact' | 'time_spent';
-type RankTier = 'none' | 'bronze' | 'silver' | 'gold';
+type QuestId = 'scroll_hero' | 'scroll_deep' | 'click_project' | 'click_github' | 'click_linkedin' | 'click_contact' | 'time_spent';
 
 interface Quest {
   id: QuestId;
   label: string;
-  description: string;
   xp: number;
   completed: boolean;
-  link?: string;
+  link?: string; // Where to go if not completed
 }
 
-const QUESTS_DATA: Quest[] = [
-  { id: 'scroll_hero', label: 'Primeira Impressão', description: 'Comece a explorar a página.', xp: 10, completed: false },
-  { id: 'scroll_deep', label: 'Explorador Curioso', description: 'Visualize mais de 50% do conteúdo.', xp: 25, completed: false, link: '#services' },
-  { id: 'click_project', label: 'Olhar Crítico', description: 'Abra ou interaja com um projeto.', xp: 25, completed: false, link: '#projects' },
-  { id: 'time_spent', label: 'Leitor Atento', description: 'Permaneça por mais de 60 segundos.', xp: 15, completed: false },
-  { id: 'click_github', label: 'Auditoria Técnica', description: 'Visite meu GitHub ou repositórios.', xp: 15, completed: false, link: '#lab' },
-  { id: 'click_contact', label: 'Próximo Passo', description: 'Considere entrar em contato.', xp: 20, completed: false, link: '#contact' }, // Total 110 XP (Bonus included)
+const INITIAL_QUESTS: Quest[] = [
+  { id: 'scroll_hero', label: 'Primeiros Passos', xp: 10, completed: false },
+  { id: 'scroll_deep', label: 'Explorador Profundo', xp: 20, completed: false, link: '#services' },
+  { id: 'click_project', label: 'Analisar um Projeto', xp: 20, completed: false, link: '#projects' },
+  { id: 'time_spent', label: 'Leitura Atenta (> 1min)', xp: 15, completed: false },
+  { id: 'click_github', label: 'Auditoria de Código (GitHub)', xp: 15, completed: false, link: '#lab' },
+  { id: 'click_contact', label: 'Interesse em Contato', xp: 20, completed: false, link: '#contact' },
 ];
 
-const getRank = (xp: number): { tier: RankTier; label: string; color: string; nextThreshold: number } => {
-  if (xp >= 90) return { tier: 'gold', label: 'Ouro - Visionário', color: 'text-yellow-500', nextThreshold: 110 };
-  if (xp >= 50) return { tier: 'silver', label: 'Prata - Analista', color: 'text-slate-400', nextThreshold: 90 };
-  if (xp >= 10) return { tier: 'bronze', label: 'Bronze - Visitante', color: 'text-amber-600', nextThreshold: 50 };
-  return { tier: 'none', label: 'Visitante', color: 'text-slate-300', nextThreshold: 10 };
-};
+const LEVEL_TITLES = [
+  { threshold: 0, title: "Visitante" },
+  { threshold: 30, title: "Observador" },
+  { threshold: 60, title: "Analista" },
+  { threshold: 90, title: "Recrutador Lead" },
+  { threshold: 100, title: "Parceiro Ideal" }
+];
 
-// --- Main Component ---
+// --- Component ---
 
 const Gamification: React.FC = () => {
-  const [quests, setQuests] = useState<Quest[]>(QUESTS_DATA);
+  const [quests, setQuests] = useState<Quest[]>(INITIAL_QUESTS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFooterPopup, setShowFooterPopup] = useState(false);
-  const [notification, setNotification] = useState<{message: string, rankUp?: boolean, visible: boolean}>({ message: '', visible: false });
+  const [sessionTime, setSessionTime] = useState(0);
+  const [notification, setNotification] = useState<{message: string, visible: boolean}>({ message: '', visible: false });
   
   // Computed State
   const totalXP = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
-  const rank = getRank(totalXP);
-  const progressToNext = Math.min(100, (totalXP / rank.nextThreshold) * 100);
+  const maxXP = INITIAL_QUESTS.reduce((acc, q) => acc + q.xp, 0);
+  const progressPercent = Math.min(100, Math.round((totalXP / maxXP) * 100));
+  const currentTitle = LEVEL_TITLES.slice().reverse().find(l => progressPercent >= l.threshold)?.title || "Visitante";
+  const levelNumber = Math.floor(progressPercent / 20) + 1;
 
-  // --- Persistence ---
+  // --- Persistence & Initialization ---
+
   useEffect(() => {
-    const saved = localStorage.getItem('vc_portfolio_gamification_v2');
+    // Load from LocalStorage
+    const saved = localStorage.getItem('vc_portfolio_gamification');
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        // Merge saved state with initial structure (in case we add new quests later)
         setQuests(prev => prev.map(q => {
           const savedQuest = parsed.quests.find((pq: any) => pq.id === q.id);
           return savedQuest ? { ...q, completed: savedQuest.completed } : q;
         }));
-      } catch (e) { console.error(e); }
+      } catch (e) {
+        console.error("Error loading gamification state", e);
+      }
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('vc_portfolio_gamification_v2', JSON.stringify({ quests }));
+    // Save to LocalStorage whenever quests change
+    localStorage.setItem('vc_portfolio_gamification', JSON.stringify({ quests }));
   }, [quests]);
 
-  // --- Logic ---
+  // --- Logic: Trackers ---
+
   const completeQuest = (id: QuestId) => {
     setQuests(prev => {
-      const idx = prev.findIndex(q => q.id === id);
-      if (idx === -1 || prev[idx].completed) return prev;
+      const questIndex = prev.findIndex(q => q.id === id);
+      if (questIndex === -1 || prev[questIndex].completed) return prev;
 
       const newQuests = [...prev];
-      newQuests[idx] = { ...newQuests[idx], completed: true };
+      newQuests[questIndex] = { ...newQuests[questIndex], completed: true };
       
-      // Calculate if Rank Up happened
-      const oldXP = prev.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
-      const newXP = newQuests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
-      const oldRank = getRank(oldXP);
-      const newRank = getRank(newXP);
-
-      const isRankUp = newRank.tier !== oldRank.tier;
-      
-      showNotification(
-        isRankUp ? `Novo Rank: ${newRank.label}!` : `Conquista: ${newQuests[idx].label}`,
-        isRankUp
-      );
+      // Trigger Notification
+      showNotification(`Conquista Desbloqueada: ${newQuests[questIndex].label}`);
       
       return newQuests;
     });
   };
 
-  const showNotification = (msg: string, rankUp = false) => {
-    setNotification({ message: msg, rankUp, visible: true });
-    setTimeout(() => setNotification(prev => ({ ...prev, visible: false })), 4000);
+  const showNotification = (msg: string) => {
+    setNotification({ message: msg, visible: true });
+    setTimeout(() => setNotification(prev => ({ ...prev, visible: false })), 3000);
   };
 
-  // Trackers
+  // 1. Timer Logic
   useEffect(() => {
-    const timer = setInterval(() => completeQuest('time_spent'), 60000);
-    
+    const timer = setInterval(() => {
+      setSessionTime(prev => {
+        const newTime = prev + 1;
+        if (newTime === 60) completeQuest('time_spent'); // 60 seconds
+        return newTime;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // 2. Scroll Logic
+  useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 100) completeQuest('scroll_hero');
-      if ((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) > 0.5) completeQuest('scroll_deep');
+      const scrollY = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = scrollY / docHeight;
+
+      if (scrollY > 100) completeQuest('scroll_hero');
+      if (scrollPercent > 0.5) completeQuest('scroll_deep');
     };
-    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // 3. Footer Intersection (The Trigger)
+  useEffect(() => {
+    const footer = document.getElementById('site-footer');
+    if (!footer) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        // If not 100% complete, show suggestion popup
+        if (progressPercent < 100) {
+          setShowFooterPopup(true);
+        }
+      } else {
+        setShowFooterPopup(false);
+      }
+    }, { threshold: 0.2 });
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, [progressPercent]);
+
+  // 4. Global Click Listener (Event Delegation)
+  useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const link = target.closest('a');
-      const href = link?.getAttribute('href') || '';
-      
-      if (href.includes('github') || href.includes('linkedin') || href.includes('#lab')) completeQuest('click_github');
-      if (href.includes('mailto') || href.includes('wa.me') || href.includes('#contact')) completeQuest('click_contact');
-      if (target.closest('#projects')) completeQuest('click_project');
+      const button = target.closest('button');
+
+      // Check Links
+      if (link) {
+        const href = link.getAttribute('href') || '';
+        if (href.includes('github.com')) completeQuest('click_github');
+        if (href.includes('linkedin.com')) completeQuest('click_linkedin');
+        if (href.includes('#contact') || href.includes('mailto:') || href.includes('wa.me')) completeQuest('click_contact');
+        if (href.includes('#lab')) completeQuest('click_github');
+      }
+
+      // Check Specific Areas (using closest container IDs)
+      if (target.closest('#projects') && (button || link)) {
+         // Any interaction inside projects section counts
+         completeQuest('click_project');
+      }
     };
 
-    const footerObserver = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting && totalXP < 90) setShowFooterPopup(true);
-        else setShowFooterPopup(false);
-    }, { threshold: 0.2 });
-    
-    const footer = document.getElementById('site-footer');
-    if (footer) footerObserver.observe(footer);
-
-    window.addEventListener('scroll', handleScroll);
     document.addEventListener('click', handleClick);
+    return () => document.removeEventListener('click', handleClick);
+  }, []);
 
-    return () => {
-      clearInterval(timer);
-      window.removeEventListener('scroll', handleScroll);
-      document.removeEventListener('click', handleClick);
-      footerObserver.disconnect();
-    };
-  }, [totalXP]); // Re-run effect if XP changes to check footer condition
+  // --- UI Components ---
 
-  // --- Styles ---
-  
-  // Dynamic border color based on rank for notification
-  const notificationBorder = 
-    rank.tier === 'gold' ? 'border-yellow-400/50 shadow-yellow-900/20' :
-    rank.tier === 'silver' ? 'border-slate-300/50 shadow-slate-900/20' :
-    'border-amber-600/50 shadow-amber-900/20';
-
-  const notificationIconColor = 
-    rank.tier === 'gold' ? '#EAB308' : // yellow-500
-    rank.tier === 'silver' ? '#94A3B8' : // slate-400
-    '#D97706'; // amber-600
+  const missingQuests = quests.filter(q => !q.completed);
 
   return (
     <>
-      {/* 1. Badge Trigger (Top Right) */}
-      <div className="fixed top-28 right-4 md:right-8 z-40">
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+      {/* 1. Level Indicator (Top Right) */}
+      <div className="fixed top-24 right-4 md:right-8 z-40">
+        <button 
           onClick={() => setIsModalOpen(true)}
-          className={`group flex items-center gap-0 pr-4 pl-1 py-1 bg-white/90 backdrop-blur-md border border-slate-200/60 rounded-full shadow-lg transition-all duration-300 ${totalXP > 0 ? 'opacity-100' : 'opacity-0 translate-x-10'}`}
+          className="group flex items-center gap-3 pl-1 pr-4 py-1.5 bg-white/80 backdrop-blur-md border border-slate-200 rounded-full shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
         >
-          <div className="relative w-10 h-10 flex items-center justify-center">
-             <Laurels className={`w-8 h-8 ${rank.color}`} color="currentColor" />
-             {/* Simple Dot for notification attention if unread quests? Optional. */}
+          <div className="relative w-8 h-8 flex items-center justify-center bg-slate-900 rounded-full text-white overflow-hidden">
+             {/* Circular Progress (CSS Conic Gradient) */}
+             <div 
+               className="absolute inset-0 z-0 opacity-30" 
+               style={{ 
+                 background: `conic-gradient(#fff ${progressPercent}%, transparent 0)` 
+               }} 
+             />
+             <span className="relative z-10 text-[10px] font-bold">Lvl {levelNumber}</span>
           </div>
-          <div className="flex flex-col items-start -ml-1">
-             <span className="text-[9px] uppercase font-bold text-slate-400 leading-none mb-0.5">Rank</span>
-             <span className={`text-xs font-serif font-bold leading-none ${rank.color}`}>{rank.tier === 'none' ? 'Iniciando' : rank.tier}</span>
+          <div className="flex flex-col items-start">
+             <span className="text-[10px] uppercase font-bold text-slate-400 leading-none mb-0.5">Nível Atual</span>
+             <span className="text-xs font-serif font-bold text-slate-900 leading-none">{currentTitle}</span>
           </div>
-        </motion.button>
+        </button>
       </div>
 
-      {/* 2. Elegant Notification (Top Right - Discreet) */}
+      {/* 2. Achievement Notification (Toast) */}
       <AnimatePresence>
         {notification.visible && (
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className={`fixed top-28 right-20 md:right-40 z-[60] bg-slate-900/95 text-white pl-4 pr-6 py-3 rounded-lg shadow-2xl backdrop-blur-md border ${notificationBorder} flex items-center gap-4`}
+            initial={{ opacity: 0, y: -20, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className="fixed top-24 left-1/2 z-[60] bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 pointer-events-none"
           >
-            <div className="relative">
-               <Laurels className="w-8 h-8" color={notificationIconColor} />
-               {notification.rankUp && (
-                 <motion.div 
-                   initial={{ scale: 0 }} animate={{ scale: 1.5, opacity: 0 }} 
-                   className="absolute inset-0 bg-white rounded-full"
-                 />
-               )}
-            </div>
-            <div>
-              <h4 className={`text-[10px] font-bold uppercase tracking-widest mb-0.5 ${rank.color}`}>
-                {notification.rankUp ? 'Rank Elevado' : 'Conquista'}
-              </h4>
-              <p className="text-sm font-serif font-medium text-slate-100">{notification.message}</p>
-            </div>
+            <Star size={16} className="text-yellow-400 fill-yellow-400" />
+            <span className="text-xs font-bold uppercase tracking-widest">{notification.message}</span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 3. Modal "Hall of Fame" */}
+      {/* 3. Session Modal */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
             />
             
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative bg-white w-full max-w-lg rounded-[2rem] shadow-2xl overflow-hidden"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="relative bg-white w-full max-w-md rounded-[2rem] shadow-2xl overflow-hidden"
             >
-              {/* Header: The Ceremony */}
-              <div className="bg-slate-950 text-white p-8 md:p-10 relative overflow-hidden text-center">
-                 {/* Decorative background lights */}
-                 <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full blur-[80px] opacity-30 pointer-events-none
-                    ${rank.tier === 'gold' ? 'bg-yellow-500' : rank.tier === 'silver' ? 'bg-slate-400' : 'bg-amber-600'}`} 
-                 />
-                 
-                 <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-white/30 hover:text-white transition-colors">
+              {/* Header */}
+              <div className="bg-slate-900 text-white p-8 pb-12 relative overflow-hidden">
+                 <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                 <button onClick={() => setIsModalOpen(false)} className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors">
                    <X size={24} />
                  </button>
-
-                 <motion.div 
-                   initial={{ scale: 0.8, opacity: 0 }}
-                   animate={{ scale: 1, opacity: 1 }}
-                   transition={{ delay: 0.2, type: "spring" }}
-                   className="relative z-10 flex justify-center mb-6"
-                 >
-                    <Laurels className={`w-32 h-32 ${rank.color}`} color="currentColor" />
-                    <div className="absolute inset-0 flex items-center justify-center pt-2">
-                       <span className="text-4xl font-serif font-bold">{Math.floor(totalXP)}</span>
-                    </div>
-                 </motion.div>
-
+                 
                  <div className="relative z-10">
-                   <h2 className="text-3xl font-serif mb-2 bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400">
-                     {rank.label}
+                   <span className="inline-block px-3 py-1 bg-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest mb-4 border border-white/10">
+                     Relatório de Sessão
+                   </span>
+                   <h2 className="text-3xl font-serif mb-2">
+                     {progressPercent === 100 ? "Exploração Completa!" : "Continue Explorando"}
                    </h2>
-                   <p className="text-slate-400 text-sm font-light uppercase tracking-widest">
-                     Nível de Engajamento
+                   <p className="text-slate-400 text-sm">
+                     Você já viu {progressPercent}% do meu portfólio.
                    </p>
                  </div>
               </div>
 
-              {/* Progress Bar */}
-              {rank.tier !== 'gold' && (
-                <div className="bg-slate-50 px-10 py-4 border-b border-slate-100">
-                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
-                      <span>Progresso para {rank.tier === 'bronze' ? 'Prata' : 'Ouro'}</span>
-                      <span>{Math.round(rank.nextThreshold - totalXP)} XP restante</span>
-                   </div>
-                   <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                      <motion.div 
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progressToNext}%` }}
-                        transition={{ duration: 1 }}
-                        className={`h-full ${rank.tier === 'bronze' ? 'bg-slate-400' : 'bg-yellow-500'}`}
-                      />
-                   </div>
-                </div>
-              )}
+              {/* Stats Bar */}
+              <div className="flex bg-slate-50 border-b border-slate-100 px-8 py-4 gap-8 -mt-6 rounded-t-[2rem] relative z-20">
+                 <div>
+                    <span className="block text-[10px] font-bold text-slate-400 uppercase">Tempo</span>
+                    <span className="text-lg font-bold text-slate-900">
+                      {Math.floor(sessionTime / 60)}m {sessionTime % 60}s
+                    </span>
+                 </div>
+                 <div>
+                    <span className="block text-[10px] font-bold text-slate-400 uppercase">Conquistas</span>
+                    <span className="text-lg font-bold text-slate-900">
+                      {quests.filter(q => q.completed).length}/{quests.length}
+                    </span>
+                 </div>
+              </div>
 
-              {/* Quests List */}
-              <div className="p-8 bg-white max-h-[35vh] overflow-y-auto custom-scrollbar">
-                <div className="space-y-4">
+              {/* Quest List */}
+              <div className="p-8 max-h-[40vh] overflow-y-auto custom-scrollbar">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-900 mb-4 flex items-center gap-2">
+                   <Map size={14} /> Mapa de Exploração
+                </h3>
+                <div className="space-y-3">
                    {quests.map(quest => (
-                     <div key={quest.id} className="flex items-start gap-4 group">
-                       <div className={`mt-0.5 w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition-colors
-                         ${quest.completed ? 'bg-slate-900 border-slate-900 text-white' : 'bg-transparent border-slate-200 text-transparent'}`}>
-                          {quest.completed && <Unlock size={10} />}
+                     <div 
+                       key={quest.id} 
+                       className={`flex items-center justify-between p-3 rounded-xl transition-colors ${quest.completed ? 'bg-green-50 border border-green-100' : 'bg-slate-50 border border-slate-100'}`}
+                     >
+                       <div className="flex items-center gap-3">
+                          {quest.completed 
+                            ? <CheckCircle2 size={18} className="text-green-600" />
+                            : <Circle size={18} className="text-slate-300" />
+                          }
+                          <span className={`text-sm font-medium ${quest.completed ? 'text-green-900' : 'text-slate-500'}`}>
+                            {quest.label}
+                          </span>
                        </div>
-                       
-                       <div className="flex-grow">
-                          <h4 className={`text-sm font-bold transition-colors ${quest.completed ? 'text-slate-900' : 'text-slate-400'}`}>
-                             {quest.label}
-                          </h4>
-                          <p className="text-xs text-slate-500 font-light">{quest.description}</p>
-                       </div>
-                       
-                       <div className="text-right">
-                          <span className={`text-xs font-bold ${quest.completed ? 'text-slate-900' : 'text-slate-300'}`}>+{quest.xp}</span>
-                       </div>
+                       <span className="text-xs font-bold text-slate-400">+{quest.xp}xp</span>
                      </div>
                    ))}
                 </div>
               </div>
-              
-              {rank.tier !== 'gold' && (
-                  <div className="p-6 bg-slate-50 border-t border-slate-100 text-center">
-                    <p className="text-xs text-slate-500 mb-3">Explore mais para desbloquear o ranking Ouro.</p>
-                  </div>
+
+              {/* Footer CTA */}
+              {progressPercent < 100 && (
+                <div className="p-6 pt-0">
+                  <Button onClick={() => setIsModalOpen(false)} className="w-full bg-slate-100 text-slate-900 hover:bg-slate-200 shadow-none border border-slate-200">
+                    Continuar Navegando
+                  </Button>
+                </div>
               )}
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* 4. Footer "Lost Items" Prompt */}
+      {/* 4. Footer Pop-up Trigger (The "Hey you missed this" moment) */}
       <AnimatePresence>
         {showFooterPopup && !isModalOpen && (
            <motion.div
-             initial={{ y: 50, opacity: 0 }}
+             initial={{ y: 100, opacity: 0 }}
              animate={{ y: 0, opacity: 1 }}
-             exit={{ y: 50, opacity: 0 }}
-             className="fixed bottom-6 right-6 z-50 w-full max-w-xs"
+             exit={{ y: 100, opacity: 0 }}
+             className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-sm"
            >
-              <div className="bg-white p-5 rounded-2xl shadow-2xl border border-slate-100 ring-1 ring-slate-900/5">
-                 <div className="flex justify-between items-start mb-3">
-                    <div className="flex items-center gap-2">
-                       <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                       <h4 className="font-serif font-bold text-slate-900">Jornada Incompleta</h4>
+              <div className="bg-white/90 backdrop-blur-xl p-6 rounded-2xl shadow-2xl border border-white/20 ring-1 ring-slate-900/5">
+                 <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h4 className="font-serif text-lg font-bold text-slate-900">Quase lá!</h4>
+                      <p className="text-xs text-slate-500">
+                        Você completou {progressPercent}% da experiência.
+                      </p>
                     </div>
                     <button onClick={() => setShowFooterPopup(false)} className="text-slate-400 hover:text-slate-900">
-                       <X size={14} />
+                       <X size={16} />
                     </button>
                  </div>
-                 
-                 <p className="text-xs text-slate-500 mb-4 leading-relaxed">
-                    Você ainda não atingiu o ranking máximo. Dê uma olhada no que falta:
-                 </p>
 
-                 <div className="space-y-2 mb-4">
-                    {quests.filter(q => !q.completed).slice(0, 2).map(q => (
-                       <a key={q.id} href={q.link || '#'} className="block px-3 py-2 bg-slate-50 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors flex justify-between items-center group">
-                          {q.label}
-                          <ChevronRight size={12} className="text-slate-300 group-hover:text-slate-600" />
-                       </a>
-                    ))}
-                 </div>
+                 {missingQuests.length > 0 && (
+                   <div className="space-y-2 mb-4">
+                      <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">Sugestão:</p>
+                      {missingQuests.slice(0, 2).map(q => (
+                        <a 
+                          key={q.id} 
+                          href={q.link || '#'} 
+                          onClick={() => setShowFooterPopup(false)}
+                          className="flex items-center justify-between group p-2 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"
+                        >
+                           <span className="text-sm text-slate-700 font-medium group-hover:text-slate-900">{q.label}</span>
+                           <ArrowRight size={14} className="text-slate-300 group-hover:text-slate-900" />
+                        </a>
+                      ))}
+                   </div>
+                 )}
                  
-                 <Button onClick={() => setIsModalOpen(true)} variant="secondary" size="sm" className="w-full text-[10px] py-2 h-auto">
-                    Ver Progresso
-                 </Button>
+                 <button 
+                   onClick={() => setIsModalOpen(true)}
+                   className="w-full py-2 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
+                 >
+                   Ver Meu Relatório Completo
+                 </button>
               </div>
            </motion.div>
         )}
