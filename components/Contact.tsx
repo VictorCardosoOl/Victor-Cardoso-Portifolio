@@ -5,12 +5,16 @@ import { ArrowUpRight, Send, Check, AlertCircle, Mail, Phone } from 'lucide-reac
 import Button from './ui/Button';
 import { Reveal } from './ui/Reveal';
 import Magnetic from './ui/Magnetic';
+import { useGamification } from './GamificationContext'; // Import Context
 
 const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', company: '', message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  
+  // Access Gamification Data
+  const { rank, level, totalTime, sectionTimes, quests } = useGamification();
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -56,7 +60,23 @@ const Contact: React.FC = () => {
     setStatus('loading');
     
     try {
-      // Simulate API call
+      // --- PREPARE LEAD SCORE DATA ---
+      const gamificationData = {
+        rank: rank,
+        level: level,
+        sessionDuration: `${Math.floor(Number(totalTime) / 60)}m ${Number(totalTime) % 60}s`,
+        mostViewedSection: Object.entries(sectionTimes).sort(([,a], [,b]) => (b as number) - (a as number))[0]?.[0] || 'none',
+        sectionBreakdown: sectionTimes,
+        completedQuests: quests.filter(q => q.completed).map(q => q.label)
+      };
+
+      console.log("--- ENVIANDO FORMULÁRIO COM LEAD SCORE ---");
+      console.log("Dados do Usuário:", formState);
+      console.log("Relatório de Gamificação (Invisível ao user):", gamificationData);
+      
+      // Simulate API call with attached data
+      // await api.post('/contact', { ...formState, ...gamificationData });
+      
       await new Promise(resolve => setTimeout(resolve, 2000));
       setStatus('success');
       setFormState({ name: '', email: '', company: '', message: '' });
