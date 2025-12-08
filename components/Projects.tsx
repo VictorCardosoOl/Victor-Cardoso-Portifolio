@@ -36,14 +36,21 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
   const y = useTransform(scrollYProgress, [0, 1], [-50, 50]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
 
-  // Efeito para rolar até os detalhes quando expandido
+  // Efeito para rolar até os detalhes quando expandido (Otimizado para Mobile)
   useEffect(() => {
     if (isExpanded) {
+      // Pequeno delay para permitir que o DOM renderize a altura correta
       const timer = setTimeout(() => {
         if (detailsRef.current) {
-          detailsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const isMobile = window.innerWidth < 768;
+          
+          detailsRef.current.scrollIntoView({ 
+            behavior: 'smooth', 
+            // No mobile, alinhar ao topo para leitura. No desktop, centro para foco visual.
+            block: isMobile ? 'start' : 'center' 
+          });
         }
-      }, 400); // Delay para permitir que a animação de altura inicie/estabilize visualmente
+      }, 300); 
       return () => clearTimeout(timer);
     }
   }, [isExpanded]);
@@ -52,6 +59,40 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
     <div ref={containerRef} className="group py-12 md:py-20 lg:py-32 border-b border-slate-200 last:border-0 relative">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 lg:gap-20 items-start">
         
+        {/* Right Column: Image (First on Mobile for Visual Flow) */}
+        <div className="lg:col-span-7 relative order-1 lg:order-2">
+            {/* Main Image Container - Agora acessível */}
+            <button
+              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-sm cursor-zoom-in shadow-lg md:shadow-none group focus:outline-none focus-visible:ring-4 focus-visible:ring-slate-900 focus-visible:ring-offset-4 touch-manipulation"
+              onClick={openLightbox}
+              aria-label={`Ver galeria do projeto ${project.title}`}
+              type="button"
+            >
+               <motion.div style={{ y, scale }} className="w-full h-full">
+                  {/* Overlay mais sofisticado para hover */}
+                  <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition-all duration-500 z-10"></div>
+                  
+                  <img 
+                    src={project.image} 
+                    alt="" 
+                    className="w-full h-full object-cover transition-transform duration-1000 ease-out"
+                  />
+               </motion.div>
+
+               {/* Mobile Tap Hint - Melhor legibilidade */}
+               <div className="absolute bottom-4 right-4 bg-white/90 text-slate-900 text-[10px] uppercase font-bold px-4 py-2 rounded-full backdrop-blur-md lg:hidden z-20 shadow-lg pointer-events-none">
+                 Toque para ampliar
+               </div>
+
+               {/* Custom Cursor Text Indicator (Desktop Only) */}
+               <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none hidden lg:flex">
+                  <div className="w-24 h-24 bg-white/95 backdrop-blur-xl rounded-full flex items-center justify-center shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-900">Expandir</span>
+                  </div>
+               </div>
+            </button>
+        </div>
+
         {/* Left Column: Sticky Details */}
         <div className="lg:col-span-5 lg:sticky lg:top-32 flex flex-col h-full justify-between order-2 lg:order-1">
           <Reveal width="100%">
@@ -77,57 +118,28 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+            {/* Action Buttons - Stacked full width on Mobile */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
                <button 
                  onClick={toggleCaseStudy}
-                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn py-2 md:py-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 rounded-sm"
+                 className={`flex items-center justify-center sm:justify-start gap-2 text-xs font-bold uppercase tracking-widest transition-all duration-300 group/btn py-3 px-4 sm:px-0 rounded-lg sm:rounded-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
+                    ${isExpanded 
+                        ? 'bg-slate-100 text-slate-900 sm:bg-transparent' 
+                        : 'bg-slate-900 text-white sm:bg-transparent sm:text-slate-900 hover:text-slate-600'
+                    }`}
                  aria-expanded={isExpanded}
                >
                  {isExpanded ? <Minus size={16} /> : <Plus size={16} />}
                  {isExpanded ? 'Fechar Detalhes' : 'Ler Case Study'}
                </button>
                
-               <a href={project.link} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors py-2 md:py-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 rounded-sm">
+               <a href={project.link} className="flex items-center justify-center sm:justify-start gap-2 text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors py-3 px-4 sm:px-0 border border-slate-200 sm:border-0 rounded-lg sm:rounded-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900">
                  Ver Projeto Real <ArrowUpRight size={16} />
                </a>
             </div>
           </Reveal>
-        </div>
 
-        {/* Right Column: Image & Case Study */}
-        <div className="lg:col-span-7 relative order-1 lg:order-2">
-            {/* Main Image Container - Agora acessível */}
-            <button
-              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-sm cursor-zoom-in shadow-lg md:shadow-none group focus:outline-none focus-visible:ring-4 focus-visible:ring-slate-900 focus-visible:ring-offset-4"
-              onClick={openLightbox}
-              aria-label={`Ver galeria do projeto ${project.title}`}
-              type="button"
-            >
-               <motion.div style={{ y, scale }} className="w-full h-full">
-                  {/* Overlay mais sofisticado para hover */}
-                  <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition-all duration-500 z-10"></div>
-                  
-                  <img 
-                    src={project.image} 
-                    alt="" /* Alt vazio pois o botão já tem label descritivo */
-                    className="w-full h-full object-cover transition-transform duration-1000 ease-out"
-                  />
-               </motion.div>
-
-               {/* Mobile Tap Hint - Melhor legibilidade */}
-               <div className="absolute bottom-4 right-4 bg-white/90 text-slate-900 text-[10px] uppercase font-bold px-4 py-2 rounded-full backdrop-blur-md lg:hidden z-20 shadow-lg">
-                 Toque para ampliar
-               </div>
-
-               {/* Custom Cursor Text Indicator (Desktop Only) */}
-               <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none hidden lg:flex">
-                  <div className="w-24 h-24 bg-white/95 backdrop-blur-xl rounded-full flex items-center justify-center shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-900">Expandir</span>
-                  </div>
-               </div>
-            </button>
-
-            {/* Expandable Case Study Content */}
+           {/* Expandable Case Study Content - Moved inside left column for mobile logic but visually distinct */}
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
@@ -135,11 +147,11 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                  className="overflow-hidden"
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden scroll-mt-24" // scroll-mt prevents navbar overlap
                 >
-                  <div className="pt-8 md:pt-12 pl-0 lg:pl-12">
-                     <div className="bg-slate-50 p-6 md:p-12 border-l-2 border-slate-900 rounded-r-2xl md:rounded-none">
+                  <div className="pt-6 md:pt-12 pl-0 lg:pl-0 w-full">
+                     <div className="bg-slate-50 p-6 md:p-10 border-t-2 md:border-t-0 md:border-l-2 border-slate-900 rounded-2xl md:rounded-none md:rounded-r-2xl shadow-inner md:shadow-none">
                         <h4 className="font-serif text-2xl text-slate-900 mb-6 italic">O Processo</h4>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">

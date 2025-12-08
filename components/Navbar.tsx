@@ -85,12 +85,12 @@ const Navbar: React.FC = () => {
                         className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 ${
                             isActive 
                             ? 'text-slate-900 font-bold' 
-                            : 'text-slate-500 hover:text-slate-800'
+                            : 'text-slate-700 hover:text-slate-900'
                         }`}
                         >
                         {link.name}
                         {/* Active/Hover Dot */}
-                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'}`}></span>
+                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></span>
                         </a>
                     </Magnetic>
                 );
