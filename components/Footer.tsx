@@ -5,7 +5,7 @@ import { ArrowUpRight } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="relative bg-slate-950 text-white pt-24 pb-12 overflow-hidden">
+    <footer id="site-footer" className="relative bg-slate-950 text-white pt-24 pb-12 overflow-hidden">
       {/* Atmosphere Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-[#050505] z-0"></div>
       <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-slate-800/20 rounded-full blur-[120px] pointer-events-none opacity-50 z-0"></div>

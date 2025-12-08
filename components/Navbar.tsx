@@ -51,10 +51,10 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Reading Progress Bar - Z-index fixed to not overlap lightbox */}
-      <div className="fixed top-0 left-0 w-full h-[3px] bg-transparent z-[49] pointer-events-none">
+      {/* Reading Progress Bar - Ajuste visual */}
+      <div className="fixed top-0 left-0 w-full h-[2px] bg-transparent z-[60] pointer-events-none">
         <div 
-          className="h-full bg-slate-900 transition-all duration-100 ease-out"
+          className="h-full bg-slate-900/80 backdrop-blur-sm transition-all duration-100 ease-out"
           style={{ width: `${readingProgress * 100}%` }}
         />
       </div>
@@ -118,17 +118,18 @@ const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile Menu Overlay with Glass Effect */}
+        {/* Mobile Menu Overlay */}
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 bg-white/60 backdrop-blur-2xl z-40 flex flex-col justify-center items-center space-y-10 animate-in fade-in duration-300">
+          <div className="fixed inset-0 bg-white/90 backdrop-blur-2xl z-40 flex flex-col justify-center items-center space-y-8 animate-in fade-in duration-300">
             {NAV_LINKS.map((link) => {
                const isActive = activeSection === link.href.replace('#', '');
                return (
                 <a 
                   key={link.name} 
                   href={link.href}
-                  className={`text-4xl font-serif font-medium transition-all p-2 rounded-xl focus-visible:ring-2 focus-visible:ring-slate-900 ${
-                    isActive ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'
+                  // Increased padding (py-6) for better touch area on mobile
+                  className={`text-3xl md:text-4xl font-serif font-medium transition-all py-6 px-8 rounded-full focus-visible:ring-2 focus-visible:ring-slate-900 active:scale-95 ${
+                    isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-400 hover:text-slate-900'
                   }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

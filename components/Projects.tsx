@@ -74,13 +74,14 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                <button 
                  onClick={toggleCaseStudy}
-                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn py-2 md:py-0"
+                 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-900 hover:text-slate-600 transition-colors group/btn py-2 md:py-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 rounded-sm"
+                 aria-expanded={isExpanded}
                >
                  {isExpanded ? <Minus size={16} /> : <Plus size={16} />}
                  {isExpanded ? 'Fechar Detalhes' : 'Ler Case Study'}
                </button>
                
-               <a href={project.link} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors py-2 md:py-0">
+               <a href={project.link} className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-slate-900 transition-colors py-2 md:py-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900 rounded-sm">
                  Ver Projeto Real <ArrowUpRight size={16} />
                </a>
             </div>
@@ -89,32 +90,36 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
 
         {/* Right Column: Image & Case Study */}
         <div className="lg:col-span-7 relative order-1 lg:order-2">
-            {/* Main Image Container */}
-            <div 
-              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-sm cursor-pointer lg:cursor-none shadow-lg md:shadow-none"
+            {/* Main Image Container - Agora acessível */}
+            <button
+              className="relative w-full aspect-[4/3] lg:aspect-[16/10] overflow-hidden rounded-2xl md:rounded-sm cursor-zoom-in shadow-lg md:shadow-none group focus:outline-none focus-visible:ring-4 focus-visible:ring-slate-900 focus-visible:ring-offset-4"
               onClick={openLightbox}
+              aria-label={`Ver galeria do projeto ${project.title}`}
+              type="button"
             >
                <motion.div style={{ y, scale }} className="w-full h-full">
-                  <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/10 transition-colors duration-700 z-10"></div>
+                  {/* Overlay mais sofisticado para hover */}
+                  <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/20 transition-all duration-500 z-10"></div>
+                  
                   <img 
                     src={project.image} 
-                    alt={project.title} 
+                    alt="" /* Alt vazio pois o botão já tem label descritivo */
                     className="w-full h-full object-cover transition-transform duration-1000 ease-out"
                   />
                </motion.div>
 
-               {/* Mobile Tap Hint */}
-               <div className="absolute bottom-4 right-4 bg-black/50 text-white text-[10px] uppercase font-bold px-3 py-1 rounded-full backdrop-blur-md lg:hidden z-20">
+               {/* Mobile Tap Hint - Melhor legibilidade */}
+               <div className="absolute bottom-4 right-4 bg-white/90 text-slate-900 text-[10px] uppercase font-bold px-4 py-2 rounded-full backdrop-blur-md lg:hidden z-20 shadow-lg">
                  Toque para ampliar
                </div>
 
                {/* Custom Cursor Text Indicator (Desktop Only) */}
-               <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none hidden lg:flex">
-                  <div className="w-24 h-24 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center">
+               <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none hidden lg:flex">
+                  <div className="w-24 h-24 bg-white/95 backdrop-blur-xl rounded-full flex items-center justify-center shadow-2xl transform scale-75 group-hover:scale-100 transition-transform duration-300">
                     <span className="text-[10px] uppercase font-bold tracking-widest text-slate-900">Expandir</span>
                   </div>
                </div>
-            </div>
+            </button>
 
             {/* Expandable Case Study Content */}
             <AnimatePresence>
@@ -169,9 +174,18 @@ const Projects: React.FC = () => {
   
   const lenis = useLenis();
   const lastScrollTime = useRef(0);
+  
+  // Refs for accessibility focus management
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const lastFocusedElement = useRef<HTMLElement | null>(null);
 
   // --- Lightbox Logic (Optimized) ---
   const openLightbox = useCallback((project: typeof PROJECTS[0], index: number = 0) => {
+    // Capture the element that triggered the modal to restore focus later
+    if (document.activeElement instanceof HTMLElement) {
+      lastFocusedElement.current = document.activeElement;
+    }
+    
     lenis?.stop();
     setLightboxProject({ project, index });
     document.body.style.overflow = 'hidden';
@@ -181,6 +195,11 @@ const Projects: React.FC = () => {
     setLightboxProject(null);
     document.body.style.overflow = '';
     lenis?.start();
+    
+    // Restore focus to the trigger element after close
+    setTimeout(() => {
+      lastFocusedElement.current?.focus();
+    }, 100);
   }, [lenis]);
 
   const nextImage = useCallback(() => {
@@ -195,6 +214,17 @@ const Projects: React.FC = () => {
     setLightboxProject({ ...lightboxProject, index: prevIndex });
   }, [lightboxProject]);
 
+  // Focus trap logic: Focus the close button when lightbox opens
+  useEffect(() => {
+    if (lightboxProject) {
+      // Small delay to ensure the element is mounted in the DOM
+      const timer = setTimeout(() => {
+        closeBtnRef.current?.focus();
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [lightboxProject]);
+
   // Keyboard & Wheel for Lightbox
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -202,6 +232,29 @@ const Projects: React.FC = () => {
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowRight') nextImage();
       if (e.key === 'ArrowLeft') prevImage();
+      
+      // Basic focus trap loop for Tab key
+      if (e.key === 'Tab') {
+         // This is a simplified focus trap. 
+         // In a production app, consider using a library like react-focus-lock
+         const focusableElements = document.getElementById('lightbox-modal')?.querySelectorAll('button');
+         if (focusableElements && focusableElements.length > 0) {
+            const firstElement = focusableElements[0] as HTMLElement;
+            const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+            if (e.shiftKey) { /* shift + tab */
+               if (document.activeElement === firstElement) {
+                  e.preventDefault();
+                  lastElement.focus();
+               }
+            } else { /* tab */
+               if (document.activeElement === lastElement) {
+                  e.preventDefault();
+                  firstElement.focus();
+               }
+            }
+         }
+      }
     };
     
     const handleWheel = (e: WheelEvent) => {
@@ -334,10 +387,14 @@ const Projects: React.FC = () => {
          </div>
       </div>
 
-      {/* --- Lightbox Modal (Refined) --- */}
+      {/* --- Lightbox Modal (Refined for Accessibility) --- */}
       <AnimatePresence>
         {lightboxProject && (
           <motion.div 
+              id="lightbox-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`Galeria do projeto ${lightboxProject.project.title}`}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -350,13 +407,15 @@ const Projects: React.FC = () => {
               <div className="text-white pointer-events-auto">
                  <h3 className="text-2xl font-serif mb-1">{lightboxProject.project.title}</h3>
                  <div className="flex gap-4 text-[10px] uppercase tracking-widest text-slate-400">
-                    <span>{lightboxProject.index + 1} / {lightboxProject.project.gallery.length}</span>
-                    <span className="hidden md:inline">Scroll or Key to Navigate</span>
+                    <span aria-live="polite">{lightboxProject.index + 1} / {lightboxProject.project.gallery.length}</span>
+                    <span className="hidden md:inline">Use Setas para Navegar</span>
                  </div>
               </div>
               <button 
+                ref={closeBtnRef}
                 onClick={closeLightbox} 
-                className="group pointer-events-auto w-12 h-12 flex items-center justify-center rounded-full border border-white/20 hover:bg-white hover:text-black text-white transition-all"
+                className="group pointer-events-auto w-12 h-12 flex items-center justify-center rounded-full border border-white/20 hover:bg-white hover:text-black text-white transition-all focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 outline-none"
+                aria-label="Fechar galeria"
               > 
                 <X size={24} /> 
               </button>
@@ -375,7 +434,7 @@ const Projects: React.FC = () => {
                >
                   <img 
                     src={lightboxProject.project.gallery[lightboxProject.index]} 
-                    alt="Project Detail"
+                    alt={`Imagem ${lightboxProject.index + 1} de ${lightboxProject.project.gallery.length} do projeto ${lightboxProject.project.title}`}
                     className="w-full h-full object-contain"
                   />
                </motion.div>
@@ -383,11 +442,19 @@ const Projects: React.FC = () => {
 
             {/* Navigation Arrows (Floating) */}
             <div className="absolute inset-x-4 md:inset-x-8 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
-                <button onClick={(e) => { e.stopPropagation(); prevImage(); }} className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
-                   <ChevronLeft size={32} md:size={48} strokeWidth={1} />
+                <button 
+                  onClick={(e) => { e.stopPropagation(); prevImage(); }} 
+                  className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all focus-visible:ring-2 focus-visible:ring-white rounded-full outline-none"
+                  aria-label="Imagem anterior"
+                >
+                   <ChevronLeft size={32} className="md:w-12 md:h-12" strokeWidth={1} />
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); nextImage(); }} className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all">
-                   <ChevronRight size={32} md:size={48} strokeWidth={1} />
+                <button 
+                  onClick={(e) => { e.stopPropagation(); nextImage(); }} 
+                  className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all focus-visible:ring-2 focus-visible:ring-white rounded-full outline-none"
+                  aria-label="Próxima imagem"
+                >
+                   <ChevronRight size={32} className="md:w-12 md:h-12" strokeWidth={1} />
                 </button>
             </div>
 

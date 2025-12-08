@@ -12,6 +12,7 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import GrainBackground from './components/GrainBackground';
+import Gamification from './components/Gamification';
 import { ScrollProvider } from './components/ScrollContext';
 import { MessageCircle } from 'lucide-react';
 import Magnetic from './components/ui/Magnetic';
@@ -21,6 +22,10 @@ const App: React.FC = () => {
     <ScrollProvider>
       <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-slate-900 selection:text-white">
         <GrainBackground />
+        
+        {/* Gamification Layer (Always on top) */}
+        <Gamification />
+        
         <Navbar />
         <main className="flex-grow">
           <Hero />

@@ -41,17 +41,18 @@ const Services: React.FC = () => {
             const Icon = service.icon;
             return (
               <Reveal key={index} delay={index * 150} width="100%">
-                  <div className="h-full glass-panel-dark p-8 rounded-[2rem] hover:bg-slate-900 transition-all duration-300 border border-white/10 group hover:-translate-y-2">
+                  {/* Adjusted contrast: Darker bg (slate-950/80) and lighter text (slate-300) */}
+                  <div className="h-full bg-slate-950/80 backdrop-blur-md p-8 rounded-[2rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group hover:-translate-y-2 shadow-xl">
                      <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-white transition-colors">
                         <Icon size={24} strokeWidth={1.5} />
                      </div>
-                     <h3 className="text-xl font-serif font-medium mb-4 text-white">{service.title}</h3>
-                     <p className="text-slate-400 text-sm leading-relaxed mb-6 font-light">
+                     <h3 className="text-xl font-serif font-medium mb-4 text-slate-100">{service.title}</h3>
+                     <p className="text-slate-300 text-sm leading-relaxed mb-6 font-light">
                        {service.description}
                      </p>
                      <div className="flex flex-wrap gap-2 mt-auto">
                         {service.tags.map((tag, i) => (
-                          <span key={i} className="text-[10px] uppercase tracking-wider px-3 py-1 bg-black/40 border border-white/5 text-slate-500 rounded-full">
+                          <span key={i} className="text-[10px] uppercase tracking-wider px-3 py-1 bg-black/60 border border-white/5 text-slate-400 rounded-full">
                              {tag}
                           </span>
                         ))}
