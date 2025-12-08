@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { NAV_LINKS } from '../constants';
 import Magnetic from './ui/Magnetic';
+import { motion, AnimatePresence } from 'framer-motion';
+import { GamificationBadge } from './Gamification';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -51,10 +53,10 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Reading Progress Bar - Ajuste visual */}
-      <div className="fixed top-0 left-0 w-full h-[2px] bg-transparent z-[60] pointer-events-none">
+      {/* Reading Progress Bar - Ajuste visual com Track Glass */}
+      <div className="fixed top-0 left-0 w-full h-[3px] bg-white/50 backdrop-blur-sm z-[100] pointer-events-none">
         <div 
-          className="h-full bg-slate-900/80 backdrop-blur-sm transition-all duration-100 ease-out"
+          className="h-full bg-slate-900 transition-all duration-100 ease-out shadow-[0_0_10px_rgba(15,23,42,0.3)]"
           style={{ width: `${readingProgress * 100}%` }}
         />
       </div>
@@ -62,18 +64,18 @@ const Navbar: React.FC = () => {
       <nav 
         className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-out 
           ${isScrolled 
-            ? 'top-6 w-[85%] md:w-auto md:min-w-[650px] glass-panel rounded-full py-4 px-10' 
+            ? 'top-6 w-[85%] md:w-auto md:min-w-[700px] glass-panel rounded-full py-4 px-10' 
             : 'top-8 w-full md:w-auto bg-transparent py-4 px-6 md:px-0'
           }`}
       >
         <div className={`flex justify-between items-center ${!isScrolled ? 'container mx-auto md:px-12' : 'w-full'}`}>
           
-          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-12 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg p-1`}>
+          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-8 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg p-1`}>
             V<span className="text-slate-400">.</span>DEV
           </a>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-6">
              {NAV_LINKS.map((link) => {
                 const isActive = activeSection === link.href.replace('#', '');
                 return (
@@ -94,10 +96,16 @@ const Navbar: React.FC = () => {
                 );
              })}
             
+            {/* Divider */}
+            <div className="w-px h-6 bg-slate-200 mx-2"></div>
+
+            {/* Gamification Badge Integrated */}
+            <GamificationBadge />
+
             <Magnetic strength={0.4}>
                  <a 
                   href="#contact" 
-                  className={`ml-8 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
+                  className={`ml-4 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
                     ${isScrolled 
                       ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_5px_15px_rgba(15,23,42,0.2)]' 
                       : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
@@ -108,37 +116,54 @@ const Navbar: React.FC = () => {
             </Magnetic>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button 
-            className="md:hidden p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-slate-900"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle Menu"
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Menu Button & Badge */}
+          <div className="flex items-center gap-4 md:hidden">
+            <div className="scale-90 origin-right">
+              <GamificationBadge />
+            </div>
+
+            <button 
+              className="p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-slate-900"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Menu Overlay */}
-        {isMobileMenuOpen && (
-          <div className="fixed inset-0 bg-white/90 backdrop-blur-2xl z-40 flex flex-col justify-center items-center space-y-8 animate-in fade-in duration-300">
-            {NAV_LINKS.map((link) => {
-               const isActive = activeSection === link.href.replace('#', '');
-               return (
-                <a 
-                  key={link.name} 
-                  href={link.href}
-                  // Increased padding (py-6) for better touch area on mobile
-                  className={`text-3xl md:text-4xl font-serif font-medium transition-all py-6 px-8 rounded-full focus-visible:ring-2 focus-visible:ring-slate-900 active:scale-95 ${
-                    isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-400 hover:text-slate-900'
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
-               )
-            })}
-          </div>
-        )}
+        {/* Mobile Menu Overlay with Framer Motion */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <motion.div 
+              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              animate={{ opacity: 1, backdropFilter: "blur(16px)" }}
+              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-white/95 z-40 flex flex-col justify-center items-center space-y-8"
+            >
+              {NAV_LINKS.map((link, index) => {
+                 const isActive = activeSection === link.href.replace('#', '');
+                 return (
+                  <motion.a 
+                    key={link.name} 
+                    href={link.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + (index * 0.05), type: "spring", stiffness: 300, damping: 30 }}
+                    whileTap={{ scale: 0.9, opacity: 0.7 }}
+                    className={`text-3xl md:text-4xl font-serif font-medium py-6 px-8 rounded-full focus-visible:ring-2 focus-visible:ring-slate-900 ${
+                      isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-400'
+                    }`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.name}
+                  </motion.a>
+                 )
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
     </>
   );

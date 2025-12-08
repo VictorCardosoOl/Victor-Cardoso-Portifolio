@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 // --- Types ---
@@ -28,6 +29,10 @@ interface GamificationContextType {
   notification: { message: string; visible: boolean } | null;
   hideNotification: () => void;
   currentSection: string;
+  // Modal Control
+  isModalOpen: boolean;
+  openModal: () => void;
+  closeModal: () => void;
 }
 
 const GamificationContext = createContext<GamificationContextType | null>(null);
@@ -56,6 +61,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [sectionTimes, setSectionTimes] = useState<SectionTime>({});
   const [currentSection, setCurrentSection] = useState('hero');
   const [notification, setNotification] = useState<{ message: string; visible: boolean } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Derived State
   const xp = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
@@ -99,6 +105,9 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const hideNotification = () => setNotification(null);
+  
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   // --- Timers & Section Tracking ---
 
@@ -161,7 +170,10 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       unlockAchievement,
       notification,
       hideNotification,
-      currentSection
+      currentSection,
+      isModalOpen,
+      openModal,
+      closeModal
     }}>
       {children}
     </GamificationContext.Provider>
