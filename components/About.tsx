@@ -34,10 +34,10 @@ const PhilosophyGrid = () => {
       {principles.map((p, i) => (
         <motion.div 
           key={i} 
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          initial={{ opacity: 0, scale: 0.95 }} // Zoom-in start
+          whileInView={{ opacity: 1, scale: 1 }} // Zoom-in end
           viewport={{ once: true, margin: "-50px" }}
-          transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+          transition={{ duration: 0.6, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }} // Smooth ease
           className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 hover:border-slate-200 transition-colors hover:bg-slate-50/80 hover:shadow-sm"
         >
           <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-5 text-slate-900 border border-slate-100">

@@ -5,14 +5,7 @@ import { ArrowUpRight, ArrowRight, X, ChevronLeft, ChevronRight, Plus, Minus } f
 import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 import { useLenis } from './ScrollContext';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
-import Magnetic from './ui/Magnetic';
-
-// --- Utility Components ---
-
-const Separator = () => (
-  <div className="w-full h-px bg-slate-200/60 my-8" />
-);
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
 // --- Individual Project Component (The "Editorial" Row) ---
 
@@ -32,6 +25,7 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
   isExpanded 
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const detailsRef = useRef<HTMLDivElement>(null); // Referência para a seção de detalhes
   
   // Parallax Effect for the image
   const { scrollYProgress } = useScroll({
@@ -41,6 +35,18 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
   
   const y = useTransform(scrollYProgress, [0, 1], [-50, 50]);
   const scale = useTransform(scrollYProgress, [0, 0.5, 1], [1.05, 1, 1.05]);
+
+  // Efeito para rolar até os detalhes quando expandido
+  useEffect(() => {
+    if (isExpanded) {
+      const timer = setTimeout(() => {
+        if (detailsRef.current) {
+          detailsRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 400); // Delay para permitir que a animação de altura inicie/estabilize visualmente
+      return () => clearTimeout(timer);
+    }
+  }, [isExpanded]);
 
   return (
     <div ref={containerRef} className="group py-12 md:py-20 lg:py-32 border-b border-slate-200 last:border-0 relative">
@@ -125,6 +131,7 @@ const ProjectRow: React.FC<ProjectRowProps> = ({
             <AnimatePresence>
               {isExpanded && (
                 <motion.div
+                  ref={detailsRef} // Attach ref for scrollIntoView
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
@@ -176,7 +183,10 @@ const Projects: React.FC = () => {
   const lastScrollTime = useRef(0);
   
   // Refs for accessibility focus management
+  const modalRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const prevBtnRef = useRef<HTMLButtonElement>(null);
+  const nextBtnRef = useRef<HTMLButtonElement>(null);
   const lastFocusedElement = useRef<HTMLElement | null>(null);
 
   // --- Lightbox Logic (Optimized) ---
@@ -217,7 +227,6 @@ const Projects: React.FC = () => {
   // Focus trap logic: Focus the close button when lightbox opens
   useEffect(() => {
     if (lightboxProject) {
-      // Small delay to ensure the element is mounted in the DOM
       const timer = setTimeout(() => {
         closeBtnRef.current?.focus();
       }, 50);
@@ -225,35 +234,37 @@ const Projects: React.FC = () => {
     }
   }, [lightboxProject]);
 
-  // Keyboard & Wheel for Lightbox
+  // Keyboard Navigation & Focus Trap
   useEffect(() => {
+    if (!lightboxProject) return;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!lightboxProject) return;
-      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeLightbox();
+      }
       if (e.key === 'ArrowRight') nextImage();
       if (e.key === 'ArrowLeft') prevImage();
       
-      // Basic focus trap loop for Tab key
+      // Robust Focus Trap
       if (e.key === 'Tab') {
-         // This is a simplified focus trap. 
-         // In a production app, consider using a library like react-focus-lock
-         const focusableElements = document.getElementById('lightbox-modal')?.querySelectorAll('button');
-         if (focusableElements && focusableElements.length > 0) {
-            const firstElement = focusableElements[0] as HTMLElement;
-            const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+        const focusableElements = modalRef.current?.querySelectorAll('button');
+        if (!focusableElements || focusableElements.length === 0) return;
 
-            if (e.shiftKey) { /* shift + tab */
-               if (document.activeElement === firstElement) {
-                  e.preventDefault();
-                  lastElement.focus();
-               }
-            } else { /* tab */
-               if (document.activeElement === lastElement) {
-                  e.preventDefault();
-                  firstElement.focus();
-               }
-            }
-         }
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        if (e.shiftKey) { // Shift + Tab
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else { // Tab
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
       }
     };
     
@@ -268,7 +279,7 @@ const Projects: React.FC = () => {
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    if (lightboxProject) window.addEventListener('wheel', handleWheel);
+    window.addEventListener('wheel', handleWheel);
     
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
@@ -310,35 +321,32 @@ const Projects: React.FC = () => {
          ))}
       </div>
 
-      {/* Archive Section (Table Style) */}
+      {/* Archive Section (Updated to Cards) */}
       <div className="bg-slate-50 py-32 mt-20 border-t border-slate-200">
          <div className="container mx-auto px-6 md:px-12 xl:px-20">
             <Reveal>
-              <div className="mb-16 flex justify-between items-end">
-                <div>
-                   <h3 className="text-4xl font-serif font-medium text-slate-900 mb-4">Arquivo</h3>
-                   <p className="text-slate-500 font-light">Experimentos, ferramentas internas e conceitos.</p>
-                </div>
-                <ArrowRight className="text-slate-300 w-12 h-12" strokeWidth={1} />
+              <div className="mb-16 flex flex-col items-center text-center">
+                 <h3 className="text-4xl font-serif font-medium text-slate-900 mb-4">Arquivo</h3>
+                 <p className="text-slate-500 font-light max-w-lg">Experimentos, ferramentas internas e conceitos exploratórios.</p>
               </div>
             </Reveal>
 
             <div className="relative">
-               {/* Hover Preview Image */}
+               {/* Hover Preview Image (Now Straight) */}
                <motion.div 
-                 className="fixed pointer-events-none z-30 hidden lg:block overflow-hidden rounded-lg shadow-2xl"
+                 className="fixed pointer-events-none z-30 hidden lg:block overflow-hidden rounded-xl shadow-2xl border-4 border-white"
                  style={{ 
                     top: "50%", 
                     left: "50%", 
                     x: "-50%", 
                     y: "-50%",
-                    width: 400,
-                    height: 280,
+                    width: 320,
+                    height: 240,
                     opacity: hoveredArchiveId !== null ? 1 : 0,
                     scale: hoveredArchiveId !== null ? 1 : 0.8,
-                    rotate: hoveredArchiveId !== null ? -5 : 0,
+                    rotate: 0, // Straightened as requested
                  }}
-                 transition={{ duration: 0.4, type: "spring" }}
+                 transition={{ duration: 0.3, type: "spring", stiffness: 200, damping: 20 }}
                >
                   {hoveredArchiveId !== null && (
                     <img 
@@ -349,35 +357,24 @@ const Projects: React.FC = () => {
                   )}
                </motion.div>
 
-               {/* Table Header */}
-               <div className="hidden md:grid grid-cols-12 gap-4 pb-4 border-b border-slate-300 text-xs font-bold uppercase tracking-widest text-slate-400">
-                  <div className="col-span-1">Ano</div>
-                  <div className="col-span-5">Projeto</div>
-                  <div className="col-span-3">Categoria</div>
-                  <div className="col-span-3 text-right">Tech</div>
-               </div>
-
-               {/* Table Rows */}
-               <div className="divide-y divide-slate-200">
+               {/* Grid of Archive Cards */}
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   {ARCHIVE_PROJECTS.map((project, idx) => (
                     <div 
                       key={idx}
-                      className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 py-6 items-center cursor-pointer transition-colors hover:bg-white relative z-10"
+                      className="group p-8 rounded-3xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-500 cursor-pointer flex flex-col items-center text-center relative z-10"
                       onMouseEnter={() => setHoveredArchiveId(idx)}
                       onMouseLeave={() => setHoveredArchiveId(null)}
                     >
-                       <div className="hidden md:block col-span-1 text-xs font-mono text-slate-400">2023</div>
+                       <span className="text-[10px] font-mono text-slate-400 mb-4 px-2 py-1 bg-slate-50 rounded-full">2023</span>
                        
-                       {/* Mobile View Structure */}
-                       <div className="col-span-1 md:col-span-5 flex flex-col md:block">
-                           <span className="md:hidden text-[10px] text-slate-400 font-mono mb-1">2023</span>
-                           <span className="text-lg font-serif font-medium text-slate-900 group-hover:translate-x-0 md:group-hover:translate-x-2 transition-transform duration-300">
-                             {project.title}
-                           </span>
-                       </div>
+                       <h4 className="text-lg font-serif font-medium text-slate-900 mb-2 group-hover:text-slate-700 transition-colors">
+                         {project.title}
+                       </h4>
 
-                       <div className="col-span-1 md:col-span-3 text-xs uppercase tracking-wide text-slate-500">{project.category}</div>
-                       <div className="col-span-1 md:col-span-3 md:text-right text-xs font-mono text-slate-400 group-hover:text-slate-900 transition-colors">
+                       <p className="text-xs uppercase tracking-widest text-slate-500 mb-4">{project.category}</p>
+                       
+                       <div className="mt-auto text-[10px] font-bold text-slate-400 font-mono group-hover:text-slate-900 transition-colors">
                          {project.tech}
                        </div>
                     </div>
@@ -387,10 +384,11 @@ const Projects: React.FC = () => {
          </div>
       </div>
 
-      {/* --- Lightbox Modal (Refined for Accessibility) --- */}
+      {/* --- Lightbox Modal (Accessible) --- */}
       <AnimatePresence>
         {lightboxProject && (
           <motion.div 
+              ref={modalRef}
               id="lightbox-modal"
               role="dialog"
               aria-modal="true"
@@ -399,7 +397,7 @@ const Projects: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center" 
+              className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-md flex items-center justify-center outline-none" 
               onClick={closeLightbox}
           >
             {/* Top Bar */}
@@ -408,7 +406,7 @@ const Projects: React.FC = () => {
                  <h3 className="text-2xl font-serif mb-1">{lightboxProject.project.title}</h3>
                  <div className="flex gap-4 text-[10px] uppercase tracking-widest text-slate-400">
                     <span aria-live="polite">{lightboxProject.index + 1} / {lightboxProject.project.gallery.length}</span>
-                    <span className="hidden md:inline">Use Setas para Navegar</span>
+                    <span className="hidden md:inline">Use Setas ou Tab para Navegar</span>
                  </div>
               </div>
               <button 
@@ -434,7 +432,7 @@ const Projects: React.FC = () => {
                >
                   <img 
                     src={lightboxProject.project.gallery[lightboxProject.index]} 
-                    alt={`Imagem ${lightboxProject.index + 1} de ${lightboxProject.project.gallery.length} do projeto ${lightboxProject.project.title}`}
+                    alt={`Imagem ${lightboxProject.index + 1} de ${lightboxProject.project.gallery.length}`}
                     className="w-full h-full object-contain"
                   />
                </motion.div>
@@ -443,6 +441,7 @@ const Projects: React.FC = () => {
             {/* Navigation Arrows (Floating) */}
             <div className="absolute inset-x-4 md:inset-x-8 top-1/2 -translate-y-1/2 flex justify-between pointer-events-none">
                 <button 
+                  ref={prevBtnRef}
                   onClick={(e) => { e.stopPropagation(); prevImage(); }} 
                   className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all focus-visible:ring-2 focus-visible:ring-white rounded-full outline-none"
                   aria-label="Imagem anterior"
@@ -450,6 +449,7 @@ const Projects: React.FC = () => {
                    <ChevronLeft size={32} className="md:w-12 md:h-12" strokeWidth={1} />
                 </button>
                 <button 
+                  ref={nextBtnRef}
                   onClick={(e) => { e.stopPropagation(); nextImage(); }} 
                   className="pointer-events-auto p-2 md:p-4 text-white/50 hover:text-white hover:scale-110 transition-all focus-visible:ring-2 focus-visible:ring-white rounded-full outline-none"
                   aria-label="Próxima imagem"

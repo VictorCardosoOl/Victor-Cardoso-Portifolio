@@ -210,99 +210,81 @@ const Gamification: React.FC = () => {
 
   // Determine styles for notification based on rank type
   const getNotificationStyles = () => {
-     // Default / Generic Style
-     let styles = {
-         border: 'border-white/10',
-         iconBg: 'bg-white/10',
-         iconColor: 'text-white',
-         gradient: 'from-white/5',
-         titleColor: 'text-slate-200'
-     };
-
      const type = notification?.type || rank; // Fallback to current rank if type not sent
 
      switch(type) {
         case 'Ouro': 
-            styles = { 
-                border: 'border-yellow-500/30', 
+            return { 
                 iconBg: 'bg-yellow-500/20', 
                 iconColor: 'text-yellow-400', 
-                gradient: 'from-yellow-500/10',
-                titleColor: 'text-yellow-400'
+                textColor: 'text-yellow-100',
             };
-            break;
         case 'Prata': 
-            styles = { 
-                border: 'border-slate-300/30', 
+            return { 
                 iconBg: 'bg-slate-400/20', 
                 iconColor: 'text-slate-200', 
-                gradient: 'from-slate-400/10',
-                titleColor: 'text-slate-300'
+                textColor: 'text-slate-100',
             };
-            break;
         case 'Bronze': 
-            styles = { 
-                border: 'border-amber-700/30', 
+            return { 
                 iconBg: 'bg-amber-700/20', 
                 iconColor: 'text-amber-500', 
-                gradient: 'from-amber-700/10',
-                titleColor: 'text-amber-500'
+                textColor: 'text-amber-100',
             };
-            break;
+        default:
+             return { 
+                iconBg: 'bg-white/10', 
+                iconColor: 'text-white', 
+                textColor: 'text-white',
+            };
      }
-     return styles;
   };
   
   const notifStyles = getNotificationStyles();
 
   return (
     <>
-      {/* 2. Notification (Refined Glass Gold + Laurel Integrated) */}
+      {/* 2. Notification (Glass Gold Pill - Refined) */}
       <AnimatePresence>
         {notification && notification.visible && (
           <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.2 } }}
-            transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="fixed top-24 right-4 md:right-8 z-[120] pointer-events-none"
+            initial={{ x: "100%", opacity: 0 }} // Slide from right edge
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "100%", opacity: 0 }} // Slide out to right
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="fixed top-8 right-6 md:right-10 z-[120] pointer-events-none"
           >
-            <div className={`relative overflow-hidden rounded-2xl border ${notifStyles.border} bg-slate-950/90 backdrop-blur-xl p-4 pr-10 shadow-2xl shadow-black/40 min-w-[320px] flex items-center gap-4 group`}>
-               {/* Subtle Rank Gradient Background (Corner) */}
-               <div className={`absolute top-0 left-0 w-2/3 h-full bg-gradient-to-r ${notifStyles.gradient} to-transparent opacity-100 pointer-events-none`} />
+            <div className={`
+              bg-slate-950/80 backdrop-blur-md 
+              rounded-full border border-white/10 shadow-2xl 
+              flex items-center gap-3 px-5 py-2.5
+              bg-gradient-to-l from-yellow-500/10 via-transparent to-transparent
+              group hover:bg-slate-900/95 transition-all duration-300
+            `}>
                
-               {/* Icon Wrapper with Laurels */}
-               <div className="relative flex-shrink-0 z-10">
-                   <div className={`w-10 h-10 rounded-full ${notifStyles.iconBg} ring-1 ring-white/10 flex items-center justify-center relative overflow-hidden`}>
-                      {/* Rank Icon */}
-                      {notification.type === 'Ouro' ? <Sparkles size={16} className={notifStyles.iconColor} /> : 
-                       notification.type === 'Prata' ? <Star size={16} className={notifStyles.iconColor} /> : 
-                       <Medal size={16} className={notifStyles.iconColor} />}
-                   </div>
+               {/* Icon Circle with Glow */}
+               <div className={`w-8 h-8 rounded-full ${notifStyles.iconBg} ring-1 ring-white/10 flex items-center justify-center relative`}>
+                  <div className="absolute inset-0 rounded-full bg-white/20 animate-pulse opacity-50"></div>
+                  {notification.type === 'Ouro' ? <Sparkles size={14} className={notifStyles.iconColor} /> : 
+                   notification.type === 'Prata' ? <Star size={14} className={notifStyles.iconColor} /> : 
+                   <Medal size={14} className={notifStyles.iconColor} />}
                </div>
 
-               {/* Content */}
-               <div className="relative z-10 flex-grow">
-                 <div className="flex items-center gap-2 mb-0.5">
-                    <span className={`text-[9px] font-bold uppercase tracking-widest ${notifStyles.titleColor}`}>
-                       {notification.type || 'Conquista'} • Nível {level}
-                    </span>
-                 </div>
-                 <p className="font-serif text-sm font-medium text-white leading-tight tracking-wide drop-shadow-sm">
+               {/* Content - Compact Layout */}
+               <div className="flex flex-col pr-2">
+                 <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 leading-none mb-1">
+                   {notification.type || 'Conquista'}
+                 </span>
+                 <p className={`font-serif text-sm font-medium leading-none ${notifStyles.textColor}`}>
                    {notification.message}
                  </p>
-               </div>
-
-               {/* Discrete Close / Decoration Icon */}
-               <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-50 transition-opacity">
-                   <div className="w-1.5 h-1.5 rounded-full bg-white/20"></div>
                </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 3. Modal (Sidebar + Content Layout) */}
+      {/* 3. Modal (Sidebar + Content Layout - Refined) */}
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
@@ -317,13 +299,13 @@ const Gamification: React.FC = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
-              className="relative bg-white w-full max-w-4xl rounded-[2rem] shadow-2xl overflow-hidden ring-1 ring-slate-900/5 grid grid-cols-1 md:grid-cols-12 max-h-[85vh]"
+              className="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-slate-900/5 grid grid-cols-1 md:grid-cols-12 max-h-[85vh]"
               onClick={(e) => e.stopPropagation()}
             >
                {/* Close Button */}
                <button 
                   onClick={closeModal} 
-                  className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/50 hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors backdrop-blur-sm"
+                  className="absolute top-6 right-6 z-20 p-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 transition-colors"
                >
                   <X size={20} />
                </button>
@@ -332,13 +314,13 @@ const Gamification: React.FC = () => {
                <div className="md:col-span-4 bg-slate-50 border-r border-slate-100 p-8 flex flex-col relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-64 bg-gradient-to-b from-slate-200/40 to-transparent pointer-events-none" />
                   
-                  <div className="relative z-10 flex flex-col items-center text-center mb-8 mt-4">
+                  <div className="relative z-10 flex flex-col items-center text-center mb-8 mt-6">
                      {/* Big Laurels */}
-                     <div className="w-32 h-32 mb-4 relative">
-                        <Laurels rank={rank} className="absolute inset-0 scale-110" />
+                     <div className="w-32 h-32 mb-6 relative">
+                        <Laurels rank={rank} className="absolute inset-0 scale-125" />
                         <div className="absolute inset-0 flex items-center justify-center flex-col">
                            <span className="text-5xl font-serif font-bold text-slate-900 leading-none">{level}</span>
-                           <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mt-1">Nível</span>
+                           <span className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mt-2">Nível</span>
                         </div>
                      </div>
                      
@@ -348,22 +330,22 @@ const Gamification: React.FC = () => {
                         </h2>
                      </div>
                      
-                     <p className="text-xs text-slate-500 font-light leading-relaxed max-w-[200px]">
+                     <p className="text-xs text-slate-500 font-light leading-relaxed max-w-[180px]">
                         {rank === 'Ouro' ? 'Exploração de elite. Você não deixa nenhum detalhe passar.' : rank === 'Prata' ? 'Curiosidade em alta. Você está mergulhando fundo.' : 'Iniciando a descoberta.'}
                      </p>
                   </div>
 
                   <div className="grid grid-cols-1 gap-3 mt-auto w-full">
-                     <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center justify-between">
+                     <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Clock size={14} className="text-slate-400" />
+                            <Clock size={16} className="text-slate-400" />
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tempo</span>
                         </div>
                         <span className="font-serif font-medium text-slate-900">{Math.floor(Number(totalTime) / 60)}m {Number(totalTime) % 60}s</span>
                      </div>
-                     <div className="bg-white p-3 rounded-xl border border-slate-100 shadow-sm flex items-center justify-between">
+                     <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Trophy size={14} className="text-slate-400" />
+                            <Trophy size={16} className="text-slate-400" />
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">XP</span>
                         </div>
                         <span className="font-serif font-medium text-slate-900">{xp}</span>
@@ -372,51 +354,53 @@ const Gamification: React.FC = () => {
                </div>
 
                {/* --- Right Column: Quests & Analytics (8 Cols) --- */}
-               <div className="md:col-span-8 p-8 md:p-10 overflow-y-auto custom-scrollbar bg-white">
+               <div className="md:col-span-8 p-8 md:p-12 overflow-y-auto custom-scrollbar bg-white">
                   
                   {/* Progress Header */}
-                  <div className="mb-8">
-                     <div className="flex justify-between items-end mb-3">
+                  <div className="mb-10">
+                     <div className="flex justify-between items-end mb-4">
                         <h3 className="text-xs font-bold uppercase tracking-widest text-slate-900 flex items-center gap-2">
-                           <Target size={14} className="text-slate-400" /> Progresso da Sessão
+                           <Target size={16} className="text-slate-400" /> Progresso da Sessão
                         </h3>
-                        <span className="text-xs font-mono font-bold text-slate-500">{progressPercent}%</span>
+                        <span className="text-lg font-serif font-bold text-slate-900">{progressPercent}%</span>
                      </div>
-                     <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                     <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                         <motion.div 
                            initial={{ width: 0 }}
                            animate={{ width: `${progressPercent}%` }}
                            transition={{ duration: 1, ease: "easeOut" }}
-                           className={`h-full rounded-full ${rank === 'Ouro' ? 'bg-yellow-500' : 'bg-slate-800'}`}
+                           className={`h-full rounded-full ${rank === 'Ouro' ? 'bg-gradient-to-r from-yellow-500 to-yellow-300' : 'bg-slate-800'}`}
                         />
                      </div>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                      {/* Quests Section */}
                      <div>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-100 pb-2">Lista de Conquistas</h4>
-                        <div className="space-y-2">
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">Lista de Conquistas</h4>
+                        <div className="space-y-3">
                            {quests.map((quest) => (
                               <div 
                                  key={quest.id} 
-                                 className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-300 ${
+                                 className={`flex items-center gap-4 p-3.5 rounded-xl border transition-all duration-300 group ${
                                     quest.completed 
-                                    ? 'bg-slate-50 border-slate-200 opacity-100' 
-                                    : 'bg-white border-dashed border-slate-200 opacity-60 hover:opacity-100'
+                                    ? 'bg-slate-50 border-slate-200' 
+                                    : 'bg-white border-dashed border-slate-200 hover:border-slate-300'
                                  }`}
                               >
-                                 <div className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-[10px] ${
-                                    quest.completed ? 'bg-slate-900 text-white shadow-sm' : 'bg-slate-100 text-slate-400'
+                                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                                    quest.completed 
+                                    ? 'bg-slate-900 text-white shadow-md scale-100' 
+                                    : 'bg-slate-50 text-slate-300 scale-90'
                                  }`}>
-                                    {quest.completed ? <CheckCircle2 size={12} /> : <Lock size={12} />}
+                                    {quest.completed ? <CheckCircle2 size={14} /> : <Lock size={14} />}
                                  </div>
                                  <div className="flex-grow min-w-0">
-                                    <p className={`text-xs font-medium truncate ${quest.completed ? 'text-slate-900' : 'text-slate-500'}`}>
+                                    <p className={`text-sm font-medium truncate transition-colors ${quest.completed ? 'text-slate-900' : 'text-slate-400'}`}>
                                        {quest.label}
                                     </p>
                                  </div>
-                                 <span className="text-[9px] font-mono font-bold text-slate-400">+{quest.xp}</span>
+                                 <span className={`text-[10px] font-mono font-bold ${quest.completed ? 'text-slate-900' : 'text-slate-300'}`}>+{quest.xp}</span>
                               </div>
                            ))}
                         </div>
@@ -424,8 +408,8 @@ const Gamification: React.FC = () => {
 
                      {/* Analytics Section */}
                      <div>
-                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 border-b border-slate-100 pb-2">Seções Mais Visitadas</h4>
-                        <div className="space-y-4 pt-1">
+                        <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">Interesse por Seção</h4>
+                        <div className="space-y-5">
                            {Object.entries(sectionTimes)
                               .sort(([,a], [,b]) => (b as number) - (a as number))
                               .slice(0, 5)
@@ -439,8 +423,9 @@ const Gamification: React.FC = () => {
                               ))
                            }
                            {Object.keys(sectionTimes).length === 0 && (
-                              <div className="py-8 text-center text-slate-400 text-xs italic bg-slate-50 rounded-lg border border-dashed border-slate-200">
-                                 Navegue para gerar dados...
+                              <div className="py-10 text-center flex flex-col items-center justify-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                                 <Clock size={24} className="text-slate-300 mb-2" />
+                                 <p className="text-slate-400 text-xs italic">Navegue para gerar dados...</p>
                               </div>
                            )}
                         </div>
