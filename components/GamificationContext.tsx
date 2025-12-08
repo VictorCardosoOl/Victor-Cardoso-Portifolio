@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // --- Types ---
 
@@ -13,9 +13,8 @@ export interface Quest {
   link?: string;
 }
 
-interface SectionTime {
-  [key: string]: number; // sectionId: seconds
-}
+// Explicitly define as Record<string, number> to avoid TS arithmetic errors
+export type SectionTime = Record<string, number>;
 
 interface GamificationContextType {
   xp: number;
@@ -25,8 +24,8 @@ interface GamificationContextType {
   sectionTimes: SectionTime;
   quests: Quest[];
   completeQuest: (id: string) => void;
-  unlockAchievement: (label: string) => void; // For manual notifications
-  notification: { message: string; visible: boolean } | null;
+  unlockAchievement: (label: string) => void; 
+  notification: { message: string; visible: boolean; type?: Rank } | null;
   hideNotification: () => void;
   currentSection: string;
   // Modal Control
@@ -55,21 +54,21 @@ const INITIAL_QUESTS: Quest[] = [
 ];
 
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // State (No LocalStorage persistence, resets on reload as requested)
+  // State: Pure React State resets on reload (Session Only)
   const [quests, setQuests] = useState<Quest[]>(INITIAL_QUESTS);
   const [totalTime, setTotalTime] = useState(0);
   const [sectionTimes, setSectionTimes] = useState<SectionTime>({});
   const [currentSection, setCurrentSection] = useState('hero');
-  const [notification, setNotification] = useState<{ message: string; visible: boolean } | null>(null);
+  const [notification, setNotification] = useState<{ message: string; visible: boolean; type?: Rank } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Derived State
   const xp = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
   
-  // Level Calculation (Simple linear progression)
+  // Level Calculation: Simple linear progression
   const level = Math.floor(xp / 25) + 1;
 
-  // Rank Calculation
+  // Rank Calculation based on Level
   const getRank = (lvl: number): Rank => {
     if (lvl >= 5) return 'Ouro';
     if (lvl >= 3) return 'Prata';
@@ -87,21 +86,27 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const newQuests = [...prev];
       newQuests[idx] = { ...newQuests[idx], completed: true };
       
-      triggerNotification(`Conquista: ${newQuests[idx].label}`);
+      // Calculate potential new rank for notification style
+      const newXp = newQuests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
+      const newLevel = Math.floor(newXp / 25) + 1;
+      const newRank = getRank(newLevel);
+
+      triggerNotification(`Conquista: ${newQuests[idx].label}`, newRank);
       return newQuests;
     });
   };
 
   const unlockAchievement = (message: string) => {
-    triggerNotification(message);
+    triggerNotification(message, rank);
   };
 
-  const triggerNotification = (message: string) => {
-    setNotification({ message, visible: true });
-    // Auto hide handled by the UI component or a timeout here if we wanted strictly logic
+  const triggerNotification = (message: string, rankType: Rank) => {
+    setNotification({ message, visible: true, type: rankType });
+    
+    // Auto hide
     setTimeout(() => {
         setNotification(prev => (prev?.message === message ? null : prev));
-    }, 4000);
+    }, 4500);
   };
 
   const hideNotification = () => setNotification(null);
@@ -147,7 +152,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           }
         });
       },
-      { threshold: 0.3 } // Trigger when 30% visible
+      { threshold: 0.3 } 
     );
 
     sections.forEach(id => {

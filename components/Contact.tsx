@@ -5,7 +5,7 @@ import { ArrowUpRight, Send, Check, AlertCircle, Mail, Phone } from 'lucide-reac
 import Button from './ui/Button';
 import { Reveal } from './ui/Reveal';
 import Magnetic from './ui/Magnetic';
-import { useGamification } from './GamificationContext'; // Import Context
+import { useGamification } from './GamificationContext';
 
 const Contact: React.FC = () => {
   const [formState, setFormState] = useState({ name: '', email: '', company: '', message: '' });
@@ -33,7 +33,7 @@ const Contact: React.FC = () => {
       const domainRegex = /^[^\s@]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       
       if (!emailRegex.test(formState.email)) {
-        newErrors.email = 'Formato de email inválido (ex: nome@empresa.com)';
+        newErrors.email = 'Formato de email inválido';
         isValid = false;
       } else if (!domainRegex.test(formState.email)) {
         newErrors.email = 'Domínio de email inválido';
@@ -61,21 +61,26 @@ const Contact: React.FC = () => {
     
     try {
       // --- PREPARE LEAD SCORE DATA ---
-      const gamificationData = {
+      // Fix: Ensure sectionTimes entries are treated as [string, number]
+      const sortedSections = Object.entries(sectionTimes).sort(([, a], [, b]) => (b as number) - (a as number));
+      const mostViewed = sortedSections[0] ? sortedSections[0][0] : 'N/A';
+
+      const gamificationPayload = {
         rank: rank,
         level: level,
-        sessionDuration: `${Math.floor(Number(totalTime) / 60)}m ${Number(totalTime) % 60}s`,
-        mostViewedSection: Object.entries(sectionTimes).sort(([,a], [,b]) => (b as number) - (a as number))[0]?.[0] || 'none',
+        sessionDurationSeconds: totalTime,
+        formattedDuration: `${Math.floor(Number(totalTime) / 60)}m ${Number(totalTime) % 60}s`,
+        mostViewedSection: mostViewed,
         sectionBreakdown: sectionTimes,
         completedQuests: quests.filter(q => q.completed).map(q => q.label)
       };
 
-      console.log("--- ENVIANDO FORMULÁRIO COM LEAD SCORE ---");
-      console.log("Dados do Usuário:", formState);
-      console.log("Relatório de Gamificação (Invisível ao user):", gamificationData);
+      console.log("--- SUBMITTING FORM WITH GAMIFICATION DATA ---");
+      console.log("User Data:", formState);
+      console.log("Lead Score (Gamification):", gamificationPayload);
       
-      // Simulate API call with attached data
-      // await api.post('/contact', { ...formState, ...gamificationData });
+      // Simulate API call
+      // await api.post('/contact', { ...formState, ...gamificationPayload });
       
       await new Promise(resolve => setTimeout(resolve, 2000));
       setStatus('success');
@@ -126,13 +131,11 @@ const Contact: React.FC = () => {
             placeholder={placeholder}
             disabled={status === 'loading'}
           />
-          {/* Animated Bottom Line (Focus) */}
           <div 
             className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${
               focusedField === id && !hasError ? 'w-full' : 'w-0'
             }`}
           />
-          {/* Animated Bottom Line (Error) */}
           <div 
             className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${
               hasError ? 'w-full' : 'w-0'
@@ -150,14 +153,12 @@ const Contact: React.FC = () => {
 
   return (
     <section id="contact" className="min-h-screen flex items-center py-20 bg-slate-50 relative overflow-hidden">
-      
-      {/* Abstract Background Element */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-white/40 skew-x-12 translate-x-32 z-0 hidden lg:block" />
 
       <div className="container relative z-10 mx-auto px-6 md:px-12 xl:px-20 h-full flex flex-col justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           
-          {/* Left Column: Info & Typography */}
+          {/* Left Column */}
           <div className="lg:col-span-6 flex flex-col justify-center h-full">
             <Reveal width="100%">
               <h2 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-slate-900 tracking-tight leading-[0.9] mb-8">
@@ -186,7 +187,6 @@ const Contact: React.FC = () => {
               </Reveal>
               
               <Reveal delay={200}>
-                {/* Updated Addresses Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-t border-slate-200 border-b border-slate-200">
                   <div>
                     <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">O Estúdio</span>
@@ -196,7 +196,6 @@ const Contact: React.FC = () => {
                       Brasil
                     </p>
                   </div>
-                  
                   <div>
                     <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Escritório</span>
                     <h4 className="text-base font-serif font-bold text-slate-900 mb-1">Escritório do Tatuapé</h4>
@@ -225,11 +224,10 @@ const Contact: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Compact Form */}
+          {/* Right Column: Form */}
           <div className="lg:col-span-6">
             <Reveal delay={200} width="100%">
               <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-2xl shadow-slate-200/50 relative overflow-hidden">
-                 {/* Success/Error Overlay */}
                  {status === 'success' && (
                     <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center text-center animate-in fade-in duration-500">
                        <div className="w-16 h-16 bg-green-50 text-green-700 rounded-full flex items-center justify-center mb-4">
@@ -243,29 +241,11 @@ const Contact: React.FC = () => {
 
                  <form onSubmit={handleSubmit} noValidate className="space-y-8 relative z-10">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                       <InputGroup 
-                          id="name" 
-                          label="Nome" 
-                          placeholder="Seu nome" 
-                          value={formState.name}
-                          required
-                       />
-                       <InputGroup 
-                          id="email" 
-                          label="Email" 
-                          type="email" 
-                          placeholder="email@exemplo.com" 
-                          value={formState.email}
-                          required
-                       />
+                       <InputGroup id="name" label="Nome" placeholder="Seu nome" value={formState.name} required />
+                       <InputGroup id="email" label="Email" type="email" placeholder="email@exemplo.com" value={formState.email} required />
                     </div>
 
-                    <InputGroup 
-                        id="company" 
-                        label="Empresa (Opcional)" 
-                        placeholder="Nome da organização" 
-                        value={formState.company}
-                    />
+                    <InputGroup id="company" label="Empresa (Opcional)" placeholder="Nome da organização" value={formState.company} />
 
                     <div className="relative group pb-4">
                       <label 
@@ -283,36 +263,18 @@ const Contact: React.FC = () => {
                           value={formState.message}
                           onChange={(e) => {
                              setFormState({...formState, message: e.target.value});
-                             if (errors.message) {
-                                setErrors(prev => {
-                                  const newErrs = {...prev};
-                                  delete newErrs.message;
-                                  return newErrs;
-                                });
-                             }
+                             if (errors.message) setErrors(prev => { const n = {...prev}; delete n.message; return n; });
                           }}
                           onFocus={() => setFocusedField('message')}
                           onBlur={() => setFocusedField(null)}
                           className={`w-full bg-transparent border-b py-3 px-2 text-base text-slate-900 placeholder-slate-300 focus:outline-none transition-all duration-300 resize-none rounded-t-md ${
-                             errors.message 
-                               ? 'border-red-400 bg-red-50/50' 
-                               : 'border-slate-200 hover:bg-slate-50'
+                             errors.message ? 'border-red-400 bg-red-50/50' : 'border-slate-200 hover:bg-slate-50'
                           }`}
                           placeholder="Como posso ajudar?"
                           disabled={status === 'loading'}
                         />
-                         {/* Animated Bottom Line (Focus) */}
-                        <div 
-                          className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${
-                             focusedField === 'message' && !errors.message ? 'w-full' : 'w-0'
-                          }`}
-                        />
-                        {/* Animated Bottom Line (Error) */}
-                        <div 
-                          className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${
-                             errors.message ? 'w-full' : 'w-0'
-                          }`}
-                        />
+                        <div className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${focusedField === 'message' && !errors.message ? 'w-full' : 'w-0'}`} />
+                        <div className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${errors.message ? 'w-full' : 'w-0'}`} />
                       </div>
                       {errors.message && (
                         <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
