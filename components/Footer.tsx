@@ -2,6 +2,7 @@
 import React from 'react';
 import { CONTACT_INFO, NAV_LINKS } from '../constants';
 import { ArrowUpRight } from 'lucide-react';
+import Magnetic from './ui/Magnetic';
 
 const Footer: React.FC = () => {
   return (
@@ -24,13 +25,14 @@ const Footer: React.FC = () => {
              </p>
              <div className="flex gap-4">
                {CONTACT_INFO.socials.map((social, idx) => (
-                 <a 
-                   key={idx} 
-                   href={social.url} 
-                   className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300"
-                 >
-                   <ArrowUpRight size={16} />
-                 </a>
+                 <Magnetic key={idx} strength={0.3}>
+                    <a 
+                      href={social.url} 
+                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300"
+                    >
+                      <ArrowUpRight size={16} />
+                    </a>
+                 </Magnetic>
                ))}
              </div>
           </div>

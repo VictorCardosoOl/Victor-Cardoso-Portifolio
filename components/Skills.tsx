@@ -2,6 +2,7 @@
 import React from 'react';
 import { SKILLS } from '../constants';
 import { Reveal } from './ui/Reveal';
+import Tilt from './ui/Tilt';
 import { CheckCircle2 } from 'lucide-react';
 
 const Skills: React.FC = () => {
@@ -11,30 +12,34 @@ const Skills: React.FC = () => {
         
         {/* Header Section */}
         <div className="text-center mb-20 max-w-2xl mx-auto">
-          <Reveal width="100%">
+          <Reveal width="100%" variant="blur">
             <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Expertise</span>
+          </Reveal>
+          <Reveal width="100%" variant="translate">
             <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6 text-slate-900 tracking-tight">
               Como posso agregar valor?
             </h2>
+          </Reveal>
+          <Reveal width="100%" variant="translate" delay={100}>
             <p className="text-slate-600 leading-relaxed font-light text-lg">
               Uma abordagem T-Shaped: profundo conhecimento em engenharia de software com ampla capacidade em design e produto.
             </p>
           </Reveal>
         </div>
 
-        {/* Uniform Grid Layout - Cleaner and more professional */}
+        {/* Uniform Grid Layout with Tilt and Scale Reveal */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
           {SKILLS.map((skill, index) => {
             const Icon = skill.icon;
             
             return (
-              <div key={index} className="h-full">
-                <Reveal delay={index * 150} width="100%">
+              <Reveal key={index} delay={index * 150} width="100%" variant="scale">
+                <Tilt strength={10} className="h-full">
                   <div 
-                    className="h-full glass-card p-8 md:p-10 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 hover:-translate-y-2 flex flex-col bg-white/40 shadow-sm hover:shadow-xl"
+                    className="h-full glass-card p-8 md:p-10 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 flex flex-col bg-white/40 shadow-sm hover:shadow-2xl"
                   >
                     {/* Header */}
-                    <div className="mb-6">
+                    <div className="mb-6 transform transition-transform duration-500 hover:translate-z-10" style={{ transformStyle: 'preserve-3d' }}>
                       <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-slate-100">
                         <Icon size={24} strokeWidth={1.5} />
                       </div>
@@ -60,8 +65,8 @@ const Skills: React.FC = () => {
                       </ul>
                     </div>
                   </div>
-                </Reveal>
-              </div>
+                </Tilt>
+              </Reveal>
             );
           })}
         </div>

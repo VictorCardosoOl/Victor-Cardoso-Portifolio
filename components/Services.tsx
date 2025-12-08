@@ -3,6 +3,7 @@ import React from 'react';
 import { SERVICES, PROCESS_STEPS } from '../constants';
 import { ArrowRight } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
+import Tilt from './ui/Tilt';
 
 const Services: React.FC = () => {
   return (
@@ -15,7 +16,7 @@ const Services: React.FC = () => {
         
         {/* Services Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-20">
-          <Reveal>
+          <Reveal variant="translate">
             <div>
               <div className="inline-block px-3 py-1 bg-white/5 rounded-full mb-4 border border-white/10 backdrop-blur-sm">
                 <span className="text-[10px] font-bold tracking-widest text-slate-300 uppercase block">
@@ -28,36 +29,38 @@ const Services: React.FC = () => {
             </div>
           </Reveal>
           
-          <Reveal delay={200}>
+          <Reveal delay={200} variant="blur">
             <p className="mt-6 md:mt-0 max-w-md text-slate-400 text-sm md:text-base leading-relaxed font-light">
                 Do design à implementação. Foco em resolver problemas reais do seu negócio com tecnologia de ponta.
             </p>
           </Reveal>
         </div>
 
-        {/* Services Grid */}
+        {/* Services Grid with Tactile Tilt */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-32">
           {SERVICES.map((service, index) => {
             const Icon = service.icon;
             return (
-              <Reveal key={index} delay={index * 150} width="100%">
-                  {/* Adjusted contrast: Darker bg (slate-950/80) and lighter text (slate-300) */}
-                  <div className="h-full bg-slate-950/80 backdrop-blur-md p-8 rounded-[2rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group hover:-translate-y-2 shadow-xl">
-                     <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-white transition-colors">
-                        <Icon size={24} strokeWidth={1.5} />
-                     </div>
-                     <h3 className="text-xl font-serif font-medium mb-4 text-slate-100">{service.title}</h3>
-                     <p className="text-slate-300 text-sm leading-relaxed mb-6 font-light">
-                       {service.description}
-                     </p>
-                     <div className="flex flex-wrap gap-2 mt-auto">
-                        {service.tags.map((tag, i) => (
-                          <span key={i} className="text-[10px] uppercase tracking-wider px-3 py-1 bg-black/60 border border-white/5 text-slate-400 rounded-full">
-                             {tag}
-                          </span>
-                        ))}
-                     </div>
-                  </div>
+              <Reveal key={index} delay={index * 150} width="100%" variant="scale">
+                  <Tilt strength={8} className="h-full">
+                    {/* Adjusted contrast: Darker bg (slate-950/80) and lighter text (slate-300) */}
+                    <div className="h-full bg-slate-950/80 backdrop-blur-md p-8 rounded-[2rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group shadow-xl">
+                       <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-white transition-colors border border-white/5 shadow-inner">
+                          <Icon size={24} strokeWidth={1.5} />
+                       </div>
+                       <h3 className="text-xl font-serif font-medium mb-4 text-slate-100">{service.title}</h3>
+                       <p className="text-slate-300 text-sm leading-relaxed mb-6 font-light">
+                         {service.description}
+                       </p>
+                       <div className="flex flex-wrap gap-2 mt-auto">
+                          {service.tags.map((tag, i) => (
+                            <span key={i} className="text-[10px] uppercase tracking-wider px-3 py-1 bg-black/60 border border-white/5 text-slate-400 rounded-full">
+                               {tag}
+                            </span>
+                          ))}
+                       </div>
+                    </div>
+                  </Tilt>
               </Reveal>
             );
           })}
@@ -76,7 +79,7 @@ const Services: React.FC = () => {
               {PROCESS_STEPS.map((step, idx) => {
                  const Icon = step.icon;
                  return (
-                   <Reveal key={idx} delay={idx * 100} width="100%">
+                   <Reveal key={idx} delay={idx * 100} width="100%" variant="translate">
                       <div className="relative pl-8 border-l border-white/10 h-full">
                          <span className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-slate-950 border border-slate-700 flex items-center justify-center text-[8px] text-white font-bold">
                            {idx + 1}
@@ -95,7 +98,7 @@ const Services: React.FC = () => {
            </div>
 
            <div className="mt-20 text-center">
-              <Reveal delay={400}>
+              <Reveal delay={400} variant="scale">
                  <a href="#contact" className="inline-flex items-center gap-2 text-white font-bold uppercase tracking-widest border-b border-white pb-1 hover:text-slate-300 hover:border-slate-300 transition-colors">
                     Começar meu projeto <ArrowRight size={16} />
                  </a>

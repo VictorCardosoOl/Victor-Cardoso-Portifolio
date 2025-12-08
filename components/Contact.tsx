@@ -160,14 +160,14 @@ const Contact: React.FC = () => {
           
           {/* Left Column */}
           <div className="lg:col-span-6 flex flex-col justify-center h-full">
-            <Reveal width="100%">
+            <Reveal width="100%" variant="translate">
               <h2 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-slate-900 tracking-tight leading-[0.9] mb-8">
                 Vamos criar <br /> <span className="text-slate-400 italic">algo único.</span>
               </h2>
             </Reveal>
 
             <div className="space-y-8">
-              <Reveal delay={100}>
+              <Reveal delay={100} variant="blur">
                 <div className="flex flex-col md:flex-row gap-8">
                   <div className="group">
                      <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
@@ -186,7 +186,7 @@ const Contact: React.FC = () => {
                 </div>
               </Reveal>
               
-              <Reveal delay={200}>
+              <Reveal delay={200} variant="translate">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-t border-slate-200 border-b border-slate-200">
                   <div>
                     <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">O Estúdio</span>
@@ -207,17 +207,18 @@ const Contact: React.FC = () => {
                 </div>
               </Reveal>
 
-              <Reveal delay={300}>
+              <Reveal delay={300} variant="translate">
                  <div className="flex gap-6 pt-2">
                     {CONTACT_INFO.socials.map((social, idx) => (
-                      <a 
-                        key={idx} 
-                        href={social.url}
-                        className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 group"
-                      >
-                        {social.name}
-                        <ArrowUpRight size={12} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                      </a>
+                      <Magnetic key={idx} strength={0.2}>
+                        <a 
+                          href={social.url}
+                          className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 group"
+                        >
+                          {social.name}
+                          <ArrowUpRight size={12} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
+                        </a>
+                      </Magnetic>
                     ))}
                  </div>
               </Reveal>
@@ -226,8 +227,8 @@ const Contact: React.FC = () => {
 
           {/* Right Column: Form */}
           <div className="lg:col-span-6">
-            <Reveal delay={200} width="100%">
-              <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-2xl shadow-slate-200/50 relative overflow-hidden">
+            <Reveal delay={200} width="100%" variant="scale">
+              <div className="glass-panel p-8 md:p-10 rounded-[2rem] relative overflow-hidden">
                  {status === 'success' && (
                     <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center text-center animate-in fade-in duration-500">
                        <div className="w-16 h-16 bg-green-50 text-green-700 rounded-full flex items-center justify-center mb-4">
