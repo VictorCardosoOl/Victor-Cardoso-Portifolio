@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
         });
       },
       {
-        rootMargin: "-45% 0px -45% 0px" // Only trigger when element is in the vertical center 10% of the screen
+        rootMargin: "-30% 0px -30% 0px" // Expanded detection range per audit
       }
     );
 
@@ -83,8 +83,8 @@ const Navbar: React.FC = () => {
                   <a
                     href={link.href}
                     className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 ${isActive
-                        ? 'text-slate-900 font-bold'
-                        : 'text-slate-500 hover:text-slate-800'
+                      ? 'text-slate-900 font-bold'
+                      : 'text-slate-500 hover:text-slate-800'
                       }`}
                   >
                     {link.name}

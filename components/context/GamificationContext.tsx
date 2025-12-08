@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 export type AchievementId = 'EXPLORER' | 'VISIONARY' | 'CONNECTOR' | 'ARCHITECT';
 
@@ -57,31 +57,39 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const level = calculateLevel(xp);
     const nextLevelXp = (level) * 500;
 
-    const unlockAchievement = (id: AchievementId) => {
-        if (unlockedAchievements.includes(id)) return;
+    const unlockAchievement = useCallback((id: AchievementId) => {
+        setUnlockedAchievements((prev) => {
+            if (prev.includes(id)) return prev; // No change if already unlocked
 
-        const achievement = ACHIEVEMENTS[id];
-        setUnlockedAchievements((prev) => [...prev, id]);
-        setXp((prev) => prev + achievement.xpReward);
-        setRecentAchievement(achievement);
+            // Calculate new state only if redundant
+            const achievement = ACHIEVEMENTS[id];
 
-        // Play subtle sound if desired (omitted for now)
-    };
+            // We must update XP and recentAchievement as side effects, but inside the callback is simpler
+            // Using functional updates to be safe
+            setXp((currXp) => currXp + achievement.xpReward);
+            setRecentAchievement(achievement);
 
-    const clearNotification = () => {
+            return [...prev, id];
+        });
+    }, []);
+
+    const clearNotification = useCallback(() => {
         setRecentAchievement(null);
-    };
+    }, []);
+
+    // Use Memo for the value to prevent consumer re-renders
+    const contextValue = useMemo(() => ({
+        xp,
+        level,
+        unlockedAchievements,
+        recentAchievement,
+        unlockAchievement,
+        clearNotification,
+        nextLevelXp
+    }), [xp, level, unlockedAchievements, recentAchievement, unlockAchievement, clearNotification, nextLevelXp]);
 
     return (
-        <GamificationContext.Provider value={{
-            xp,
-            level,
-            unlockedAchievements,
-            recentAchievement,
-            unlockAchievement,
-            clearNotification,
-            nextLevelXp
-        }}>
+        <GamificationContext.Provider value={contextValue}>
             {children}
         </GamificationContext.Provider>
     );
