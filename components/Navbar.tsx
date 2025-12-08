@@ -53,7 +53,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Reading Progress Bar - Ajuste visual com Track Glass */}
+      {/* Reading Progress Bar - Visível acima da Navbar com Track Glass */}
       <div className="fixed top-0 left-0 w-full h-[3px] bg-white/50 backdrop-blur-sm z-[100] pointer-events-none">
         <div 
           className="h-full bg-slate-900 transition-all duration-100 ease-out shadow-[0_0_10px_rgba(15,23,42,0.3)]"
