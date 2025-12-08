@@ -1,8 +1,8 @@
-
 import React from 'react';
 import { SKILLS } from '../constants';
 import { Reveal } from './ui/Reveal';
 import { CheckCircle2 } from 'lucide-react';
+import Magnetic from './ui/Magnetic';
 
 const Skills: React.FC = () => {
   return (
@@ -10,10 +10,10 @@ const Skills: React.FC = () => {
       <div className="container mx-auto px-6 md:px-12 xl:px-20">
         
         {/* Header Section */}
-        <div className="text-center mb-20 max-w-2xl mx-auto">
+        <div className="text-center mb-24 max-w-2xl mx-auto">
           <Reveal width="100%">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Expertise</span>
-            <h2 className="text-4xl md:text-5xl font-serif font-medium mb-6 text-slate-900 tracking-tight">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4 block">Expertise</span>
+            <h2 className="text-4xl md:text-6xl font-serif font-medium mb-6 text-slate-900 tracking-tight">
               Como posso agregar valor?
             </h2>
             <p className="text-slate-600 leading-relaxed font-light text-lg">
@@ -30,36 +30,38 @@ const Skills: React.FC = () => {
             return (
               <div key={index} className="h-full">
                 <Reveal delay={index * 150} width="100%">
-                  <div 
-                    className="h-full glass-card p-8 md:p-10 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 hover:-translate-y-2 flex flex-col bg-white/40 shadow-sm hover:shadow-xl"
-                  >
-                    {/* Header */}
-                    <div className="mb-6">
-                      <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-slate-100">
-                        <Icon size={24} strokeWidth={1.5} />
+                  <Magnetic strength={0.05}>
+                    <div 
+                      className="h-full glass-card p-8 md:p-12 rounded-[3rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 hover:-translate-y-2 flex flex-col bg-white/40 shadow-sm hover:shadow-2xl"
+                    >
+                      {/* Header */}
+                      <div className="mb-8">
+                        <div className="w-16 h-16 bg-white text-slate-900 rounded-3xl flex items-center justify-center shadow-sm mb-8 border border-slate-100">
+                          <Icon size={28} strokeWidth={1.5} />
+                        </div>
+                        
+                        <h3 className="text-3xl font-serif font-medium mb-4 text-slate-900">
+                          {skill.title}
+                        </h3>
+                        
+                        <p className="text-sm text-slate-500 leading-relaxed font-light">
+                          {skill.description}
+                        </p>
                       </div>
-                      
-                      <h3 className="text-2xl font-serif font-medium mb-3 text-slate-900">
-                        {skill.title}
-                      </h3>
-                      
-                      <p className="text-sm text-slate-500 leading-relaxed font-light">
-                        {skill.description}
-                      </p>
-                    </div>
 
-                    {/* Tech List */}
-                    <div className="mt-auto pt-6 border-t border-slate-200/50">
-                      <ul className="space-y-3">
-                        {skill.items.map((item, idx) => (
-                          <li key={idx} className="flex items-center gap-3 text-sm font-medium text-slate-700">
-                            <CheckCircle2 size={14} className="text-slate-400" />
-                            {item}
-                          </li>
-                        ))}
-                      </ul>
+                      {/* Tech List */}
+                      <div className="mt-auto pt-8 border-t border-slate-200/50">
+                        <ul className="space-y-4">
+                          {skill.items.map((item, idx) => (
+                            <li key={idx} className="flex items-center gap-3 text-sm font-medium text-slate-700">
+                              <CheckCircle2 size={16} className="text-slate-400" strokeWidth={1.5} />
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                  </div>
+                  </Magnetic>
                 </Reveal>
               </div>
             );

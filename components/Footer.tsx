@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { CONTACT_INFO, NAV_LINKS } from '../constants';
 import { ArrowUpRight } from 'lucide-react';
+import Magnetic from './ui/Magnetic';
 
 const Footer: React.FC = () => {
   return (
@@ -16,28 +16,29 @@ const Footer: React.FC = () => {
           
           {/* Brand Column */}
           <div className="lg:w-1/3">
-             <a href="#" className="inline-block text-3xl font-serif font-bold tracking-tight text-white mb-6">
+             <a href="#" className="inline-block text-4xl font-serif font-bold tracking-tight text-white mb-8">
                V<span className="text-slate-600">.</span>DEV
              </a>
-             <p className="text-slate-400 leading-relaxed font-light max-w-sm mb-8">
+             <p className="text-slate-400 leading-relaxed font-light max-w-sm mb-10 text-lg">
                Engenharia de software com foco em performance, acessibilidade e design refinado para produtos digitais de alto impacto.
              </p>
              <div className="flex gap-4">
                {CONTACT_INFO.socials.map((social, idx) => (
-                 <a 
-                   key={idx} 
-                   href={social.url} 
-                   className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300"
-                 >
-                   <ArrowUpRight size={16} />
-                 </a>
+                 <Magnetic key={idx} strength={0.4}>
+                   <a 
+                     href={social.url} 
+                     className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-slate-400 hover:bg-white hover:text-black hover:border-white transition-all duration-300"
+                   >
+                     <ArrowUpRight size={18} />
+                   </a>
+                 </Magnetic>
                ))}
              </div>
           </div>
 
           {/* Links Column */}
           <div className="lg:w-1/4">
-             <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-8">Navegação</h4>
+             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-8">Navegação</h4>
              <ul className="space-y-4">
                {NAV_LINKS.map((link) => (
                  <li key={link.name}>
@@ -51,22 +52,22 @@ const Footer: React.FC = () => {
 
           {/* Contact Column */}
           <div className="lg:w-1/3">
-             <h4 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-8">Contato</h4>
-             <div className="space-y-6">
+             <h4 className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-8">Contato</h4>
+             <div className="space-y-8">
                 <div>
-                  <span className="block text-xs text-slate-500 mb-1">Email</span>
-                  <a href={`mailto:${CONTACT_INFO.email}`} className="text-xl font-serif text-white hover:text-slate-300 transition-colors">
+                  <span className="block text-[10px] text-slate-500 mb-2 uppercase tracking-wide">Email</span>
+                  <a href={`mailto:${CONTACT_INFO.email}`} className="text-2xl font-serif text-white hover:text-slate-300 transition-colors">
                     {CONTACT_INFO.email}
                   </a>
                 </div>
                 <div>
-                  <span className="block text-xs text-slate-500 mb-1">Telefone</span>
+                  <span className="block text-[10px] text-slate-500 mb-2 uppercase tracking-wide">Telefone</span>
                   <span className="text-lg text-slate-300">
                     {CONTACT_INFO.phone}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-xs text-slate-500 mb-1">Localização</span>
+                  <span className="block text-[10px] text-slate-500 mb-2 uppercase tracking-wide">Localização</span>
                   <span className="text-lg text-slate-300">
                     {CONTACT_INFO.location}
                   </span>
@@ -76,7 +77,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-600 font-medium uppercase tracking-wider">
+        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">
            <p>&copy; {new Date().getFullYear()} Victor Cardoso. Todos os direitos reservados.</p>
            <p className="mt-4 md:mt-0">Feito com paixão & código.</p>
         </div>

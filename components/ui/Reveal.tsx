@@ -14,8 +14,8 @@ export const Reveal: React.FC<RevealProps> = ({
   children, 
   width = "fit-content", 
   delay = 0,
-  duration = 0.5,
-  y = 50,
+  duration = 0.8, // Increased default duration for elegance
+  y = 30, // Reduced y distance for subtlety
   className = ""
 }) => {
   const ref = useRef(null);
@@ -41,12 +41,16 @@ export const Reveal: React.FC<RevealProps> = ({
     <div ref={ref} style={{ width }} className={`relative overflow-hidden ${className}`}>
       <motion.div
         variants={{
-          hidden: { opacity: 0, y: y },
-          visible: { opacity: 1, y: 0 }
+          hidden: { opacity: 0, y: y, scale: 0.98 },
+          visible: { opacity: 1, y: 0, scale: 1 }
         }}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
-        transition={{ duration, delay: delaySec, ease: "easeOut" }}
+        transition={{ 
+          duration, 
+          delay: delaySec, 
+          ease: [0.25, 0.1, 0.25, 1] // Custom refined ease curve
+        }}
       >
         {children}
       </motion.div>
