@@ -33,8 +33,8 @@ const Hero: React.FC = () => {
                      className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105"
                    />
                    
-                   {/* Glass Overlay Gradient */}
-                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/10 via-transparent to-transparent opacity-60"></div>
+                   {/* Glass Overlay Gradient (Refined) */}
+                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-slate-900/5 to-transparent opacity-80 mix-blend-multiply"></div>
                  </motion.div>
               </div>
             </Reveal>

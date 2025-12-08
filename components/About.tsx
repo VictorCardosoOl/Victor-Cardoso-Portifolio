@@ -2,6 +2,7 @@
 import React from 'react';
 import { Reveal } from './ui/Reveal';
 import { Layers, Zap, Shield, Users, GitCommit } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // Philosophy Grid
 const PhilosophyGrid = () => {
@@ -31,13 +32,20 @@ const PhilosophyGrid = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       {principles.map((p, i) => (
-        <div key={i} className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 hover:border-slate-200 transition-colors">
-          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-5 text-slate-900">
+        <motion.div 
+          key={i} 
+          initial={{ opacity: 0, scale: 0.9, y: 20 }}
+          whileInView={{ opacity: 1, scale: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.5, delay: i * 0.1, ease: "easeOut" }}
+          className="bg-slate-50 p-6 rounded-[2rem] border border-slate-100 hover:border-slate-200 transition-colors hover:bg-slate-50/80 hover:shadow-sm"
+        >
+          <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-sm mb-5 text-slate-900 border border-slate-100">
             <p.icon size={22} strokeWidth={1.5} />
           </div>
           <h4 className="text-lg font-serif font-bold text-slate-900 mb-3">{p.title}</h4>
           <p className="text-sm text-slate-600 leading-relaxed font-light">{p.desc}</p>
-        </div>
+        </motion.div>
       ))}
     </div>
   );

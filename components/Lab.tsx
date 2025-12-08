@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Github, Star, GitFork, ArrowUpRight } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
@@ -32,7 +33,7 @@ const Lab: React.FC = () => {
   }, []);
 
   return (
-    <section id="lab" className="py-24 relative bg-slate-50 border-t border-slate-200">
+    <section id="lab" className="py-24 relative bg-slate-50 border-t border-slate-200 z-10">
       <div className="container mx-auto px-6 md:px-12">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <Reveal>
@@ -60,29 +61,34 @@ const Lab: React.FC = () => {
                      href={repo.html_url} 
                      target="_blank" 
                      rel="noopener noreferrer"
-                     className="block p-6 bg-white rounded-3xl border border-slate-200 hover:border-slate-400 hover:shadow-lg transition-all duration-300 h-full flex flex-col group"
+                     className="block p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 shadow-sm hover:shadow-xl hover:border-white/60 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col group relative overflow-hidden"
                    >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="p-2 bg-slate-100 rounded-full text-slate-900 group-hover:bg-slate-900 group-hover:text-white transition-colors">
-                           <Github size={20} />
+                      {/* Gradient glow on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-slate-100/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                      <div className="relative z-10">
+                        <div className="flex justify-between items-start mb-4">
+                            <div className="p-2 bg-white/80 rounded-full text-slate-900 border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-colors duration-300">
+                            <Github size={20} />
+                            </div>
+                            <ArrowUpRight size={16} className="text-slate-400 group-hover:text-slate-900 transition-colors" />
                         </div>
-                        <ArrowUpRight size={16} className="text-slate-400 group-hover:text-slate-900 transition-colors" />
-                      </div>
-                      
-                      <h3 className="font-bold text-slate-900 mb-2 truncate pr-4">{repo.name}</h3>
-                      <p className="text-xs text-slate-500 line-clamp-2 mb-6 flex-grow leading-relaxed">
-                        {repo.description || "Sem descrição disponível."}
-                      </p>
-                      
-                      <div className="flex items-center gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-auto pt-4 border-t border-slate-100">
-                         {repo.language && (
-                           <span className="flex items-center gap-1">
-                             <span className="w-2 h-2 rounded-full bg-indigo-500"></span> {repo.language}
-                           </span>
-                         )}
-                         <span className="flex items-center gap-1">
-                           <Star size={12} /> {repo.stargazers_count}
-                         </span>
+                        
+                        <h3 className="font-bold text-slate-900 mb-2 truncate pr-4">{repo.name}</h3>
+                        <p className="text-xs text-slate-500 line-clamp-2 mb-6 flex-grow leading-relaxed">
+                            {repo.description || "Sem descrição disponível."}
+                        </p>
+                        
+                        <div className="flex items-center gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-auto pt-4 border-t border-slate-200/50">
+                            {repo.language && (
+                            <span className="flex items-center gap-1">
+                                <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span> {repo.language}
+                            </span>
+                            )}
+                            <span className="flex items-center gap-1">
+                            <Star size={12} /> {repo.stargazers_count}
+                            </span>
+                        </div>
                       </div>
                    </a>
                 </Reveal>
