@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PROJECTS } from '../constants';
-import { Plus, ArrowUpRight, MoveRight, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
+import { ArrowUpRight, MoveRight, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useLenis } from './ScrollContext';
 import { 
   motion, 
@@ -13,7 +13,6 @@ import {
 
 const MotionDiv = motion.div as any;
 const MotionImg = motion.img as any;
-const MotionButton = motion.button as any;
 
 // --- CONFIGURAÇÃO DE FÍSICA E PARÂMETROS ---
 const PHYSICS = {
@@ -35,19 +34,18 @@ const ProgressIndicator: React.FC<{ progress: number; isVisible: boolean }> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
       transition={{ duration: 0.5, delay: 0.2 }}
-      className="absolute bottom-8 right-8 z-[60] flex items-center gap-4 bg-slate-950/80 backdrop-blur-md px-5 py-3 rounded-full border border-white/10 shadow-2xl"
+      className="absolute bottom-6 right-6 md:bottom-12 md:right-12 z-[60] flex items-center gap-3 md:gap-4 bg-slate-950/80 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-full border border-white/10 shadow-2xl"
     >
-      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums w-8 text-right">
+      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums w-6 md:w-8 text-right">
         {Math.round(progress * 100)}%
       </span>
-      <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+      <div className="w-20 md:w-32 h-1 bg-white/10 rounded-full overflow-hidden">
         <MotionDiv 
           className="h-full bg-white"
           style={{ width: `${progress * 100}%` }}
           layout 
         />
       </div>
-      <MoveRight size={14} className="text-white" />
     </MotionDiv>
   );
 };
@@ -60,12 +58,10 @@ interface ProjectLightboxProps {
 }
 
 const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) => {
-  // Combina a imagem principal com a galeria para formar a lista completa
   const images = [project.image, ...(project.gallery || [])];
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 
-  // Keyboard Navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
@@ -86,14 +82,14 @@ const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) =
     });
   };
 
-  const handleDragEnd = (e: any, { offset, velocity }: PanInfo) => {
-    const swipe = offset.x; // positive = right, negative = left
+  const handleDragEnd = (e: any, { offset }: PanInfo) => {
+    const swipe = offset.x;
     const swipeThreshold = 50;
     
     if (swipe < -swipeThreshold) {
-      paginate(1); // Swipe Left -> Next
+      paginate(1);
     } else if (swipe > swipeThreshold) {
-      paginate(-1); // Swipe Right -> Prev
+      paginate(-1);
     }
   };
 
@@ -124,23 +120,20 @@ const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) =
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex flex-col"
     >
-      {/* Header */}
-      <div className="flex justify-between items-center p-6 md:p-8 z-20">
+      <div className="flex justify-between items-center p-4 md:p-8 z-20">
         <div>
-          <h3 className="text-white font-serif text-xl md:text-2xl">{project.title}</h3>
-          <p className="text-slate-400 text-xs uppercase tracking-widest">{currentIndex + 1} / {images.length}</p>
+          <h3 className="text-white font-serif text-lg md:text-2xl">{project.title}</h3>
+          <p className="text-slate-400 text-[10px] md:text-xs uppercase tracking-widest">{currentIndex + 1} / {images.length}</p>
         </div>
         <button 
           onClick={onClose}
-          className="p-3 bg-white/10 rounded-full hover:bg-white hover:text-slate-900 text-white transition-all"
+          className="p-2 md:p-3 bg-white/10 rounded-full hover:bg-white hover:text-slate-900 text-white transition-all"
         >
-          <X size={24} />
+          <X size={20} className="md:w-6 md:h-6" />
         </button>
       </div>
 
-      {/* Main Gallery Area */}
       <div className="flex-grow relative flex items-center justify-center overflow-hidden">
-        {/* Navigation Buttons (Desktop) */}
         <button 
           className="absolute left-4 md:left-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
           onClick={() => paginate(-1)}
@@ -155,8 +148,7 @@ const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) =
           <ChevronRight size={32} />
         </button>
 
-        {/* Image Slider */}
-        <div className="relative w-full h-full max-w-6xl max-h-[80vh] px-4 md:px-20">
+        <div className="relative w-full h-full max-w-6xl max-h-[60vh] md:max-h-[80vh] px-2 md:px-20">
           <AnimatePresence initial={false} custom={direction} mode="popLayout">
             <MotionImg
               key={currentIndex}
@@ -181,8 +173,7 @@ const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) =
         </div>
       </div>
 
-      {/* Thumbnails */}
-      <div className="h-24 md:h-32 border-t border-white/10 bg-black/20 flex items-center justify-center gap-2 md:gap-4 px-4 overflow-x-auto">
+      <div className="h-20 md:h-32 border-t border-white/10 bg-black/20 flex items-center justify-center gap-2 md:gap-4 px-4 overflow-x-auto pb-safe">
         {images.map((img, idx) => (
           <button
             key={idx}
@@ -190,7 +181,7 @@ const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) =
               setDirection(idx > currentIndex ? 1 : -1);
               setCurrentIndex(idx);
             }}
-            className={`relative h-16 w-24 md:h-20 md:w-32 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 ${
+            className={`relative h-14 w-20 md:h-20 md:w-32 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 ${
               idx === currentIndex ? 'ring-2 ring-white scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
             }`}
           >
@@ -209,35 +200,26 @@ const Projects: React.FC = () => {
   const trackRef = useRef<HTMLDivElement>(null);
   const lenis = useLenis();
 
-  // Estados de Controle
   const [isActive, setIsActive] = useState(false);
   const [isInView, setIsInView] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [progress, setProgress] = useState(0);
-  
-  // Estado do Lightbox (Agora armazena o projeto selecionado ou null)
   const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
 
-  // Valores de Movimento (Física)
   const x = useMotionValue(0);
   const springX = useSpring(x, PHYSICS.spring);
   const containerWidth = useRef(0);
   const trackWidth = useRef(0);
-  
-  // Controle de Saída
   const reverseScrollCount = useRef(0);
 
   useEffect(() => {
-    // Bloquear scroll quando o lightbox estiver aberto
     if (selectedProject) {
       lenis?.stop();
     } else if (!isActive) {
-      // Só reativa se não estiver no modo horizontal (o modo horizontal controla o lenis internamente)
       lenis?.start();
     }
   }, [selectedProject, lenis, isActive]);
 
-  // --- RESPONSIVIDADE & SETUP ---
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
@@ -253,7 +235,6 @@ const Projects: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // --- 1. OBSERVER DE VISIBILIDADE GERAL ---
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -271,9 +252,7 @@ const Projects: React.FC = () => {
   }, [isActive, lenis]);
 
 
-  // --- 2. LÓGICA CORE DE SCROLL (GUARD RAIL) ---
   useEffect(() => {
-    // Se não estiver visível, mobile ou lightbox aberto, não faz nada
     if (!isInView || isMobile || selectedProject) return;
 
     const handleWheel = (e: WheelEvent) => {
@@ -360,27 +339,31 @@ const Projects: React.FC = () => {
     >
       <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
 
-      <ProgressIndicator progress={progress} isVisible={isActive} />
+      {!isMobile && <ProgressIndicator progress={progress} isVisible={isActive} />}
 
       <MotionDiv 
         ref={trackRef}
-        className="flex gap-8 md:gap-16 px-6 md:px-20 w-max items-center h-[80vh]"
+        // Aggressive Whitespace: Increased gap-40 (10rem/160px) for premium feel
+        className="flex gap-8 md:gap-40 px-5 md:px-20 w-max items-center h-[75vh] md:h-[80vh]"
         style={{ x: springX, cursor: isMobile ? 'grab' : isActive ? 'none' : 'default' }}
         drag={isMobile ? "x" : false}
         dragConstraints={containerRef}
       >
         {/* HEADER CARD */}
-        <div className="w-[85vw] md:w-[30vw] h-full flex flex-col justify-center shrink-0 pr-12 z-[3]">
+        <div className="w-[85vw] md:w-[30vw] h-full flex flex-col justify-center shrink-0 md:pr-12 z-[3]">
            <div className="pl-4 border-l-2 border-white/20">
-              <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 block">
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 md:mb-4 block">
                 Portfólio Selecionado
               </span>
-              <h2 className="text-5xl md:text-7xl font-serif font-medium text-white leading-none mb-6">
+              <h2 className="text-4xl sm:text-5xl md:text-7xl font-serif font-medium text-white leading-none mb-4 md:mb-6">
                 Projetos <br /> <span className="text-slate-500 italic">Recentes</span>
               </h2>
-              <p className="text-slate-400 font-light leading-relaxed max-w-sm">
+              <p className="text-slate-400 font-light leading-relaxed max-w-sm text-sm md:text-base">
                  Explore uma seleção de trabalhos focados em performance, conversão e experiência do usuário.
-                 {isMobile ? "Arraste para explorar →" : "Continue rolando para navegar →"}
+                 <br/><br/>
+                 <span className="text-white font-medium flex items-center gap-2">
+                    {isMobile ? "Arraste para explorar" : "Continue rolando"} <MoveRight size={16} />
+                 </span>
               </p>
            </div>
         </div>
@@ -392,18 +375,19 @@ const Projects: React.FC = () => {
             project={project} 
             index={index} 
             onOpen={() => setSelectedProject(project)}
+            isMobile={isMobile}
           />
         ))}
 
         {/* END CARD */}
         <div className="w-[85vw] md:w-[30vw] h-full flex items-center justify-center shrink-0 z-[3]">
-            <a href="#contact" className="group flex flex-col items-center justify-center gap-6 text-center">
-               <div className="w-24 h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
-                  <ArrowUpRight size={32} className="text-white group-hover:text-slate-900" />
+            <a href="#contact" className="group flex flex-col items-center justify-center gap-4 md:gap-6 text-center">
+               <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
+                  <ArrowUpRight size={28} className="text-white group-hover:text-slate-900 md:w-8 md:h-8" />
                </div>
                <div>
-                 <h3 className="text-3xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
-                 <p className="text-sm text-slate-400 font-bold uppercase tracking-widest underline decoration-slate-700 underline-offset-4 group-hover:text-white group-hover:decoration-white transition-all">
+                 <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
+                 <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest underline decoration-slate-700 underline-offset-4 group-hover:text-white group-hover:decoration-white transition-all">
                    Iniciar Conversa
                  </p>
                </div>
@@ -424,18 +408,18 @@ const Projects: React.FC = () => {
   );
 };
 
-// --- COMPONENTE DO CARD DE PROJETO ---
-
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0]; 
   index: number;
   onOpen: () => void;
-}> = ({ project, index, onOpen }) => {
+  isMobile: boolean;
+}> = ({ project, index, onOpen, isMobile }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
     <MotionDiv 
-      className="relative w-[85vw] md:w-[60vw] h-[65vh] md:h-[75vh] shrink-0 rounded-[2rem] overflow-hidden group cursor-none select-none"
+      // Adjusted width for better ratio with large gaps
+      className="relative w-[88vw] sm:w-[80vw] md:w-[55vw] h-[55vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-none select-none"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       initial={{ opacity: 0, scale: 0.95 }}
@@ -451,38 +435,40 @@ const ProjectCard: React.FC<{
       />
 
       <div 
-        className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"
+        className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent opacity-90 md:opacity-80 group-hover:opacity-95 transition-opacity duration-500"
         style={{ mixBlendMode: 'multiply' }}
       />
-      <div className="absolute inset-0 z-[21] bg-black/10" />
+      
+      {isMobile && <div className="absolute inset-0 z-[21] bg-black/20" />}
 
-      <div className="absolute inset-0 z-[30] p-8 md:p-12 flex flex-col justify-between">
-        <div className="flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -translate-y-4 group-hover:translate-y-0">
-           <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
+      {/* Aggressive padding inside card */}
+      <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between">
+        <div className={`flex justify-between items-start transition-opacity duration-500 transform ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 -translate-y-4 group-hover:translate-y-0'}`}>
+           <span className="px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
              {project.category}
            </span>
-           <span className="text-4xl font-serif text-white/20 font-bold">0{index + 1}</span>
+           <span className="text-2xl md:text-4xl font-serif text-white/20 font-bold">0{index + 1}</span>
         </div>
 
-        <div className="relative transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-           <h3 className="relative z-[40] text-4xl md:text-6xl font-serif font-medium text-white mb-4 leading-none tracking-tight drop-shadow-lg">
+        <div className={`relative transform transition-transform duration-500 ${isMobile ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0'}`}>
+           <h3 className="relative z-[40] text-3xl sm:text-4xl md:text-6xl font-serif font-medium text-white mb-2 md:mb-6 leading-none tracking-tight drop-shadow-lg">
              {project.title}
            </h3>
 
-           <p className="relative z-[50] text-slate-300 font-light leading-relaxed max-w-lg mb-8 text-sm md:text-base drop-shadow-md opacity-90">
+           <p className="relative z-[50] text-slate-300 font-light leading-relaxed max-w-lg mb-8 md:mb-10 text-sm md:text-base drop-shadow-md opacity-90 line-clamp-3 md:line-clamp-none">
              {project.description}
            </p>
 
-           <div className="relative z-[60] flex flex-wrap gap-4">
+           <div className="relative z-[60] flex flex-wrap gap-3 md:gap-4">
               <button 
                 onClick={onOpen}
-                className="flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-xl"
+                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-xl w-full sm:w-auto justify-center"
               >
                 Ver Galeria <ImageIcon size={14} />
               </button>
               <a 
                 href={project.link}
-                className="flex items-center gap-2 px-6 py-3 bg-transparent border border-white/30 text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all shadow-lg backdrop-blur-sm"
+                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-transparent border border-white/30 text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all shadow-lg backdrop-blur-sm w-full sm:w-auto justify-center"
               >
                 Visitar Site <ArrowUpRight size={14} />
               </a>

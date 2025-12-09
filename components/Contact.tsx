@@ -100,7 +100,7 @@ const Contact: React.FC = () => {
       <div className="relative group pb-4">
         <label 
           htmlFor={id} 
-          className={`block text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors duration-300 ${
+          className={`block text-[9px] md:text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors duration-300 ${
             hasError ? 'text-red-500' : focusedField === id ? 'text-slate-900' : 'text-slate-400'
           }`}
         >
@@ -130,6 +130,7 @@ const Contact: React.FC = () => {
             }`}
             placeholder={placeholder}
             disabled={status === 'loading'}
+            style={{ fontSize: '16px' }} // Prevent iOS zoom
           />
           <div 
             className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${
@@ -143,7 +144,7 @@ const Contact: React.FC = () => {
           />
         </div>
         {hasError && (
-          <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
+          <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
              <AlertCircle size={10} /> {errors[id]}
           </div>
         )}
@@ -152,54 +153,54 @@ const Contact: React.FC = () => {
   };
 
   return (
-    <section id="contact" className="min-h-screen flex items-center py-20 bg-slate-50 relative overflow-hidden">
+    <section id="contact" className="min-h-screen flex items-center py-16 md:py-20 bg-slate-50 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-1/2 h-full bg-white/40 skew-x-12 translate-x-32 z-0 hidden lg:block" />
 
-      <div className="container relative z-10 mx-auto px-6 md:px-12 xl:px-20 h-full flex flex-col justify-center">
+      <div className="container relative z-10 mx-auto px-5 md:px-12 xl:px-20 h-full flex flex-col justify-center">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
           
           {/* Left Column */}
           <div className="lg:col-span-6 flex flex-col justify-center h-full">
             <Reveal width="100%" variant="translate">
-              <h2 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-slate-900 tracking-tight leading-[0.9] mb-8">
+              <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-slate-900 tracking-tight leading-[0.95] md:leading-[0.9] mb-6 md:mb-8">
                 Vamos criar <br /> <span className="text-slate-400 italic">algo único.</span>
               </h2>
             </Reveal>
 
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               <Reveal delay={100} variant="blur">
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex flex-col sm:flex-row gap-6 md:gap-8">
                   <div className="group">
-                     <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                     <span className="flex items-center gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                        <Mail size={12} /> Email
                      </span>
-                     <a href={`mailto:${CONTACT_INFO.email}`} className="text-xl font-medium text-slate-900 hover:text-slate-600 transition-colors">
+                     <a href={`mailto:${CONTACT_INFO.email}`} className="text-lg md:text-xl font-medium text-slate-900 hover:text-slate-600 transition-colors">
                        {CONTACT_INFO.email}
                      </a>
                   </div>
                   <div>
-                     <span className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
+                     <span className="flex items-center gap-2 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2">
                        <Phone size={12} /> Telefone
                      </span>
-                     <p className="text-xl font-medium text-slate-900">{CONTACT_INFO.phone}</p>
+                     <p className="text-lg md:text-xl font-medium text-slate-900">{CONTACT_INFO.phone}</p>
                   </div>
                 </div>
               </Reveal>
               
               <Reveal delay={200} variant="translate">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-8 border-t border-slate-200 border-b border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8 py-6 md:py-8 border-t border-slate-200 border-b border-slate-200">
                   <div>
-                    <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">O Estúdio</span>
+                    <span className="block text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 md:mb-3">O Estúdio</span>
                     <h4 className="text-base font-serif font-bold text-slate-900 mb-1">Estúdio Formosa</h4>
-                    <p className="text-sm text-slate-600 leading-relaxed font-light">
+                    <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-light">
                       Vila Formosa, São Paulo<br />
                       Brasil
                     </p>
                   </div>
                   <div>
-                    <span className="block text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Escritório</span>
+                    <span className="block text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-2 md:mb-3">Escritório</span>
                     <h4 className="text-base font-serif font-bold text-slate-900 mb-1">Escritório do Tatuapé</h4>
-                    <p className="text-sm text-slate-600 leading-relaxed font-light">
+                    <p className="text-xs md:text-sm text-slate-600 leading-relaxed font-light">
                       Tatuapé, São Paulo<br />
                       Brasil
                     </p>
@@ -208,12 +209,12 @@ const Contact: React.FC = () => {
               </Reveal>
 
               <Reveal delay={300} variant="translate">
-                 <div className="flex gap-6 pt-2">
+                 <div className="flex gap-4 md:gap-6 pt-2">
                     {CONTACT_INFO.socials.map((social, idx) => (
                       <Magnetic key={idx} strength={0.2}>
                         <a 
                           href={social.url}
-                          className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 group"
+                          className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors flex items-center gap-1 group py-2"
                         >
                           {social.name}
                           <ArrowUpRight size={12} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
@@ -228,7 +229,7 @@ const Contact: React.FC = () => {
           {/* Right Column: Form */}
           <div className="lg:col-span-6">
             <Reveal delay={200} width="100%" variant="scale">
-              <div className="glass-panel p-8 md:p-10 rounded-[2rem] relative overflow-hidden">
+              <div className="glass-panel p-6 md:p-10 rounded-[2rem] relative overflow-hidden">
                  {status === 'success' && (
                     <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center text-center animate-in fade-in duration-500">
                        <div className="w-16 h-16 bg-green-50 text-green-700 rounded-full flex items-center justify-center mb-4">
@@ -240,8 +241,8 @@ const Contact: React.FC = () => {
                     </div>
                  )}
 
-                 <form onSubmit={handleSubmit} noValidate className="space-y-8 relative z-10">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                 <form onSubmit={handleSubmit} noValidate className="space-y-6 md:space-y-8 relative z-10">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                        <InputGroup id="name" label="Nome" placeholder="Seu nome" value={formState.name} required />
                        <InputGroup id="email" label="Email" type="email" placeholder="email@exemplo.com" value={formState.email} required />
                     </div>
@@ -251,7 +252,7 @@ const Contact: React.FC = () => {
                     <div className="relative group pb-4">
                       <label 
                         htmlFor="message" 
-                        className={`block text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors duration-300 ${
+                        className={`block text-[9px] md:text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors duration-300 ${
                           errors.message ? 'text-red-500' : focusedField === 'message' ? 'text-slate-900' : 'text-slate-400'
                         }`}
                       >
@@ -273,24 +274,25 @@ const Contact: React.FC = () => {
                           }`}
                           placeholder="Como posso ajudar?"
                           disabled={status === 'loading'}
+                          style={{ fontSize: '16px' }} // Prevent iOS zoom
                         />
                         <div className={`absolute bottom-0 left-0 h-[2px] bg-slate-900 transition-all duration-500 ease-out z-10 ${focusedField === 'message' && !errors.message ? 'w-full' : 'w-0'}`} />
                         <div className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${errors.message ? 'w-full' : 'w-0'}`} />
                       </div>
                       {errors.message && (
-                        <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
+                        <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
                            <AlertCircle size={10} /> {errors.message}
                         </div>
                       )}
                     </div>
 
-                    <div className="pt-4 flex justify-end">
+                    <div className="pt-2 md:pt-4 flex justify-end">
                        <Magnetic strength={0.4}>
                           <Button 
                             type="submit" 
                             variant="primary" 
                             size="md" 
-                            className="w-full md:w-auto"
+                            className="w-full md:w-auto justify-center"
                             disabled={status === 'loading'}
                           >
                             {status === 'loading' ? 'Enviando...' : 'Enviar Agora'}
