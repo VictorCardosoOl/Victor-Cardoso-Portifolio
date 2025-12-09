@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Reveal } from './ui/Reveal';
 import { TextReveal } from './ui/TextReveal';
 import Button from './ui/Button';
@@ -12,7 +12,11 @@ const MotionDiv = motion.div as any;
 
 const Hero: React.FC = () => {
   const { scrollY } = useScroll();
-  const y = useTransform(scrollY, [0, 1000], [0, 300]); // Parallax effect
+  
+  // Add spring physics to scrollY for a "heavier", smoother parallax feel
+  const smoothY = useSpring(scrollY, { damping: 15, stiffness: 100, mass: 0.5 });
+  const y = useTransform(smoothY, [0, 1000], [0, 200]); // Reduced distance for elegance
+
   const { transitionTo } = usePageTransition();
 
   const handleNav = (e: React.MouseEvent, href: string) => {
@@ -34,7 +38,7 @@ const Hero: React.FC = () => {
                  {/* Main Image Container with Parallax */}
                  <MotionDiv 
                    style={{ y }}
-                   className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] bg-slate-200"
+                   className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.15)] bg-slate-200"
                  >
                    <img 
                      src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800&h=1000" 
@@ -44,6 +48,23 @@ const Hero: React.FC = () => {
                    
                    {/* Glass Overlay Gradient (Refined) */}
                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-slate-900/5 to-transparent opacity-80 mix-blend-multiply"></div>
+                   
+                   {/* Info Card - Floating */}
+                   <div className="absolute bottom-6 left-6 right-6 p-4 glass-panel rounded-2xl border border-white/20 shadow-lg backdrop-blur-xl bg-white/80">
+                      <div className="flex items-center justify-between">
+                         <div>
+                            <span className="text-[9px] uppercase tracking-widest font-bold text-slate-500 block mb-1">Status Atual</span>
+                            <div className="flex items-center gap-2">
+                               <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                               <span className="text-xs font-bold text-slate-900">Aceitando Projetos</span>
+                            </div>
+                         </div>
+                         <div className="text-right">
+                            <span className="text-[9px] uppercase tracking-widest font-bold text-slate-500 block mb-1">Stack</span>
+                            <span className="text-xs font-bold text-slate-900">React / Node</span>
+                         </div>
+                      </div>
+                   </div>
                  </MotionDiv>
               </div>
             </Reveal>
@@ -92,7 +113,11 @@ const Hero: React.FC = () => {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
                   <Magnetic strength={0.5}>
                       <a href="#contact" onClick={(e) => handleNav(e, '#contact')} className="block">
-                        <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/20">
+                        <Button 
+                          variant="primary" 
+                          size="lg" 
+                          className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/30 ring-1 ring-white/20 hover:ring-slate-900/10 transition-all"
+                        >
                           Solicitar Orçamento <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
                       </a>
@@ -100,7 +125,11 @@ const Hero: React.FC = () => {
                   
                   <Magnetic strength={0.5}>
                       <a href="#projects" onClick={(e) => handleNav(e, '#projects')} className="block">
-                        <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white/50 backdrop-blur-md">
+                        <Button 
+                          variant="secondary" 
+                          size="lg" 
+                          className="w-full sm:w-auto bg-white/60 backdrop-blur-xl border border-white/50 hover:bg-white hover:border-slate-300"
+                        >
                           Ver Portfolio
                         </Button>
                       </a>

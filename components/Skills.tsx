@@ -34,8 +34,7 @@ const Skills: React.FC = () => {
             - Tablet: 2 Columns (Last item spans full width for balance)
             - Desktop: 3 Columns
         */}
-        {/* Increased gap from 6/10 to 8/12 */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10 items-stretch">
           {SKILLS.map((skill, index) => {
             const Icon = skill.icon;
             
@@ -49,15 +48,17 @@ const Skills: React.FC = () => {
                   <Tilt strength={8} className="h-full">
                     <div 
                       className={clsx(
-                        // Increased padding from p-8 to p-10/p-14
-                        "h-full glass-card p-10 md:p-14 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 flex flex-col bg-white/40 shadow-sm hover:shadow-2xl",
-                        // On tablet, if it spans 2 cols, we can add a bit more horizontal padding or keep it standard
-                        isLastItem && "md:px-16"
+                        "h-full glass-card p-8 rounded-[2.5rem] border border-slate-200/60 transition-all duration-500 flex flex-col bg-white/40 relative overflow-hidden group",
+                        "hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(0,0,0,0.1)] hover:border-slate-300", // Tactile Levitation & Shadow
+                        isLastItem && "md:px-10"
                       )}
                     >
+                      {/* Specular Glow Effect on Hover */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/60 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" style={{ mixBlendMode: 'soft-light' }} />
+
                       {/* Header */}
-                      <div className="mb-8 transform transition-transform duration-500 hover:translate-z-10" style={{ transformStyle: 'preserve-3d' }}>
-                        <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-slate-100">
+                      <div className="mb-8 transform transition-transform duration-500 group-hover:translate-z-10 relative z-10" style={{ transformStyle: 'preserve-3d' }}>
+                        <div className="w-14 h-14 bg-white text-slate-900 rounded-2xl flex items-center justify-center shadow-sm mb-6 border border-slate-100 group-hover:scale-110 transition-transform duration-500">
                           <Icon size={24} strokeWidth={1.5} />
                         </div>
                         
@@ -71,7 +72,7 @@ const Skills: React.FC = () => {
                       </div>
 
                       {/* Tech List */}
-                      <div className="mt-auto pt-6 border-t border-slate-200/50">
+                      <div className="mt-auto pt-6 border-t border-slate-200/50 relative z-10">
                         <ul className={clsx(
                           "grid gap-3",
                           // On wide span (tablet), use 2 cols for the list for better use of space
@@ -79,7 +80,7 @@ const Skills: React.FC = () => {
                         )}>
                           {skill.items.map((item, idx) => (
                             <li key={idx} className="flex items-center gap-3 text-sm font-medium text-slate-700">
-                              <CheckCircle2 size={16} className="text-slate-400 shrink-0" />
+                              <CheckCircle2 size={16} className="text-slate-400 shrink-0 group-hover:text-slate-900 transition-colors duration-300" />
                               {item}
                             </li>
                           ))}

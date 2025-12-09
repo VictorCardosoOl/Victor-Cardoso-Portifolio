@@ -39,7 +39,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
   useEffect(() => {
     if (isAnimating && targetHref) {
-      // 1. Wait for curtain to fully cover screen (0.8s enter duration)
+      // 1. Wait for curtain to fully cover screen (matches duration of enter animation: 0.8s)
       const scrollTimer = setTimeout(() => {
         const targetId = targetHref.replace('#', '');
         const element = document.getElementById(targetId);
@@ -56,7 +56,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
         // 3. Trigger exit animation (reveal) by resetting state
         setIsAnimating(false);
         setTargetHref(null);
-      }, 900); // Slightly longer than animation to ensure coverage
+      }, 800);
 
       return () => clearTimeout(scrollTimer);
     }
@@ -72,17 +72,17 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
             initial={{ y: '100%' }}
             animate={{ y: '0%' }}
             exit={{ y: '-100%' }}
-            transition={{ duration: 0.9, ease: [0.85, 0, 0.15, 1] }} // Heavy cinematic easing
-            className="fixed inset-0 z-[10000] bg-slate-950 flex items-center justify-center pointer-events-none"
+            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center pointer-events-none"
           >
-            {/* Brand Mark centered during transition */}
+            {/* Minimal Branding during transition */}
             <MotionDiv
-               initial={{ opacity: 0, scale: 0.8 }}
-               animate={{ opacity: 1, scale: 1 }}
-               exit={{ opacity: 0, scale: 1.1 }}
-               transition={{ delay: 0.3, duration: 0.5 }}
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -20 }}
+               transition={{ delay: 0.2, duration: 0.4 }}
             >
-               <span className="text-white font-serif text-5xl font-bold tracking-tighter">V<span className="text-indigo-500">.</span></span>
+               <span className="text-white font-serif text-3xl font-bold tracking-tight">V.</span>
             </MotionDiv>
           </MotionDiv>
         )}

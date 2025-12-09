@@ -143,8 +143,7 @@ const About: React.FC = () => {
           {/* Right Column: Philosophy Grid */}
           <div className="w-full lg:w-1/2 order-1 lg:order-2">
             <Reveal delay={150} width="100%">
-              {/* Increased padding from p-8 to p-10/p-14 */}
-              <div className="bg-white p-10 md:p-14 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-24">
+              <div className="bg-white p-8 md:p-10 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-24">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                   <div>
                      <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">

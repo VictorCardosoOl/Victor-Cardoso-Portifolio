@@ -47,8 +47,7 @@ const Services: React.FC = () => {
               <Reveal key={index} delay={index * 150} width="100%" variant="scale">
                   <Tilt strength={8} className="h-full">
                     {/* Adjusted contrast: Darker bg (slate-950/80) and lighter text (slate-300) */}
-                    {/* Increased padding from p-8 to p-10/p-12 */}
-                    <div className="h-full bg-slate-950/80 backdrop-blur-md p-10 md:p-12 rounded-[2rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group shadow-xl">
+                    <div className="h-full bg-slate-950/80 backdrop-blur-md p-8 rounded-[2rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group shadow-xl">
                        <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center mb-6 text-white transition-colors border border-white/5 shadow-inner">
                           <Icon size={24} strokeWidth={1.5} />
                        </div>

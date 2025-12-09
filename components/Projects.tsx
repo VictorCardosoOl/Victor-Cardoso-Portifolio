@@ -1,26 +1,29 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PROJECTS } from '../constants';
-import { Plus, ArrowUpRight, MoveRight } from 'lucide-react';
+import { Plus, ArrowUpRight, MoveRight, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
 import { useLenis } from './ScrollContext';
 import { 
   motion, 
   useSpring, 
   useMotionValue, 
-  AnimatePresence 
+  AnimatePresence,
+  PanInfo
 } from 'framer-motion';
 
 const MotionDiv = motion.div as any;
+const MotionImg = motion.img as any;
+const MotionButton = motion.button as any;
 
 // --- CONFIGURAÇÃO DE FÍSICA E PARÂMETROS ---
 const PHYSICS = {
-  wheelMultiplier: 2.2,    // Aumentado levemente para scroll mais responsivo
+  wheelMultiplier: 2.2,
   spring: {
-    damping: 50,           // Mais 'peso' para sensação premium
-    stiffness: 250,        // Retorno mais rápido
+    damping: 50,
+    stiffness: 250,
     mass: 1.2
   },
-  snapThreshold: 100,      // Pixels de proximidade para atrair ao topo (Snap)
+  snapThreshold: 100,
 };
 
 // --- COMPONENTES AUXILIARES ---
@@ -41,10 +44,160 @@ const ProgressIndicator: React.FC<{ progress: number; isVisible: boolean }> = ({
         <MotionDiv 
           className="h-full bg-white"
           style={{ width: `${progress * 100}%` }}
-          layout // Smooth width transition
+          layout 
         />
       </div>
       <MoveRight size={14} className="text-white" />
+    </MotionDiv>
+  );
+};
+
+// --- COMPONENTE LIGHTBOX / GALERIA ---
+
+interface ProjectLightboxProps {
+  project: typeof PROJECTS[0];
+  onClose: () => void;
+}
+
+const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) => {
+  // Combina a imagem principal com a galeria para formar a lista completa
+  const images = [project.image, ...(project.gallery || [])];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  // Keyboard Navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') paginate(1);
+      if (e.key === 'ArrowLeft') paginate(-1);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex]); // eslint-disable-line
+
+  const paginate = (newDirection: number) => {
+    setDirection(newDirection);
+    setCurrentIndex((prev) => {
+      let nextIndex = prev + newDirection;
+      if (nextIndex < 0) nextIndex = images.length - 1;
+      if (nextIndex >= images.length) nextIndex = 0;
+      return nextIndex;
+    });
+  };
+
+  const handleDragEnd = (e: any, { offset, velocity }: PanInfo) => {
+    const swipe = offset.x; // positive = right, negative = left
+    const swipeThreshold = 50;
+    
+    if (swipe < -swipeThreshold) {
+      paginate(1); // Swipe Left -> Next
+    } else if (swipe > swipeThreshold) {
+      paginate(-1); // Swipe Right -> Prev
+    }
+  };
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9
+    })
+  };
+
+  return (
+    <MotionDiv 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex justify-between items-center p-6 md:p-8 z-20">
+        <div>
+          <h3 className="text-white font-serif text-xl md:text-2xl">{project.title}</h3>
+          <p className="text-slate-400 text-xs uppercase tracking-widest">{currentIndex + 1} / {images.length}</p>
+        </div>
+        <button 
+          onClick={onClose}
+          className="p-3 bg-white/10 rounded-full hover:bg-white hover:text-slate-900 text-white transition-all"
+        >
+          <X size={24} />
+        </button>
+      </div>
+
+      {/* Main Gallery Area */}
+      <div className="flex-grow relative flex items-center justify-center overflow-hidden">
+        {/* Navigation Buttons (Desktop) */}
+        <button 
+          className="absolute left-4 md:left-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
+          onClick={() => paginate(-1)}
+        >
+          <ChevronLeft size={32} />
+        </button>
+        
+        <button 
+          className="absolute right-4 md:right-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
+          onClick={() => paginate(1)}
+        >
+          <ChevronRight size={32} />
+        </button>
+
+        {/* Image Slider */}
+        <div className="relative w-full h-full max-w-6xl max-h-[80vh] px-4 md:px-20">
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            <MotionImg
+              key={currentIndex}
+              src={images[currentIndex]}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={1}
+              onDragEnd={handleDragEnd}
+              className="w-full h-full object-contain rounded-xl shadow-2xl cursor-grab active:cursor-grabbing select-none"
+              alt={`${project.title} screenshot ${currentIndex + 1}`}
+            />
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* Thumbnails */}
+      <div className="h-24 md:h-32 border-t border-white/10 bg-black/20 flex items-center justify-center gap-2 md:gap-4 px-4 overflow-x-auto">
+        {images.map((img, idx) => (
+          <button
+            key={idx}
+            onClick={() => {
+              setDirection(idx > currentIndex ? 1 : -1);
+              setCurrentIndex(idx);
+            }}
+            className={`relative h-16 w-24 md:h-20 md:w-32 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 ${
+              idx === currentIndex ? 'ring-2 ring-white scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
+            }`}
+          >
+            <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
     </MotionDiv>
   );
 };
@@ -58,10 +211,12 @@ const Projects: React.FC = () => {
 
   // Estados de Controle
   const [isActive, setIsActive] = useState(false);
-  const [isInView, setIsInView] = useState(false); // Apenas para saber se estamos PERTO
+  const [isInView, setIsInView] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  
+  // Estado do Lightbox (Agora armazena o projeto selecionado ou null)
+  const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
 
   // Valores de Movimento (Física)
   const x = useMotionValue(0);
@@ -71,6 +226,16 @@ const Projects: React.FC = () => {
   
   // Controle de Saída
   const reverseScrollCount = useRef(0);
+
+  useEffect(() => {
+    // Bloquear scroll quando o lightbox estiver aberto
+    if (selectedProject) {
+      lenis?.stop();
+    } else if (!isActive) {
+      // Só reativa se não estiver no modo horizontal (o modo horizontal controla o lenis internamente)
+      lenis?.start();
+    }
+  }, [selectedProject, lenis, isActive]);
 
   // --- RESPONSIVIDADE & SETUP ---
   useEffect(() => {
@@ -84,24 +249,21 @@ const Projects: React.FC = () => {
     
     handleResize();
     window.addEventListener('resize', handleResize);
-    // Recalcular após um pequeno delay para garantir renderização
     setTimeout(handleResize, 500);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   // --- 1. OBSERVER DE VISIBILIDADE GERAL ---
-  // Apenas detecta se a seção está na tela para ativar o listener de wheel
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsInView(entry.isIntersecting);
-        // Se sair da tela completamente, reseta o estado
         if (!entry.isIntersecting && isActive) {
             setIsActive(false);
             lenis?.start();
         }
       },
-      { threshold: 0 } // Qualquer pedaço visível ativa o listener
+      { threshold: 0 }
     );
 
     if (containerRef.current) observer.observe(containerRef.current);
@@ -112,22 +274,19 @@ const Projects: React.FC = () => {
   // --- 2. LÓGICA CORE DE SCROLL (GUARD RAIL) ---
   useEffect(() => {
     // Se não estiver visível, mobile ou lightbox aberto, não faz nada
-    if (!isInView || isMobile || lightboxOpen) return;
+    if (!isInView || isMobile || selectedProject) return;
 
     const handleWheel = (e: WheelEvent) => {
       if (!containerRef.current) return;
 
       const rect = containerRef.current.getBoundingClientRect();
-      const isAtTop = Math.abs(rect.top) < 2; // Tolerância de 2px
-      const isApproaching = rect.top > 0 && rect.top < PHYSICS.snapThreshold; // Está chegando perto (snap zone)
+      const isAtTop = Math.abs(rect.top) < 2;
+      const isApproaching = rect.top > 0 && rect.top < PHYSICS.snapThreshold;
 
-      // CENÁRIO A: Ainda não ativou o modo horizontal
       if (!isActive) {
-        // Se o usuário está rolando para baixo e chegou no topo (ou perto)
         if (e.deltaY > 0 && (isAtTop || isApproaching)) {
-            // SNAP: Se estiver muito perto, força o alinhamento
             if (isApproaching && lenis) {
-                e.preventDefault(); // Impede o scroll nativo "picotado"
+                e.preventDefault();
                 lenis.scrollTo(containerRef.current, { 
                     offset: 0, 
                     immediate: false, 
@@ -140,72 +299,56 @@ const Projects: React.FC = () => {
                 return;
             }
 
-            // Se já está no topo exato
             if (isAtTop) {
                 e.preventDefault();
                 setIsActive(true);
                 lenis?.stop();
-                // Garante alinhamento visual perfeito
                 window.scrollTo({ top: containerRef.current.offsetTop + 0.5 }); 
             }
         }
-        // Se o usuário está rolando para cima (saindo pelo topo), deixa o Lenis cuidar
         return;
       }
 
-      // CENÁRIO B: Modo Horizontal ATIVO
       if (isActive) {
-        e.preventDefault(); // Rouba o scroll totalmente
+        e.preventDefault();
 
         const currentX = x.get();
         const maxScroll = -trackWidth.current;
         const delta = e.deltaY * PHYSICS.wheelMultiplier;
 
-        // Calcular novo X
         let newX = currentX - delta;
         
-        // Limites Rígidos
         if (newX > 0) newX = 0;
         if (newX < maxScroll) newX = maxScroll;
 
-        // Atualizar progresso
         const newProgress = Math.abs(newX / maxScroll);
         setProgress(Math.min(Math.max(newProgress, 0), 1));
 
-        // --- SISTEMA DE SAÍDA ---
-        
-        // 1. Tentar sair pelo INÍCIO (Scroll Up)
         if (currentX >= 0 && e.deltaY < 0) {
             reverseScrollCount.current += 1;
-            // Exige intenção clara (3 scrolls) ou um movimento forte
             if (reverseScrollCount.current > 3 || e.deltaY < -40) {
                 setIsActive(false);
                 lenis?.start();
                 reverseScrollCount.current = 0;
             }
         }
-        // 2. Tentar sair pelo FIM (Scroll Down)
         else if (currentX <= maxScroll && e.deltaY > 0) {
             reverseScrollCount.current += 1;
             if (reverseScrollCount.current > 3 || e.deltaY > 40) {
                 setIsActive(false);
                 lenis?.start();
-                // Pequeno empurrão para sair da zona de snap
-                // lenis?.scrollTo(window.scrollY + 150, { immediate: false, duration: 1 }); 
                 reverseScrollCount.current = 0;
             }
         } else {
-            // Se está navegando horizontalmente normal, reseta contador
             reverseScrollCount.current = 0;
             x.set(newX);
         }
       }
     };
 
-    // Adiciona listener não-passivo para poder usar preventDefault
     window.addEventListener('wheel', handleWheel, { passive: false });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [isActive, isInView, isMobile, lenis, x, lightboxOpen]);
+  }, [isActive, isInView, isMobile, lenis, x, selectedProject]);
 
 
   return (
@@ -215,21 +358,18 @@ const Projects: React.FC = () => {
       className="relative h-screen w-full bg-slate-950 overflow-hidden flex flex-col justify-center"
       style={{ zIndex: 30 }} 
     >
-      {/* Background Noise/Texture */}
       <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
 
       <ProgressIndicator progress={progress} isVisible={isActive} />
 
-      {/* TRACK HORIZONTAL */}
-      {/* Increased gap from 16 to 40 for more breathability */}
       <MotionDiv 
         ref={trackRef}
-        className="flex gap-8 md:gap-40 px-6 md:px-40 w-max items-center h-[80vh]"
+        className="flex gap-8 md:gap-16 px-6 md:px-20 w-max items-center h-[80vh]"
         style={{ x: springX, cursor: isMobile ? 'grab' : isActive ? 'none' : 'default' }}
         drag={isMobile ? "x" : false}
         dragConstraints={containerRef}
       >
-        {/* HEADER CARD (Intro) */}
+        {/* HEADER CARD */}
         <div className="w-[85vw] md:w-[30vw] h-full flex flex-col justify-center shrink-0 pr-12 z-[3]">
            <div className="pl-4 border-l-2 border-white/20">
               <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 block">
@@ -251,11 +391,11 @@ const Projects: React.FC = () => {
             key={index} 
             project={project} 
             index={index} 
-            setLightboxOpen={setLightboxOpen}
+            onOpen={() => setSelectedProject(project)}
           />
         ))}
 
-        {/* END CARD (Call to Action) */}
+        {/* END CARD */}
         <div className="w-[85vw] md:w-[30vw] h-full flex items-center justify-center shrink-0 z-[3]">
             <a href="#contact" className="group flex flex-col items-center justify-center gap-6 text-center">
                <div className="w-24 h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
@@ -270,17 +410,27 @@ const Projects: React.FC = () => {
             </a>
         </div>
       </MotionDiv>
+
+      {/* LIGHTBOX OVERLAY */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectLightbox 
+            project={selectedProject} 
+            onClose={() => setSelectedProject(null)} 
+          />
+        )}
+      </AnimatePresence>
     </section>
   );
 };
 
-// --- COMPONENTE DO CARD DE PROJETO (Camadas e Acessibilidade) ---
+// --- COMPONENTE DO CARD DE PROJETO ---
 
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0]; 
   index: number;
-  setLightboxOpen: (open: boolean) => void;
-}> = ({ project, index, setLightboxOpen }) => {
+  onOpen: () => void;
+}> = ({ project, index, onOpen }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -293,7 +443,6 @@ const ProjectCard: React.FC<{
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, margin: "-10%" }}
     >
-      {/* LAYER 1: Imagem de Fundo (Lazy Loaded) */}
       <img 
         src={project.image} 
         alt={project.title}
@@ -301,18 +450,13 @@ const ProjectCard: React.FC<{
         className="absolute inset-0 w-full h-full object-cover z-[10] transition-transform duration-1000 ease-out group-hover:scale-105 will-change-transform"
       />
 
-      {/* LAYER 2: Overlay */}
       <div 
         className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"
         style={{ mixBlendMode: 'multiply' }}
       />
       <div className="absolute inset-0 z-[21] bg-black/10" />
 
-      {/* LAYER 3: Container de Conteúdo */}
-      {/* Increased padding from p-12 to p-16 for more internal whitespace */}
-      <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between">
-        
-        {/* Top Info */}
+      <div className="absolute inset-0 z-[30] p-8 md:p-12 flex flex-col justify-between">
         <div className="flex justify-between items-start opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -translate-y-4 group-hover:translate-y-0">
            <span className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
              {project.category}
@@ -320,25 +464,21 @@ const ProjectCard: React.FC<{
            <span className="text-4xl font-serif text-white/20 font-bold">0{index + 1}</span>
         </div>
 
-        {/* Bottom Content */}
         <div className="relative transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-           {/* LAYER 4: Título */}
            <h3 className="relative z-[40] text-4xl md:text-6xl font-serif font-medium text-white mb-4 leading-none tracking-tight drop-shadow-lg">
              {project.title}
            </h3>
 
-           {/* LAYER 5: Descrição */}
            <p className="relative z-[50] text-slate-300 font-light leading-relaxed max-w-lg mb-8 text-sm md:text-base drop-shadow-md opacity-90">
              {project.description}
            </p>
 
-           {/* LAYER 6: Botões */}
            <div className="relative z-[60] flex flex-wrap gap-4">
               <button 
-                onClick={() => setLightboxOpen(true)}
+                onClick={onOpen}
                 className="flex items-center gap-2 px-6 py-3 bg-white text-slate-900 rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-xl"
               >
-                Ver Detalhes <Plus size={14} />
+                Ver Galeria <ImageIcon size={14} />
               </button>
               <a 
                 href={project.link}
@@ -350,7 +490,6 @@ const ProjectCard: React.FC<{
         </div>
       </div>
 
-      {/* LAYER 7: Efeitos de Foco */}
       <div 
         className={`absolute inset-0 z-[70] pointer-events-none border-[1px] border-white/0 transition-all duration-500 ${isHovered ? 'border-white/20 inset-4 rounded-xl' : ''}`} 
       />
