@@ -58,6 +58,16 @@
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        /* Hide default cursor on desktop to allow custom cursor */
+      }
+      
+      @media (pointer: fine) {
+        body {
+          cursor: none;
+        }
+        a, button, input, textarea, .cursor-hover {
+          cursor: none;
+        }
       }
       
       /* Custom scrollbar */

@@ -1,99 +1,111 @@
 
-import React, { useEffect, useState } from 'react';
-import { Github, Star, GitFork, ArrowUpRight } from 'lucide-react';
+import React from 'react';
+import { ArrowUpRight, Play } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
+import Tilt from './ui/Tilt';
 
-interface Repo {
-  id: number;
-  name: string;
-  description: string;
-  html_url: string;
-  stargazers_count: number;
-  language: string;
-  forks_count: number;
-}
+const EXPERIMENTS = [
+    {
+        id: 1,
+        title: "Liquid Metal",
+        category: "WebGL Shader",
+        description: "Simulação de fluidos em tempo real com física de partículas.",
+        image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800&h=600",
+        link: "https://codepen.io"
+    },
+    {
+        id: 2,
+        title: "Kinetics Type",
+        category: "Interactive Design",
+        description: "Tipografia reativa que responde ao movimento do cursor.",
+        image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800&h=600",
+        link: "https://codepen.io"
+    },
+    {
+        id: 3,
+        title: "Raymarching",
+        category: "Creative Coding",
+        description: "Exploração de renderização volumétrica usando Three.js.",
+        image: "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?auto=format&fit=crop&q=80&w=800&h=600",
+        link: "https://codepen.io"
+    },
+    {
+        id: 4,
+        title: "Generative Grid",
+        category: "Algorithmic Art",
+        description: "Padrões geométricos gerados proceduralmente.",
+        image: "https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&q=80&w=800&h=600",
+        link: "https://codepen.io"
+    }
+];
 
 const Lab: React.FC = () => {
-  const [repos, setRepos] = useState<Repo[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch repositories from a prominent user (e.g., vercel or facebook) for demo purposes
-    // In production, replace 'vercel' with your username
-    fetch('https://api.github.com/users/vercel/repos?sort=updated&per_page=4')
-      .then(res => res.json())
-      .then(data => {
-        setRepos(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch repos", err);
-        setLoading(false);
-      });
-  }, []);
-
   return (
-    <section id="lab" className="py-24 relative bg-slate-50 border-t border-slate-200 z-10">
-      <div className="container mx-auto px-6 md:px-12">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+    <section id="lab" className="py-32 relative bg-slate-900 text-white z-10 overflow-hidden">
+      {/* Dark Ambiance Background */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[#050505] z-0"></div>
+      <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-purple-900/10 rounded-full blur-[150px] pointer-events-none opacity-40 z-0"></div>
+
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-6">
           <Reveal>
             <div>
-               <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Open Source</span>
-               <h2 className="text-4xl font-serif font-medium text-slate-900">Lab & Experimentos</h2>
+               <span className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 block">Playground Visual</span>
+               <h2 className="text-5xl font-serif font-medium text-white tracking-tight">
+                 Lab & <span className="italic text-slate-600">Experimentos</span>
+               </h2>
             </div>
           </Reveal>
           <Reveal delay={100}>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900 hover:text-slate-600 transition-colors">
-              <Github size={18} /> Ver Github Completo
-            </a>
+            <p className="max-w-xs text-sm text-slate-400 font-light leading-relaxed text-right md:text-left">
+              Uma coleção de ensaios visuais, shaders e interações experimentais que desafiam o navegador.
+            </p>
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {loading ? (
-             Array.from({ length: 4 }).map((_, i) => (
-               <div key={i} className="h-48 bg-slate-200 rounded-3xl animate-pulse"></div>
-             ))
-          ) : (
-             repos.slice(0, 4).map((repo, index) => (
-                <Reveal key={repo.id} delay={index * 100} width="100%">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+             {EXPERIMENTS.map((exp, index) => (
+                <Reveal key={exp.id} delay={index * 100} width="100%">
                    <a 
-                     href={repo.html_url} 
+                     href={exp.link} 
                      target="_blank" 
                      rel="noopener noreferrer"
-                     className="block p-6 bg-white/60 backdrop-blur-md rounded-3xl border border-white/40 shadow-sm hover:shadow-xl hover:border-white/60 hover:-translate-y-1 transition-all duration-300 h-full flex flex-col group relative overflow-hidden"
+                     className="block group relative aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-[2rem] cursor-none"
                    >
-                      {/* Gradient glow on hover */}
-                      <div className="absolute inset-0 bg-gradient-to-tr from-slate-100/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                      <Tilt strength={8} className="w-full h-full">
+                          <div className="w-full h-full relative bg-slate-800">
+                              {/* Overlay for Depth */}
+                              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors z-10 duration-500"></div>
+                              
+                              <img 
+                                src={exp.image} 
+                                alt={exp.title} 
+                                className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[0.25,1,0.5,1] group-hover:scale-110 opacity-80 group-hover:opacity-60" 
+                              />
+                              
+                              {/* Hover Content Reveal */}
+                              <div className="absolute inset-0 z-20 p-8 flex flex-col justify-end">
+                                  {/* Play Icon - Centered initially, fades out or moves */}
+                                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-white opacity-0 group-hover:opacity-100 scale-50 group-hover:scale-100 transition-all duration-500">
+                                      <Play fill="currentColor" size={20} className="ml-1" />
+                                  </div>
 
-                      <div className="relative z-10">
-                        <div className="flex justify-between items-start mb-4">
-                            <div className="p-2 bg-white/80 rounded-full text-slate-900 border border-slate-100 group-hover:bg-slate-900 group-hover:text-white transition-colors duration-300">
-                            <Github size={20} />
-                            </div>
-                            <ArrowUpRight size={16} className="text-slate-400 group-hover:text-slate-900 transition-colors" />
-                        </div>
-                        
-                        <h3 className="font-bold text-slate-900 mb-2 truncate pr-4">{repo.name}</h3>
-                        <p className="text-xs text-slate-500 line-clamp-2 mb-6 flex-grow leading-relaxed">
-                            {repo.description || "Sem descrição disponível."}
-                        </p>
-                        
-                        <div className="flex items-center gap-4 text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-auto pt-4 border-t border-slate-200/50">
-                            {repo.language && (
-                            <span className="flex items-center gap-1">
-                                <span className="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]"></span> {repo.language}
-                            </span>
-                            )}
-                            <span className="flex items-center gap-1">
-                            <Star size={12} /> {repo.stargazers_count}
-                            </span>
-                        </div>
-                      </div>
+                                  <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                      <div className="flex justify-between items-end border-b border-white/10 pb-4 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+                                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">{exp.category}</span>
+                                          <ArrowUpRight size={18} className="text-white" />
+                                      </div>
+                                      <h3 className="text-3xl font-serif text-white mb-2">{exp.title}</h3>
+                                      <p className="text-sm text-slate-300 font-light max-w-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                                          {exp.description}
+                                      </p>
+                                  </div>
+                              </div>
+                          </div>
+                      </Tilt>
                    </a>
                 </Reveal>
-             ))
-          )}
+             ))}
         </div>
       </div>
     </section>

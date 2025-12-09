@@ -4,19 +4,20 @@ import { Menu, X } from 'lucide-react';
 import { NAV_LINKS } from '../constants';
 import Magnetic from './ui/Magnetic';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GamificationBadge } from './Gamification';
+import { usePageTransition } from './ui/PageTransition';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('');
   const [readingProgress, setReadingProgress] = useState(0);
+  
+  const { transitionTo } = usePageTransition();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
       
-      // Reading Progress Logic
       const totalScroll = document.documentElement.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
       const scroll = windowHeight > 0 ? totalScroll / windowHeight : 0;
@@ -27,8 +28,6 @@ const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    // Using rootMargin to create a "sweet spot" in the middle of the screen.
-    // The observer only triggers when an element intersects this narrow horizontal band.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -38,7 +37,7 @@ const Navbar: React.FC = () => {
         });
       },
       { 
-        rootMargin: "-45% 0px -45% 0px" // Only trigger when element is in the vertical center 10% of the screen
+        rootMargin: "-45% 0px -45% 0px" 
       } 
     );
 
@@ -51,79 +50,76 @@ const Navbar: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+    transitionTo(href);
+  };
+
   return (
     <>
-      {/* Reading Progress Bar - Visível acima da Navbar com Track Glass */}
-      <div className="fixed top-0 left-0 w-full h-[3px] bg-white/50 backdrop-blur-sm z-[100] pointer-events-none">
-        <div 
-          className="h-full bg-slate-900 transition-all duration-100 ease-out shadow-[0_0_10px_rgba(15,23,42,0.3)]"
-          style={{ width: `${readingProgress * 100}%` }}
-        />
-      </div>
+      <div className={`fixed left-0 w-full h-[2px] bg-slate-900 transition-all duration-300 z-[100] origin-left ${isScrolled ? 'top-[72px] opacity-0' : 'top-0 opacity-100'}`} style={{ transform: `scaleX(${readingProgress})` }} />
 
       <nav 
-        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-out 
+        className={`fixed left-1/2 -translate-x-1/2 z-50 transition-all duration-700 ease-[0.16,1,0.3,1] 
           ${isScrolled 
-            ? 'top-6 w-[85%] md:w-auto md:min-w-[700px] glass-panel rounded-full py-4 px-10' 
+            ? 'top-6 w-auto min-w-[300px] glass-panel rounded-full py-3 px-8' 
             : 'top-8 w-full md:w-auto bg-transparent py-4 px-6 md:px-0'
           }`}
       >
-        <div className={`flex justify-between items-center ${!isScrolled ? 'container mx-auto md:px-12' : 'w-full'}`}>
+        <div className={`flex justify-between items-center ${!isScrolled ? 'container mx-auto md:px-12' : 'gap-8'}`}>
           
-          <a href="#" className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-800' : 'text-slate-900'} hover:opacity-70 mr-8 focus-visible:ring-2 focus-visible:ring-slate-900 rounded-lg p-1`}>
-            V<span className="text-slate-400">.</span>DEV
-          </a>
+          <Magnetic strength={0.2}>
+            <a 
+              href="#hero" 
+              onClick={(e) => handleNavClick(e, '#hero')}
+              className={`text-xl font-serif font-bold tracking-tight z-50 relative transition-colors ${isScrolled ? 'text-slate-900' : 'text-slate-900'} hover:opacity-70`}
+            >
+                V<span className="text-slate-400">.</span>
+            </a>
+          </Magnetic>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-8">
              {NAV_LINKS.map((link) => {
                 const isActive = activeSection === link.href.replace('#', '');
                 return (
                     <Magnetic key={link.name} strength={0.2}>
                         <a 
-                        href={link.href}
-                        className={`text-xs font-medium uppercase tracking-widest relative group transition-all duration-300 px-2 py-1 focus-visible:ring-2 focus-visible:ring-slate-900 ${
-                            isActive 
-                            ? 'text-slate-900 font-bold' 
-                            : 'text-slate-700 hover:text-slate-900'
-                        }`}
+                          href={link.href}
+                          onClick={(e) => handleNavClick(e, link.href)}
+                          className={`text-[10px] font-bold uppercase tracking-[0.2em] relative group transition-all duration-300 py-1 ${
+                              isActive 
+                              ? 'text-slate-900' 
+                              : 'text-slate-500 hover:text-slate-900'
+                          }`}
                         >
                         {link.name}
-                        {/* Active/Hover Dot */}
-                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-800 transition-all duration-300 ${isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}></span>
+                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-900 transition-all duration-300 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0 group-hover:scale-100 group-hover:opacity-100'}`}></span>
                         </a>
                     </Magnetic>
                 );
              })}
             
-            {/* Divider */}
-            <div className="w-px h-6 bg-slate-200 mx-2"></div>
-
-            {/* Gamification Badge Integrated */}
-            <GamificationBadge />
-
             <Magnetic strength={0.4}>
                  <a 
-                  href="#contact" 
-                  className={`ml-4 px-7 py-3 text-xs font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-slate-900
-                    ${isScrolled 
-                      ? 'bg-slate-900 text-white hover:bg-slate-800 shadow-[0_5px_15px_rgba(15,23,42,0.2)]' 
-                      : 'bg-slate-900 text-white hover:bg-slate-800 shadow-xl'
-                    }`}
+                  href="#contact"
+                  onClick={(e) => handleNavClick(e, '#contact')}
+                  className={`ml-4 px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest transition-all rounded-full duration-300 inline-block border ${
+                      isScrolled
+                      ? 'bg-slate-900 text-white border-slate-900 hover:bg-slate-800'
+                      : 'bg-transparent border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white'
+                  }`}
                 >
-                  Fale Comigo
+                  Contato
                 </a>
             </Magnetic>
           </div>
 
-          {/* Mobile Menu Button & Badge */}
+          {/* Mobile Menu Button */}
           <div className="flex items-center gap-4 md:hidden">
-            <div className="scale-90 origin-right">
-              <GamificationBadge />
-            </div>
-
             <button 
-              className="p-2 text-slate-800 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-slate-900"
+              className="p-2 text-slate-900 z-50 relative hover:bg-slate-100/50 rounded-full transition-colors"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label="Toggle Menu"
             >
@@ -132,15 +128,15 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Menu Overlay with Framer Motion */}
+        {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div 
-              initial={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              animate={{ opacity: 1, backdropFilter: "blur(16px)" }}
-              exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
-              transition={{ duration: 0.3 }}
-              className="fixed inset-0 bg-white/95 z-40 flex flex-col justify-center items-center space-y-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4 }}
+              className="fixed inset-0 bg-slate-50 z-40 flex flex-col justify-center items-center space-y-6"
             >
               {NAV_LINKS.map((link, index) => {
                  const isActive = activeSection === link.href.replace('#', '');
@@ -148,21 +144,14 @@ const Navbar: React.FC = () => {
                   <motion.a 
                     key={link.name} 
                     href={link.href}
-                    initial={{ opacity: 0, y: 20 }}
+                    onClick={(e) => handleNavClick(e, link.href)}
+                    initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 + (index * 0.05), type: "spring", stiffness: 300, damping: 30 }}
-                    whileTap={{ scale: 0.95 }}
-                    className={`relative w-64 text-center text-2xl font-serif font-medium py-4 rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-slate-900 border ${
-                      isActive 
-                        ? 'bg-slate-50 text-slate-900 border-slate-200 shadow-sm' 
-                        : 'text-slate-400 border-transparent hover:text-slate-800 hover:bg-slate-50 hover:border-slate-100'
+                    transition={{ delay: 0.1 + (index * 0.05), duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className={`text-4xl md:text-5xl font-serif font-medium tracking-tight hover:text-slate-500 transition-colors ${
+                      isActive ? 'text-slate-900 italic' : 'text-slate-300'
                     }`}
-                    onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {/* Active Indicator Dot for Mobile - Refined */}
-                    {isActive && (
-                      <span className="absolute left-6 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-slate-900 shadow-[0_0_10px_rgba(15,23,42,0.3)]" />
-                    )}
                     {link.name}
                   </motion.a>
                  )
