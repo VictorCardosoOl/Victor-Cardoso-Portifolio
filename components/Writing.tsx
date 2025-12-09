@@ -26,7 +26,8 @@ const Writing: React.FC = () => {
           {WRITING.map((post, index) => (
              <Reveal key={index} delay={index * 100} width="100%" variant="translate">
                <a href={post.link} className="group block h-full">
-                 <div className="h-full p-8 rounded-[2rem] bg-slate-50 border border-slate-100 hover:border-slate-300 hover:bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between">
+                 {/* Increased padding from p-8 to p-10/p-12 */}
+                 <div className="h-full p-10 md:p-12 rounded-[2rem] bg-slate-50 border border-slate-100 hover:border-slate-300 hover:bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 flex flex-col justify-between">
                     <div>
                         <div className="flex justify-between items-start mb-6">
                             <span className="px-3 py-1 rounded-full bg-white border border-slate-200 text-[10px] font-bold uppercase tracking-widest text-slate-500 group-hover:bg-slate-900 group-hover:text-white transition-colors">

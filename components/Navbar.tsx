@@ -5,6 +5,10 @@ import { NAV_LINKS } from '../constants';
 import Magnetic from './ui/Magnetic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePageTransition } from './ui/PageTransition';
+import { FlipLink } from './ui/FlipLink';
+
+const MotionDiv = motion.div as any;
+const MotionA = motion.a as any;
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -85,18 +89,16 @@ const Navbar: React.FC = () => {
                 const isActive = activeSection === link.href.replace('#', '');
                 return (
                     <Magnetic key={link.name} strength={0.2}>
-                        <a 
-                          href={link.href}
-                          onClick={(e) => handleNavClick(e, link.href)}
-                          className={`text-[10px] font-bold uppercase tracking-[0.2em] relative group transition-all duration-300 py-1 ${
-                              isActive 
-                              ? 'text-slate-900' 
-                              : 'text-slate-500 hover:text-slate-900'
-                          }`}
-                        >
-                        {link.name}
-                        <span className={`absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-slate-900 transition-all duration-300 ${isActive ? 'opacity-100 scale-100' : 'opacity-0 scale-0 group-hover:scale-100 group-hover:opacity-100'}`}></span>
-                        </a>
+                        <div className="py-2"> {/* Wrapper for hit area */}
+                          <FlipLink
+                            href={link.href}
+                            onClick={(e) => handleNavClick(e, link.href)}
+                            isActive={isActive}
+                            className={`text-[10px] font-bold tracking-[0.2em] ${isActive ? 'text-slate-900' : 'text-slate-500'}`}
+                          >
+                            {link.name}
+                          </FlipLink>
+                        </div>
                     </Magnetic>
                 );
              })}
@@ -131,7 +133,7 @@ const Navbar: React.FC = () => {
         {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMobileMenuOpen && (
-            <motion.div 
+            <MotionDiv 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -141,22 +143,25 @@ const Navbar: React.FC = () => {
               {NAV_LINKS.map((link, index) => {
                  const isActive = activeSection === link.href.replace('#', '');
                  return (
-                  <motion.a 
+                  <MotionA 
                     key={link.name} 
                     href={link.href}
-                    onClick={(e) => handleNavClick(e, link.href)}
+                    onClick={(e: any) => handleNavClick(e, link.href)}
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 + (index * 0.05), duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className={`text-4xl md:text-5xl font-serif font-medium tracking-tight hover:text-slate-500 transition-colors ${
-                      isActive ? 'text-slate-900 italic' : 'text-slate-300'
+                    className={`flex items-center gap-3 px-6 py-2 rounded-full transition-all duration-300 ${
+                      isActive ? 'bg-slate-100 text-slate-900 shadow-sm' : 'text-slate-300 hover:text-slate-500'
                     }`}
                   >
-                    {link.name}
-                  </motion.a>
+                    {isActive && <div className="w-1.5 h-1.5 rounded-full bg-slate-900" />}
+                    <span className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
+                      {link.name}
+                    </span>
+                  </MotionA>
                  )
               })}
-            </motion.div>
+            </MotionDiv>
           )}
         </AnimatePresence>
       </nav>

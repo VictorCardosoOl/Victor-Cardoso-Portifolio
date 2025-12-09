@@ -20,6 +20,8 @@ import Magnetic from './components/ui/Magnetic';
 import Cursor from './components/ui/Cursor';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const MotionDiv = motion.div as any;
+
 // Simple Preloader Component
 const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const [count, setCount] = useState(0);
@@ -51,7 +53,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   }, [onComplete]);
 
   return (
-    <motion.div
+    <MotionDiv
       initial={{ opacity: 1 }}
       exit={{ y: "-100%", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
       className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center text-white"
@@ -59,7 +61,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
       <div className="text-9xl font-serif font-bold tracking-tighter">
         {Math.round(count)}%
       </div>
-    </motion.div>
+    </MotionDiv>
   );
 };
 
@@ -98,7 +100,7 @@ const App: React.FC = () => {
                   href="https://wa.me/5511999999999" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-14 h-14 bg-white text-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 border border-slate-100"
+                  className="flex items-center justify-center w-14 h-14 bg-white text-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 border border-slate-100 cursor-none"
                   aria-label="Contato via WhatsApp"
                 >
                   <MessageCircle size={24} className="text-slate-900" />

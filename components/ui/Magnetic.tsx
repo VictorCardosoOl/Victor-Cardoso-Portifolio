@@ -1,5 +1,6 @@
+
 import React, { useRef, useState } from 'react';
-import { motion, useSpring, useMotionValue, useTransform } from 'framer-motion';
+import { motion, useSpring, useMotionValue } from 'framer-motion';
 
 interface MagneticProps {
   children: React.ReactElement;
@@ -38,8 +39,8 @@ export const Magnetic: React.FC<MagneticProps> = ({ children, strength = 0.3 }) 
       onMouseMove={handleMouse}
       onMouseLeave={reset}
     >
-      {React.cloneElement(children, {
-        style: { ...children.props.style } // Preserve existing styles if any
+      {React.cloneElement(children as React.ReactElement<any>, {
+        style: { ...(children as React.ReactElement<any>).props.style } // Preserve existing styles if any
       })}
     </motion.div>
   );

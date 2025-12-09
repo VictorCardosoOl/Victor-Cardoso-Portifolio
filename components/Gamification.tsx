@@ -4,6 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ChevronRight, Sparkles, CheckCircle2, Lock, Clock, Trophy, Target, Star, Medal } from 'lucide-react';
 import { useGamification, Rank } from './GamificationContext';
 
+const MotionPath = motion.path as any;
+const MotionCircle = motion.circle as any;
+const MotionDiv = motion.div as any;
+
 // --- Visual Components ---
 
 const Laurels = ({ rank, className }: { rank: Rank; className?: string }) => {
@@ -23,20 +27,20 @@ const Laurels = ({ rank, className }: { rank: Rank; className?: string }) => {
       strokeLinecap="round" 
       strokeLinejoin="round"
     >
-       <motion.path 
+       <MotionPath 
          initial={{ pathLength: 0, opacity: 0 }} 
          animate={{ pathLength: 1, opacity: 1 }} 
          transition={{ duration: 1.5, ease: "easeOut" }}
          d="M 50 85 C 25 85 5 60 5 35 C 5 20 15 5 35 5" 
        />
-       <motion.path 
+       <MotionPath 
          initial={{ pathLength: 0, opacity: 0 }} 
          animate={{ pathLength: 1, opacity: 1 }} 
          transition={{ duration: 1.5, ease: "easeOut" }}
          d="M 50 85 C 75 85 95 60 95 35 C 95 20 85 5 65 5" 
        />
        {/* Rank Icon Element */}
-       <motion.circle 
+       <MotionCircle 
           cx="50" cy="20" r="8" 
           initial={{ scale: 0 }} 
           animate={{ scale: 1 }} 
@@ -46,7 +50,7 @@ const Laurels = ({ rank, className }: { rank: Rank; className?: string }) => {
           opacity="0.2"
        />
        {rank === 'Ouro' && (
-         <motion.path
+         <MotionPath
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 1, type: "spring" }}
@@ -69,7 +73,7 @@ const HeatmapBar: React.FC<{ section: string; time: number; maxTime: number }> =
                 <span className="text-[10px] font-mono text-slate-400">{time}s</span>
             </div>
             <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden border border-slate-200/50">
-                <motion.div 
+                <MotionDiv 
                     initial={{ width: 0 }}
                     animate={{ width: `${percent}%` }}
                     className="h-full bg-slate-800 rounded-full opacity-80 group-hover:opacity-100 transition-opacity"
@@ -247,7 +251,7 @@ const Gamification: React.FC = () => {
       {/* 2. Notification (Glass Gold Pill - Refined) */}
       <AnimatePresence>
         {notification && notification.visible && (
-          <motion.div
+          <MotionDiv
             initial={{ x: "100%", opacity: 0 }} // Slide from right edge
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: "100%", opacity: 0 }} // Slide out to right
@@ -280,7 +284,7 @@ const Gamification: React.FC = () => {
                  </p>
                </div>
             </div>
-          </motion.div>
+          </MotionDiv>
         )}
       </AnimatePresence>
 
@@ -288,19 +292,19 @@ const Gamification: React.FC = () => {
       <AnimatePresence>
         {isModalOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
-            <motion.div 
+            <MotionDiv 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={closeModal}
               className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
             />
             
-            <motion.div 
+            <MotionDiv 
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
               className="relative bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden ring-1 ring-slate-900/5 grid grid-cols-1 md:grid-cols-12 max-h-[85vh]"
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: any) => e.stopPropagation()}
             >
                {/* Close Button */}
                <button 
@@ -365,7 +369,7 @@ const Gamification: React.FC = () => {
                         <span className="text-lg font-serif font-bold text-slate-900">{progressPercent}%</span>
                      </div>
                      <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <motion.div 
+                        <MotionDiv 
                            initial={{ width: 0 }}
                            animate={{ width: `${progressPercent}%` }}
                            transition={{ duration: 1, ease: "easeOut" }}
@@ -433,7 +437,7 @@ const Gamification: React.FC = () => {
                   </div>
 
                </div>
-            </motion.div>
+            </MotionDiv>
           </div>
         )}
       </AnimatePresence>
@@ -441,7 +445,7 @@ const Gamification: React.FC = () => {
       {/* 4. Footer Suggestion Popup (Subtle Reminder) */}
       <AnimatePresence>
          {showFooterPopup && !isModalOpen && missingQuests.length > 0 && (
-            <motion.div
+            <MotionDiv
                initial={{ y: 50, opacity: 0 }}
                animate={{ y: 0, opacity: 1 }}
                exit={{ y: 20, opacity: 0 }}
@@ -472,7 +476,7 @@ const Gamification: React.FC = () => {
                      <ChevronRight size={14} className="text-slate-300 group-hover/item:text-slate-900 transition-colors" />
                   </a>
                </div>
-            </motion.div>
+            </MotionDiv>
          )}
       </AnimatePresence>
     </>

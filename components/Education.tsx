@@ -28,7 +28,8 @@ const Education: React.FC = () => {
           {EDUCATION.map((edu, index) => (
             <Reveal key={index} delay={index * 150} width="100%" variant="scale">
                 <Tilt strength={5} className="h-full">
-                    <div className="h-full p-8 rounded-[2rem] bg-white border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group relative overflow-hidden">
+                    {/* Increased padding from p-8 to p-10/p-12 */}
+                    <div className="h-full p-10 md:p-12 rounded-[2rem] bg-white border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group relative overflow-hidden">
                         {/* Subtle Gradient Glow on Hover */}
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
                         

@@ -80,7 +80,7 @@ const Lab: React.FC = () => {
                               <img 
                                 src={exp.image} 
                                 alt={exp.title} 
-                                className="w-full h-full object-cover transition-transform duration-[1.5s] ease-[0.25,1,0.5,1] group-hover:scale-110 opacity-80 group-hover:opacity-60" 
+                                className="w-full h-full object-cover transition-transform duration-[0.7s] ease-[0.25,1,0.5,1] group-hover:scale-110 opacity-80 group-hover:opacity-60" 
                               />
                               
                               {/* Hover Content Reveal */}

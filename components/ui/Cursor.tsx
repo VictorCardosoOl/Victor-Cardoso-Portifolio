@@ -1,9 +1,12 @@
+
 import React, { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 
+const MotionDiv = motion.div as any;
+
 const Cursor: React.FC = () => {
-  const [isHovered, setIsHovered] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [variant, setVariant] = useState<'default' | 'hover'>('default');
   
   // Mouse position logic
   const mouseX = useMotionValue(-100);
@@ -21,14 +24,14 @@ const Cursor: React.FC = () => {
       if (!isVisible) setIsVisible(true);
     };
 
-    const handleMouseEnter = () => setIsHovered(true);
-    const handleMouseLeave = () => setIsHovered(false);
+    const handleMouseEnter = () => setVariant('hover');
+    const handleMouseLeave = () => setVariant('default');
 
     window.addEventListener('mousemove', moveCursor);
     
-    // Add logic to detect clickable elements dynamically
+    // Logic to detect clickable elements dynamically
     const addListeners = () => {
-      const clickables = document.querySelectorAll('a, button, input, textarea, .cursor-hover');
+      const clickables = document.querySelectorAll('a, button, input, textarea, .cursor-hover, [role="button"]');
       clickables.forEach(el => {
         el.addEventListener('mouseenter', handleMouseEnter);
         el.addEventListener('mouseleave', handleMouseLeave);
@@ -52,26 +55,29 @@ const Cursor: React.FC = () => {
     };
   }, [mouseX, mouseY, isVisible]);
 
-  // Hide on mobile/touch devices via CSS media query usually, 
-  // but returning null here if needed can be handled by hooks.
-  // We'll rely on global CSS to hide default cursor and show this one only on pointer:fine.
-
   return (
-    <>
-      {/* Main Dot */}
-      <motion.div 
-        className="fixed top-0 left-0 w-4 h-4 bg-slate-900 rounded-full pointer-events-none z-[9999] mix-blend-difference"
-        style={{ 
-          x, 
-          y, 
-          translateX: '-50%', 
-          translateY: '-50%',
-          scale: isHovered ? 3.5 : 1,
-          opacity: isVisible ? 1 : 0
-        }}
-        transition={{ scale: { duration: 0.2 } }}
-      />
-    </>
+    <MotionDiv 
+      className="fixed top-0 left-0 pointer-events-none z-[9999] mix-blend-difference"
+      style={{ 
+        x, 
+        y, 
+        translateX: '-50%', 
+        translateY: '-50%',
+      }}
+    >
+        {/* Main Cursor Circle */}
+        <MotionDiv 
+            className="bg-white rounded-full"
+            animate={{
+                width: variant === 'hover' ? 64 : 16,
+                height: variant === 'hover' ? 64 : 16,
+                opacity: isVisible ? 1 : 0
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        />
+        
+        {/* Text inside cursor (optional, visible only on hover if desired, currently plain circle as per reference style) */}
+    </MotionDiv>
   );
 };
 

@@ -4,6 +4,8 @@ import { Reveal } from './ui/Reveal';
 import { Layers, Zap, Shield, Users, GitCommit } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const MotionDiv = motion.div as any;
+
 // Philosophy Grid
 const PhilosophyGrid = () => {
   const principles = [
@@ -32,7 +34,7 @@ const PhilosophyGrid = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
       {principles.map((p, i) => (
-        <motion.div 
+        <MotionDiv 
           key={i} 
           initial={{ opacity: 0, scale: 0.95 }} // Zoom-in start
           whileInView={{ opacity: 1, scale: 1 }} // Zoom-in end
@@ -45,7 +47,7 @@ const PhilosophyGrid = () => {
           </div>
           <h4 className="text-lg font-serif font-bold text-slate-900 mb-3">{p.title}</h4>
           <p className="text-sm text-slate-600 leading-relaxed font-light">{p.desc}</p>
-        </motion.div>
+        </MotionDiv>
       ))}
     </div>
   );
@@ -141,7 +143,8 @@ const About: React.FC = () => {
           {/* Right Column: Philosophy Grid */}
           <div className="w-full lg:w-1/2 order-1 lg:order-2">
             <Reveal delay={150} width="100%">
-              <div className="bg-white p-8 md:p-10 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-24">
+              {/* Increased padding from p-8 to p-10/p-14 */}
+              <div className="bg-white p-10 md:p-14 border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-200/50 sticky top-24">
                 <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
                   <div>
                      <h3 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">

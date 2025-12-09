@@ -6,10 +6,19 @@ import { Reveal } from './ui/Reveal';
 import { TextReveal } from './ui/TextReveal';
 import Button from './ui/Button';
 import Magnetic from './ui/Magnetic';
+import { usePageTransition } from './ui/PageTransition';
+
+const MotionDiv = motion.div as any;
 
 const Hero: React.FC = () => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 1000], [0, 300]); // Parallax effect
+  const { transitionTo } = usePageTransition();
+
+  const handleNav = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    transitionTo(href);
+  };
 
   return (
     <section id="hero" className="min-h-screen flex items-center pt-32 pb-20 relative overflow-hidden">
@@ -23,7 +32,7 @@ const Hero: React.FC = () => {
               <div className="relative w-full max-w-md aspect-[3/4] group select-none">
                  
                  {/* Main Image Container with Parallax */}
-                 <motion.div 
+                 <MotionDiv 
                    style={{ y }}
                    className="relative w-full h-full rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] bg-slate-200"
                  >
@@ -35,7 +44,7 @@ const Hero: React.FC = () => {
                    
                    {/* Glass Overlay Gradient (Refined) */}
                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/30 via-slate-900/5 to-transparent opacity-80 mix-blend-multiply"></div>
-                 </motion.div>
+                 </MotionDiv>
               </div>
             </Reveal>
           </div>
@@ -82,7 +91,7 @@ const Hero: React.FC = () => {
               <Reveal delay={500} width="100%">
                 <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-6">
                   <Magnetic strength={0.5}>
-                      <a href="#contact" className="block">
+                      <a href="#contact" onClick={(e) => handleNav(e, '#contact')} className="block">
                         <Button variant="primary" size="lg" className="w-full sm:w-auto shadow-xl hover:shadow-2xl hover:shadow-slate-900/20">
                           Solicitar Orçamento <ArrowRight className="w-4 h-4 ml-2" />
                         </Button>
@@ -90,7 +99,7 @@ const Hero: React.FC = () => {
                   </Magnetic>
                   
                   <Magnetic strength={0.5}>
-                      <a href="#projects" className="block">
+                      <a href="#projects" onClick={(e) => handleNav(e, '#projects')} className="block">
                         <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-white/50 backdrop-blur-md">
                           Ver Portfolio
                         </Button>
@@ -105,16 +114,16 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <motion.div 
+      <MotionDiv 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 0.4, y: 0 }}
         transition={{ delay: 1, duration: 1, repeat: Infinity, repeatType: "reverse" }}
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-20 hover:opacity-100 transition-opacity cursor-pointer" 
-        onClick={() => document.getElementById('projects')?.scrollIntoView({behavior: 'smooth'})}
+        onClick={() => transitionTo('#projects')}
       >
         <span className="text-[10px] uppercase tracking-widest font-bold">Scroll</span>
         <ChevronDown className="text-slate-900" size={20} />
-      </motion.div>
+      </MotionDiv>
     </section>
   );
 };

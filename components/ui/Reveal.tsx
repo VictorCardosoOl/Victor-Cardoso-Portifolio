@@ -1,5 +1,8 @@
+
 import React, { useRef, useEffect, useState } from 'react';
-import { motion, useInView, Variants } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
+
+const MotionDiv = motion.div as any;
 
 interface RevealProps {
   children: React.ReactNode;
@@ -40,7 +43,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   // Animation Variants Strategy
-  const animationVariants: Record<string, Variants> = {
+  const animationVariants: Record<string, any> = {
     translate: {
       hidden: { opacity: 0, y: y },
       visible: { opacity: 1, y: 0 }
@@ -59,7 +62,7 @@ export const Reveal: React.FC<RevealProps> = ({
 
   return (
     <div ref={ref} style={{ width }} className={`relative ${className}`}>
-      <motion.div
+      <MotionDiv
         variants={selectedVariant}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
@@ -70,7 +73,7 @@ export const Reveal: React.FC<RevealProps> = ({
         }}
       >
         {children}
-      </motion.div>
+      </MotionDiv>
     </div>
   );
 };

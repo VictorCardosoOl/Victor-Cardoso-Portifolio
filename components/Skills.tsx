@@ -34,7 +34,8 @@ const Skills: React.FC = () => {
             - Tablet: 2 Columns (Last item spans full width for balance)
             - Desktop: 3 Columns
         */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10 items-stretch">
+        {/* Increased gap from 6/10 to 8/12 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-stretch">
           {SKILLS.map((skill, index) => {
             const Icon = skill.icon;
             
@@ -48,9 +49,10 @@ const Skills: React.FC = () => {
                   <Tilt strength={8} className="h-full">
                     <div 
                       className={clsx(
-                        "h-full glass-card p-8 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 flex flex-col bg-white/40 shadow-sm hover:shadow-2xl",
+                        // Increased padding from p-8 to p-10/p-14
+                        "h-full glass-card p-10 md:p-14 rounded-[2.5rem] border border-slate-200/60 hover:border-slate-300 transition-all duration-500 flex flex-col bg-white/40 shadow-sm hover:shadow-2xl",
                         // On tablet, if it spans 2 cols, we can add a bit more horizontal padding or keep it standard
-                        isLastItem && "md:px-10"
+                        isLastItem && "md:px-16"
                       )}
                     >
                       {/* Header */}

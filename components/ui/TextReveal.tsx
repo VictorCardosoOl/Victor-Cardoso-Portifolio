@@ -2,6 +2,9 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 
+const MotionDiv = motion.div as any;
+const MotionSpan = motion.span as any;
+
 interface TextRevealProps {
   children: string;
   className?: string;
@@ -45,7 +48,7 @@ export const TextReveal: React.FC<TextRevealProps> = ({ children, className = ""
   };
 
   return (
-    <motion.div
+    <MotionDiv
       ref={ref}
       style={{ display: "flex", flexWrap: "wrap" }}
       variants={container}
@@ -55,11 +58,11 @@ export const TextReveal: React.FC<TextRevealProps> = ({ children, className = ""
     >
       {words.map((word, index) => (
         <span key={index} className="overflow-hidden inline-block mr-[0.25em] -mb-2 pb-2">
-          <motion.span variants={child} className="inline-block">
+          <MotionSpan variants={child} className="inline-block">
             {word}
-          </motion.span>
+          </MotionSpan>
         </span>
       ))}
-    </motion.div>
+    </MotionDiv>
   );
 };

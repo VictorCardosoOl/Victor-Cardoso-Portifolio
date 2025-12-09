@@ -3,8 +3,11 @@ import React from 'react';
 import { CONTACT_INFO, NAV_LINKS } from '../constants';
 import { ArrowUpRight } from 'lucide-react';
 import Magnetic from './ui/Magnetic';
+import { usePageTransition } from './ui/PageTransition';
 
 const Footer: React.FC = () => {
+  const { transitionTo } = usePageTransition();
+
   return (
     <footer id="site-footer" className="relative bg-slate-950 text-white pt-24 pb-12 overflow-hidden">
       {/* Atmosphere Background Elements */}
@@ -17,7 +20,11 @@ const Footer: React.FC = () => {
           
           {/* Brand Column */}
           <div className="lg:w-1/3">
-             <a href="#" className="inline-block text-3xl font-serif font-bold tracking-tight text-white mb-6">
+             <a 
+               href="#hero" 
+               onClick={(e) => { e.preventDefault(); transitionTo('#hero'); }}
+               className="inline-block text-3xl font-serif font-bold tracking-tight text-white mb-6"
+             >
                V<span className="text-slate-600">.</span>DEV
              </a>
              <p className="text-slate-400 leading-relaxed font-light max-w-sm mb-8">
@@ -43,7 +50,11 @@ const Footer: React.FC = () => {
              <ul className="space-y-4">
                {NAV_LINKS.map((link) => (
                  <li key={link.name}>
-                   <a href={link.href} className="text-slate-300 hover:text-white transition-colors text-sm font-medium block hover:translate-x-1 duration-300">
+                   <a 
+                     href={link.href} 
+                     onClick={(e) => { e.preventDefault(); transitionTo(link.href); }}
+                     className="text-slate-300 hover:text-white transition-colors text-sm font-medium block hover:translate-x-1 duration-300"
+                   >
                      {link.name}
                    </a>
                  </li>
