@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -55,12 +56,19 @@
       }
     </script>
     <style>
+      /* Ensure sticky works */
+      html, body {
+        overflow-x: hidden;
+        width: 100%;
+        position: relative;
+      }
+      
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        /* Hide default cursor on desktop to allow custom cursor */
       }
       
+      /* Hide cursor only on fine pointer devices */
       @media (pointer: fine) {
         body {
           cursor: none;
@@ -73,6 +81,7 @@
       /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
+        height: 6px;
       }
       ::-webkit-scrollbar-track {
         background: transparent;
@@ -85,7 +94,16 @@
         background: rgba(100, 116, 139, 0.8);
       }
       
-      /* Refined Glass Effect (Light) - V.2 Modern */
+      /* Utilities classes for hiding scrollbar but keeping functionality */
+      .no-scrollbar::-webkit-scrollbar {
+          display: none;
+      }
+      .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+      }
+      
+      /* Glass Effects */
       .glass-panel {
         background: rgba(255, 255, 255, 0.65);
         backdrop-filter: blur(40px) saturate(160%);
@@ -96,7 +114,6 @@
           inset 0 1px 0 rgba(255, 255, 255, 0.6);
       }
       
-      /* Standard Glass Card (Light) - V.2 Tactile */
       .glass-card {
         background: rgba(255, 255, 255, 0.45);
         backdrop-filter: blur(20px);
@@ -108,25 +125,12 @@
         transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
       }
 
-      /* Refined Glass Effect (Dark) - Optimized Contrast & Blur */
-      .glass-panel-dark {
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(60px) saturate(140%);
-        -webkit-backdrop-filter: blur(60px) saturate(140%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 
-          0 20px 80px rgba(0, 0, 0, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      }
-
-      /* Custom Focus Ring for A11y */
       :focus-visible {
         outline: none;
         box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
         border-radius: 4px;
       }
       
-      /* Selection Color */
       ::selection {
         background: #0f172a;
         color: #fff;

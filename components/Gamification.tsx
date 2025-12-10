@@ -149,13 +149,33 @@ const Gamification: React.FC = () => {
     quests, 
     notification, 
     completeQuest, 
-    sectionTimes, 
-    totalTime,
+    getSessionDuration,
+    getAllSectionTimes,
     isModalOpen,
     closeModal
   } = useGamification();
 
   const [showFooterPopup, setShowFooterPopup] = useState(false);
+  
+  // Local state for UI display of time (avoids global context re-renders)
+  const [displayTime, setDisplayTime] = useState(0);
+  const [displaySections, setDisplaySections] = useState<Record<string, number>>({});
+
+  // Sync Timer when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+        // Initial fetch
+        setDisplayTime(getSessionDuration());
+        setDisplaySections(getAllSectionTimes());
+
+        // Update every second while open
+        const interval = setInterval(() => {
+            setDisplayTime(getSessionDuration());
+            setDisplaySections(getAllSectionTimes());
+        }, 1000);
+        return () => clearInterval(interval);
+    }
+  }, [isModalOpen, getSessionDuration, getAllSectionTimes]);
 
   // --- Global Event Listeners ---
   useEffect(() => {
@@ -209,7 +229,7 @@ const Gamification: React.FC = () => {
   const progressPercent = Math.round((completedQuests.length / quests.length) * 100);
   
   // Cast values safely for Heatmap
-  const timeValues = Object.values(sectionTimes) as number[];
+  const timeValues = Object.values(displaySections) as number[];
   const maxSectionTime = Math.max(...timeValues, 1);
 
   // Determine styles for notification based on rank type
@@ -345,7 +365,7 @@ const Gamification: React.FC = () => {
                             <Clock size={16} className="text-slate-400" />
                             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tempo</span>
                         </div>
-                        <span className="font-serif font-medium text-slate-900">{Math.floor(Number(totalTime) / 60)}m {Number(totalTime) % 60}s</span>
+                        <span className="font-serif font-medium text-slate-900">{Math.floor(displayTime / 60)}m {displayTime % 60}s</span>
                      </div>
                      <div className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between">
                         <div className="flex items-center gap-2">
@@ -414,7 +434,7 @@ const Gamification: React.FC = () => {
                      <div>
                         <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-100 pb-3">Interesse por Seção</h4>
                         <div className="space-y-5">
-                           {Object.entries(sectionTimes)
+                           {Object.entries(displaySections)
                               .sort(([,a], [,b]) => (b as number) - (a as number))
                               .slice(0, 5)
                               .map(([section, time]) => (
@@ -426,7 +446,7 @@ const Gamification: React.FC = () => {
                                   />
                               ))
                            }
-                           {Object.keys(sectionTimes).length === 0 && (
+                           {Object.keys(displaySections).length === 0 && (
                               <div className="py-10 text-center flex flex-col items-center justify-center bg-slate-50 rounded-xl border border-dashed border-slate-200">
                                  <Clock size={24} className="text-slate-300 mb-2" />
                                  <p className="text-slate-400 text-xs italic">Navegue para gerar dados...</p>
