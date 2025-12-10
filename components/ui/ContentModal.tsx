@@ -25,7 +25,10 @@ const ContentModal: React.FC<ContentModalProps> = ({
   // Scroll Locking & Escape Key
   useEffect(() => {
     if (isOpen) {
+      // 1. Stop main page scroll
       lenis?.stop();
+      
+      // 2. Lock body overflow to prevent background scrolling
       document.body.style.overflow = 'hidden';
       
       const handleEsc = (e: KeyboardEvent) => {
@@ -34,6 +37,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
       window.addEventListener('keydown', handleEsc);
       
       return () => {
+        // Cleanup: Resume main page scroll
         lenis?.start();
         document.body.style.overflow = '';
         window.removeEventListener('keydown', handleEsc);
@@ -56,6 +60,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
             transition={{ duration: 0.4 }}
             onClick={onClose}
             className="fixed inset-0 z-[90] bg-slate-950/60 backdrop-blur-sm cursor-pointer"
+            aria-hidden="true"
           />
 
           {/* Modal Panel */}
@@ -97,7 +102,11 @@ const ContentModal: React.FC<ContentModalProps> = ({
             </div>
 
             {/* Scrollable Content Body */}
-            <div className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50">
+            {/* data-lenis-prevent attribute ensures Lenis doesn't hijack scroll inside this container */}
+            <div 
+              className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50 overscroll-contain"
+              data-lenis-prevent="true" 
+            >
                {children}
             </div>
           </motion.div>

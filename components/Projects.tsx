@@ -2,11 +2,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { PROJECTS } from '../constants';
 import { ArrowUpRight, MoveRight, ImageIcon, CheckCircle2 } from 'lucide-react';
-import { useLenis } from './ScrollContext';
 import { 
   motion, 
-  useSpring, 
-  useMotionValue
+  useScroll, 
+  useTransform, 
+  useSpring
 } from 'framer-motion';
 import ContentModal from './ui/ContentModal';
 import { Reveal } from './ui/Reveal';
@@ -15,22 +15,19 @@ const MotionDiv = motion.div as any;
 
 // --- COMPONENTES AUXILIARES ---
 
-const ProgressIndicator: React.FC<{ progress: number; isVisible: boolean }> = ({ progress, isVisible }) => {
+const ProgressIndicator: React.FC<{ progress: any; isVisible: boolean }> = ({ progress, isVisible }) => {
   return (
     <MotionDiv 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className="absolute bottom-6 right-6 md:bottom-12 md:right-12 z-[60] flex items-center gap-3 md:gap-4 bg-slate-950/80 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-full border border-white/10 shadow-2xl"
+      style={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+      className="absolute bottom-6 right-6 md:bottom-12 md:right-12 z-[60] flex items-center gap-3 md:gap-4 bg-slate-950/80 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-full border border-white/10 shadow-2xl transition-all duration-500"
     >
-      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums w-6 md:w-8 text-right">
-        {Math.round(progress * 100)}%
+      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums w-12 text-right">
+         Scroll
       </span>
       <div className="w-20 md:w-32 h-1 bg-white/10 rounded-full overflow-hidden">
         <MotionDiv 
           className="h-full bg-white"
-          style={{ width: `${progress * 100}%` }}
-          layout 
+          style={{ scaleX: progress, transformOrigin: "left" }}
         />
       </div>
     </MotionDiv>
@@ -151,207 +148,111 @@ const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ proje
 // --- COMPONENTE PRINCIPAL ---
 
 const Projects: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-  const lenis = useLenis();
-
-  const [isActive, setIsActive] = useState(false);
-  const [isInView, setIsInView] = useState(false);
+  const targetRef = useRef<HTMLDivElement>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const [progress, setProgress] = useState(0);
-  
-  // Modal State
   const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
 
-  const x = useMotionValue(0);
-  const springX = useSpring(x, { damping: 50, stiffness: 250, mass: 1.2 });
-  const containerWidth = useRef(0);
-  const trackWidth = useRef(0);
-  const reverseScrollCount = useRef(0);
-
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (containerRef.current && trackRef.current) {
-        containerWidth.current = containerRef.current.offsetWidth;
-        trackWidth.current = trackRef.current.scrollWidth - containerWidth.current;
-      }
-    };
-    
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    setTimeout(handleResize, 500);
-    return () => window.removeEventListener('resize', handleResize);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Update logic to pause horizontal scroll only, main scroll lock handled by ContentModal
-  useEffect(() => {
-    if (selectedProject) {
-      // Modal handles scroll locking
-      setIsActive(false); 
-    }
-  }, [selectedProject]);
+  // --- LOGICA DE SCROLL (Sticky Method) ---
+  // A seção tem 400vh de altura. O useScroll monitora o progresso de 0 a 1 enquanto esses 400vh passam.
+  // O container interno é "sticky", então ele fica parado na tela.
+  // O valor "x" move o conteúdo horizontalmente baseado nesse progresso vertical.
+  
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ["start start", "end end"] 
+  });
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsInView(entry.isIntersecting);
-        if (!entry.isIntersecting && isActive) {
-            setIsActive(false);
-            lenis?.start();
-        }
-      },
-      { threshold: 0 }
-    );
+  // Smooth scroll progress
+  const smoothProgress = useSpring(scrollYProgress, {
+    damping: 30,
+    stiffness: 200,
+    mass: 0.8
+  });
 
-    if (containerRef.current) observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [isActive, lenis]);
-
-
-  useEffect(() => {
-    if (!isInView || isMobile || selectedProject) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (!containerRef.current) return;
-
-      const rect = containerRef.current.getBoundingClientRect();
-      const isAtTop = Math.abs(rect.top) < 2;
-      const isApproaching = rect.top > 0 && rect.top < 100;
-
-      if (!isActive) {
-        if (e.deltaY > 0 && (isAtTop || isApproaching)) {
-            if (isApproaching && lenis) {
-                e.preventDefault();
-                lenis.scrollTo(containerRef.current, { 
-                    offset: 0, 
-                    immediate: false, 
-                    duration: 0.8,
-                    onComplete: () => {
-                        setIsActive(true);
-                        lenis.stop();
-                    }
-                });
-                return;
-            }
-
-            if (isAtTop) {
-                e.preventDefault();
-                setIsActive(true);
-                lenis?.stop();
-                window.scrollTo({ top: containerRef.current.offsetTop + 0.5 }); 
-            }
-        }
-        return;
-      }
-
-      if (isActive) {
-        e.preventDefault();
-
-        const currentX = x.get();
-        const maxScroll = -trackWidth.current;
-        const delta = e.deltaY * 2.2;
-
-        let newX = currentX - delta;
-        
-        if (newX > 0) newX = 0;
-        if (newX < maxScroll) newX = maxScroll;
-
-        const newProgress = Math.abs(newX / maxScroll);
-        setProgress(Math.min(Math.max(newProgress, 0), 1));
-
-        if (currentX >= 0 && e.deltaY < 0) {
-            reverseScrollCount.current += 1;
-            if (reverseScrollCount.current > 3 || e.deltaY < -40) {
-                setIsActive(false);
-                lenis?.start();
-                reverseScrollCount.current = 0;
-            }
-        }
-        else if (currentX <= maxScroll && e.deltaY > 0) {
-            reverseScrollCount.current += 1;
-            if (reverseScrollCount.current > 3 || e.deltaY > 40) {
-                setIsActive(false);
-                lenis?.start();
-                reverseScrollCount.current = 0;
-            }
-        } else {
-            reverseScrollCount.current = 0;
-            x.set(newX);
-        }
-      }
-    };
-
-    window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
-  }, [isActive, isInView, isMobile, lenis, x, selectedProject]);
-
+  // Calculate horizontal translation
+  // "1%" start padding -> "-85%" moves enough to show all items. 
+  // Adjust "-85%" based on the actual total width of items vs viewport.
+  const x = useTransform(smoothProgress, [0, 1], ["1%", "-90%"]);
 
   return (
     <section 
-      ref={containerRef} 
-      id="projects"
-      className="relative h-screen w-full bg-slate-950 overflow-hidden flex flex-col justify-center"
-      style={{ zIndex: 30 }} 
+      id="projects" 
+      ref={targetRef} 
+      className={`relative bg-slate-950 ${isMobile ? 'h-auto' : 'h-[400vh]'}`} // Height defines scroll distance
+      style={{ zIndex: 30 }}
     >
-      <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
+      {/* Background Noise */}
+      <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150 fixed"></div>
 
-      {!isMobile && <ProgressIndicator progress={progress} isVisible={isActive} />}
+      {/* Sticky Container */}
+      <div className={`
+        ${isMobile ? 'relative' : 'sticky top-0 h-screen overflow-hidden'} 
+        flex flex-col justify-center
+      `}>
+        
+        {!isMobile && <ProgressIndicator progress={smoothProgress} isVisible={true} />}
 
-      <MotionDiv 
-        ref={trackRef}
-        className="flex gap-8 md:gap-40 px-5 md:px-20 w-max items-center h-[75vh] md:h-[80vh]"
-        style={{ x: springX, cursor: isMobile ? 'grab' : isActive ? 'none' : 'default' }}
-        drag={isMobile ? "x" : false}
-        dragConstraints={containerRef}
-      >
-        {/* HEADER CARD */}
-        <div className="w-[85vw] md:w-[30vw] h-full flex flex-col justify-center shrink-0 md:pr-12 z-[3]">
-           <div className="pl-4 border-l-2 border-white/20">
-              <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 md:mb-4 block">
-                Portfólio Selecionado
-              </span>
-              <h2 className="text-4xl sm:text-5xl md:text-7xl font-serif font-medium text-white leading-none mb-4 md:mb-6">
-                Projetos <br /> <span className="text-slate-500 italic">Recentes</span>
-              </h2>
-              <p className="text-slate-400 font-light leading-relaxed max-w-sm text-sm md:text-base">
-                 Explore uma seleção de trabalhos focados em performance, conversão e experiência do usuário.
-                 <br/><br/>
-                 <span className="text-white font-medium flex items-center gap-2">
-                    {isMobile ? "Arraste para explorar" : "Continue rolando"} <MoveRight size={16} />
-                 </span>
-              </p>
-           </div>
-        </div>
+        <MotionDiv 
+          className={`flex gap-8 md:gap-40 px-5 md:px-20 items-center ${isMobile ? 'flex-col py-20 overflow-x-hidden' : 'w-max h-[80vh]'}`}
+          style={!isMobile ? { x } : {}} // Apply horizontal transform only on desktop
+        >
+          {/* HEADER CARD */}
+          <div className="w-full md:w-[30vw] flex flex-col justify-center shrink-0 md:pr-12 z-[3]">
+             <div className="pl-4 border-l-2 border-white/20">
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 md:mb-4 block">
+                  Portfólio Selecionado
+                </span>
+                <h2 className="text-4xl sm:text-5xl md:text-7xl font-serif font-medium text-white leading-none mb-4 md:mb-6">
+                  Projetos <br /> <span className="text-slate-500 italic">Recentes</span>
+                </h2>
+                <p className="text-slate-400 font-light leading-relaxed max-w-sm text-sm md:text-base">
+                   Explore uma seleção de trabalhos focados em performance, conversão e experiência do usuário.
+                   <br/><br/>
+                   {!isMobile && (
+                     <span className="text-white font-medium flex items-center gap-2">
+                        Role para baixo para explorar <MoveRight size={16} className="rotate-90 md:rotate-0" />
+                     </span>
+                   )}
+                </p>
+             </div>
+          </div>
 
-        {/* PROJECT CARDS */}
-        {PROJECTS.map((project, index) => (
-          <ProjectCard 
-            key={index} 
-            project={project} 
-            index={index} 
-            onOpen={() => setSelectedProject(project)}
-            isMobile={isMobile}
-          />
-        ))}
+          {/* PROJECT CARDS */}
+          {PROJECTS.map((project, index) => (
+            <ProjectCard 
+              key={index} 
+              project={project} 
+              index={index} 
+              onOpen={() => setSelectedProject(project)}
+              isMobile={isMobile}
+            />
+          ))}
 
-        {/* END CARD */}
-        <div className="w-[85vw] md:w-[30vw] h-full flex items-center justify-center shrink-0 z-[3]">
-            <a href="#contact" className="group flex flex-col items-center justify-center gap-4 md:gap-6 text-center">
-               <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
-                  <ArrowUpRight size={28} className="text-white group-hover:text-slate-900 md:w-8 md:h-8" />
-               </div>
-               <div>
-                 <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
-                 <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest underline decoration-slate-700 underline-offset-4 group-hover:text-white group-hover:decoration-white transition-all">
-                   Iniciar Conversa
-                 </p>
-               </div>
-            </a>
-        </div>
-      </MotionDiv>
+          {/* END CARD */}
+          <div className="w-full md:w-[30vw] h-[50vh] md:h-full flex items-center justify-center shrink-0 z-[3]">
+              <a href="#contact" className="group flex flex-col items-center justify-center gap-4 md:gap-6 text-center">
+                 <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
+                    <ArrowUpRight size={28} className="text-white group-hover:text-slate-900 md:w-8 md:h-8" />
+                 </div>
+                 <div>
+                   <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
+                   <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest underline decoration-slate-700 underline-offset-4 group-hover:text-white group-hover:decoration-white transition-all">
+                     Iniciar Conversa
+                   </p>
+                 </div>
+              </a>
+          </div>
+        </MotionDiv>
+      </div>
 
-      {/* NEW CONTENT MODAL (Replaces Old Lightbox) */}
+      {/* NEW CONTENT MODAL */}
       <ContentModal 
         isOpen={!!selectedProject} 
         onClose={() => setSelectedProject(null)}
@@ -374,13 +275,13 @@ const ProjectCard: React.FC<{
 
   return (
     <MotionDiv 
-      className="relative w-[88vw] sm:w-[80vw] md:w-[55vw] h-[55vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-none select-none bg-slate-900"
+      className="relative w-full md:w-[55vw] h-[60vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-pointer select-none bg-slate-900 shadow-2xl"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
-      onClick={onOpen} // Click entire card to open
-      initial={{ opacity: 0, scale: 0.98 }}
+      onClick={onOpen}
+      initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
+      transition={{ duration: 0.6 }}
       viewport={{ once: true, margin: "-10%" }}
     >
       <img 
@@ -391,32 +292,20 @@ const ProjectCard: React.FC<{
         className="absolute inset-0 w-full h-full object-cover z-[10] transition-transform duration-1000 ease-out group-hover:scale-105 will-change-transform"
       />
 
-      {/* REVEAL MASK (Curtain Effect) */}
-      <MotionDiv
-         initial={{ scaleY: 1 }}
-         whileInView={{ scaleY: 0 }}
-         viewport={{ once: true, margin: "-10%" }}
-         transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }} // Expo ease
-         style={{ transformOrigin: "bottom" }}
-         className="absolute inset-0 z-[15] bg-slate-200 pointer-events-none"
-      />
-
       <div 
         className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent opacity-90 md:opacity-80 group-hover:opacity-95 transition-opacity duration-500"
         style={{ mixBlendMode: 'multiply' }}
       />
       
-      {isMobile && <div className="absolute inset-0 z-[21] bg-black/20" />}
-
       <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between pointer-events-none">
-        <div className={`flex justify-between items-start transition-opacity duration-500 transform ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 -translate-y-4 group-hover:translate-y-0'}`}>
+        <div className={`flex justify-between items-start transition-opacity duration-500 transform ${isMobile ? 'opacity-100' : 'opacity-100'}`}>
            <span className="px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
              {project.category}
            </span>
            <span className="text-2xl md:text-4xl font-serif text-white/20 font-bold">0{index + 1}</span>
         </div>
 
-        <div className={`relative transform transition-transform duration-500 ${isMobile ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0'}`}>
+        <div className={`relative transform transition-transform duration-500 translate-y-0`}>
            <h3 className="relative z-[40] text-3xl sm:text-4xl md:text-6xl font-serif font-medium text-white mb-2 md:mb-6 leading-none tracking-tight drop-shadow-lg">
              {project.title}
            </h3>
