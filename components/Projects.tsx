@@ -44,12 +44,13 @@ const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ proje
     <div className="container mx-auto px-5 md:px-20 py-10 md:py-16 max-w-7xl">
       
       {/* Hero Image inside Modal */}
-      <div className="w-full h-[40vh] md:h-[60vh] rounded-[2rem] overflow-hidden mb-12 shadow-sm">
+      <div className="w-full h-[40vh] md:h-[60vh] rounded-[2rem] overflow-hidden mb-12 shadow-sm relative group">
          <img 
            src={project.image} 
            alt={project.title} 
            className="w-full h-full object-cover"
          />
+         <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors duration-500" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
@@ -95,7 +96,7 @@ const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ proje
             <h3 className="text-3xl md:text-4xl font-serif font-medium text-slate-900 mb-8">Estudo de Caso</h3>
             
             <div className="space-y-12">
-               <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+               <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <div className="flex items-start gap-4 mb-4">
                      <div className="p-2 bg-slate-100 rounded-lg text-slate-900 font-bold">01</div>
                      <h4 className="text-xl font-serif font-bold text-slate-900 pt-1">O Desafio</h4>
@@ -105,7 +106,7 @@ const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ proje
                   </p>
                </div>
 
-               <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+               <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                   <div className="flex items-start gap-4 mb-4">
                      <div className="p-2 bg-slate-100 rounded-lg text-slate-900 font-bold">02</div>
                      <h4 className="text-xl font-serif font-bold text-slate-900 pt-1">A Solução</h4>
@@ -115,7 +116,7 @@ const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ proje
                   </p>
                </div>
 
-               <div className="bg-slate-900 p-8 rounded-3xl shadow-xl text-white">
+               <div className="bg-slate-900 p-8 rounded-3xl shadow-xl text-white transform hover:scale-[1.01] transition-transform duration-500">
                   <div className="flex items-start gap-4 mb-4">
                      <div className="p-2 bg-slate-800 rounded-lg text-white font-bold"><CheckCircle2 size={16} /></div>
                      <h4 className="text-xl font-serif font-bold text-white pt-1">Resultados</h4>
@@ -135,7 +136,7 @@ const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ proje
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {project.gallery.map((img, idx) => (
                  <Reveal key={idx} width="100%" delay={idx * 100}>
-                    <div className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500">
+                    <div className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500 group">
                        <img src={img} alt={`Gallery ${idx}`} className="w-full h-auto hover:scale-105 transition-transform duration-700" loading="lazy" />
                     </div>
                  </Reveal>
@@ -373,11 +374,11 @@ const ProjectCard: React.FC<{
 
   return (
     <MotionDiv 
-      className="relative w-[88vw] sm:w-[80vw] md:w-[55vw] h-[55vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-none select-none"
+      className="relative w-[88vw] sm:w-[80vw] md:w-[55vw] h-[55vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-none select-none bg-slate-900"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
       onClick={onOpen} // Click entire card to open
-      initial={{ opacity: 0, scale: 0.95 }}
+      initial={{ opacity: 0, scale: 0.98 }}
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, margin: "-10%" }}
@@ -388,6 +389,16 @@ const ProjectCard: React.FC<{
         loading="lazy"
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover z-[10] transition-transform duration-1000 ease-out group-hover:scale-105 will-change-transform"
+      />
+
+      {/* REVEAL MASK (Curtain Effect) */}
+      <MotionDiv
+         initial={{ scaleY: 1 }}
+         whileInView={{ scaleY: 0 }}
+         viewport={{ once: true, margin: "-10%" }}
+         transition={{ duration: 1.4, ease: [0.19, 1, 0.22, 1] }} // Expo ease
+         style={{ transformOrigin: "bottom" }}
+         className="absolute inset-0 z-[15] bg-slate-200 pointer-events-none"
       />
 
       <div 
