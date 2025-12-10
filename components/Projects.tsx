@@ -1,33 +1,20 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, MoveRight, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
+import { ArrowUpRight, MoveRight, ImageIcon, CheckCircle2 } from 'lucide-react';
 import { useLenis } from './ScrollContext';
 import { 
   motion, 
   useSpring, 
-  useMotionValue, 
-  AnimatePresence,
-  PanInfo
+  useMotionValue
 } from 'framer-motion';
+import ContentModal from './ui/ContentModal';
+import { Reveal } from './ui/Reveal';
 
 const MotionDiv = motion.div as any;
-const MotionImg = motion.img as any;
-
-// --- CONFIGURAÇÃO DE FÍSICA E PARÂMETROS ---
-const PHYSICS = {
-  wheelMultiplier: 2.2,
-  spring: {
-    damping: 50,
-    stiffness: 250,
-    mass: 1.2
-  },
-  snapThreshold: 100,
-};
 
 // --- COMPONENTES AUXILIARES ---
 
-// 3. UI DE ESTADO (Barra de Progresso)
 const ProgressIndicator: React.FC<{ progress: number; isVisible: boolean }> = ({ progress, isVisible }) => {
   return (
     <MotionDiv 
@@ -50,146 +37,113 @@ const ProgressIndicator: React.FC<{ progress: number; isVisible: boolean }> = ({
   );
 };
 
-// --- COMPONENTE LIGHTBOX / GALERIA ---
+// --- CASE STUDY DETAIL COMPONENT ---
 
-interface ProjectLightboxProps {
-  project: typeof PROJECTS[0];
-  onClose: () => void;
-}
-
-const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) => {
-  const images = [project.image, ...(project.gallery || [])];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [direction, setDirection] = useState(0);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-      if (e.key === 'ArrowRight') paginate(1);
-      if (e.key === 'ArrowLeft') paginate(-1);
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex]); // eslint-disable-line
-
-  const paginate = (newDirection: number) => {
-    setDirection(newDirection);
-    setCurrentIndex((prev) => {
-      let nextIndex = prev + newDirection;
-      if (nextIndex < 0) nextIndex = images.length - 1;
-      if (nextIndex >= images.length) nextIndex = 0;
-      return nextIndex;
-    });
-  };
-
-  const handleDragEnd = (e: any, { offset }: PanInfo) => {
-    const swipe = offset.x;
-    const swipeThreshold = 50;
-    
-    if (swipe < -swipeThreshold) {
-      paginate(1);
-    } else if (swipe > swipeThreshold) {
-      paginate(-1);
-    }
-  };
-
-  const slideVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.9
-    }),
-    center: {
-      zIndex: 1,
-      x: 0,
-      opacity: 1,
-      scale: 1
-    },
-    exit: (direction: number) => ({
-      zIndex: 0,
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-      scale: 0.9
-    })
-  };
-
+const ProjectDetailContent: React.FC<{ project: typeof PROJECTS[0] }> = ({ project }) => {
   return (
-    <MotionDiv 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex flex-col"
-    >
-      <div className="flex justify-between items-center p-4 md:p-8 z-20">
-        <div>
-          <h3 className="text-white font-serif text-lg md:text-2xl">{project.title}</h3>
-          <p className="text-slate-400 text-[10px] md:text-xs uppercase tracking-widest">{currentIndex + 1} / {images.length}</p>
+    <div className="container mx-auto px-5 md:px-20 py-10 md:py-16 max-w-7xl">
+      
+      {/* Hero Image inside Modal */}
+      <div className="w-full h-[40vh] md:h-[60vh] rounded-[2rem] overflow-hidden mb-12 shadow-sm">
+         <img 
+           src={project.image} 
+           alt={project.title} 
+           className="w-full h-full object-cover"
+         />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+         {/* Sidebar / Meta Data */}
+         <div className="lg:col-span-4 space-y-8">
+            <div>
+               <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Descrição</h3>
+               <p className="text-slate-700 leading-relaxed font-light text-lg">
+                 {project.description}
+               </p>
+            </div>
+
+            <div>
+               <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Tecnologias</h3>
+               <div className="flex flex-wrap gap-2">
+                 {project.tags.map((tag, i) => (
+                    <span key={i} className="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-medium text-slate-600">
+                      {tag}
+                    </span>
+                 ))}
+               </div>
+            </div>
+
+            <div>
+               <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Ano</h3>
+               <p className="text-slate-900 font-serif text-xl">{project.year}</p>
+            </div>
+
+            <div className="pt-6 border-t border-slate-200">
+               <a 
+                 href={project.link} 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="flex items-center gap-2 text-slate-900 font-bold uppercase tracking-widest text-xs hover:text-slate-600 transition-colors"
+               >
+                 Visitar Projeto Real <ArrowUpRight size={14} />
+               </a>
+            </div>
+         </div>
+
+         {/* Main Content / Case Study */}
+         <div className="lg:col-span-8">
+            <h3 className="text-3xl md:text-4xl font-serif font-medium text-slate-900 mb-8">Estudo de Caso</h3>
+            
+            <div className="space-y-12">
+               <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                  <div className="flex items-start gap-4 mb-4">
+                     <div className="p-2 bg-slate-100 rounded-lg text-slate-900 font-bold">01</div>
+                     <h4 className="text-xl font-serif font-bold text-slate-900 pt-1">O Desafio</h4>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed font-light pl-[3.25rem]">
+                    {project.caseStudy.challenge}
+                  </p>
+               </div>
+
+               <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+                  <div className="flex items-start gap-4 mb-4">
+                     <div className="p-2 bg-slate-100 rounded-lg text-slate-900 font-bold">02</div>
+                     <h4 className="text-xl font-serif font-bold text-slate-900 pt-1">A Solução</h4>
+                  </div>
+                  <p className="text-slate-600 leading-relaxed font-light pl-[3.25rem]">
+                    {project.caseStudy.solution}
+                  </p>
+               </div>
+
+               <div className="bg-slate-900 p-8 rounded-3xl shadow-xl text-white">
+                  <div className="flex items-start gap-4 mb-4">
+                     <div className="p-2 bg-slate-800 rounded-lg text-white font-bold"><CheckCircle2 size={16} /></div>
+                     <h4 className="text-xl font-serif font-bold text-white pt-1">Resultados</h4>
+                  </div>
+                  <p className="text-slate-300 leading-relaxed font-light pl-[3.25rem]">
+                    {project.caseStudy.result}
+                  </p>
+               </div>
+            </div>
+         </div>
+      </div>
+
+      {/* Gallery Grid */}
+      {project.gallery && project.gallery.length > 0 && (
+        <div className="mt-20 pt-20 border-t border-slate-200">
+           <h3 className="text-2xl font-serif font-medium text-slate-900 mb-10 text-center">Galeria do Projeto</h3>
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {project.gallery.map((img, idx) => (
+                 <Reveal key={idx} width="100%" delay={idx * 100}>
+                    <div className="rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-500">
+                       <img src={img} alt={`Gallery ${idx}`} className="w-full h-auto hover:scale-105 transition-transform duration-700" loading="lazy" />
+                    </div>
+                 </Reveal>
+              ))}
+           </div>
         </div>
-        <button 
-          onClick={onClose}
-          className="p-2 md:p-3 bg-white/10 rounded-full hover:bg-white hover:text-slate-900 text-white transition-all"
-        >
-          <X size={20} className="md:w-6 md:h-6" />
-        </button>
-      </div>
-
-      <div className="flex-grow relative flex items-center justify-center overflow-hidden">
-        <button 
-          className="absolute left-4 md:left-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
-          onClick={() => paginate(-1)}
-        >
-          <ChevronLeft size={32} />
-        </button>
-        
-        <button 
-          className="absolute right-4 md:right-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
-          onClick={() => paginate(1)}
-        >
-          <ChevronRight size={32} />
-        </button>
-
-        <div className="relative w-full h-full max-w-6xl max-h-[60vh] md:max-h-[80vh] px-2 md:px-20">
-          <AnimatePresence initial={false} custom={direction} mode="popLayout">
-            <MotionImg
-              key={currentIndex}
-              src={images[currentIndex]}
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
-                opacity: { duration: 0.2 }
-              }}
-              drag="x"
-              dragConstraints={{ left: 0, right: 0 }}
-              dragElastic={1}
-              onDragEnd={handleDragEnd}
-              className="w-full h-full object-contain rounded-xl shadow-2xl cursor-grab active:cursor-grabbing select-none"
-              alt={`${project.title} screenshot ${currentIndex + 1}`}
-            />
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <div className="h-20 md:h-32 border-t border-white/10 bg-black/20 flex items-center justify-center gap-2 md:gap-4 px-4 overflow-x-auto pb-safe">
-        {images.map((img, idx) => (
-          <button
-            key={idx}
-            onClick={() => {
-              setDirection(idx > currentIndex ? 1 : -1);
-              setCurrentIndex(idx);
-            }}
-            className={`relative h-14 w-20 md:h-20 md:w-32 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 ${
-              idx === currentIndex ? 'ring-2 ring-white scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
-            }`}
-          >
-            <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
-          </button>
-        ))}
-      </div>
-    </MotionDiv>
+      )}
+    </div>
   );
 };
 
@@ -204,21 +158,15 @@ const Projects: React.FC = () => {
   const [isInView, setIsInView] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [progress, setProgress] = useState(0);
+  
+  // Modal State
   const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
 
   const x = useMotionValue(0);
-  const springX = useSpring(x, PHYSICS.spring);
+  const springX = useSpring(x, { damping: 50, stiffness: 250, mass: 1.2 });
   const containerWidth = useRef(0);
   const trackWidth = useRef(0);
   const reverseScrollCount = useRef(0);
-
-  useEffect(() => {
-    if (selectedProject) {
-      lenis?.stop();
-    } else if (!isActive) {
-      lenis?.start();
-    }
-  }, [selectedProject, lenis, isActive]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -234,6 +182,14 @@ const Projects: React.FC = () => {
     setTimeout(handleResize, 500);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Update logic to pause horizontal scroll only, main scroll lock handled by ContentModal
+  useEffect(() => {
+    if (selectedProject) {
+      // Modal handles scroll locking
+      setIsActive(false); 
+    }
+  }, [selectedProject]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -260,7 +216,7 @@ const Projects: React.FC = () => {
 
       const rect = containerRef.current.getBoundingClientRect();
       const isAtTop = Math.abs(rect.top) < 2;
-      const isApproaching = rect.top > 0 && rect.top < PHYSICS.snapThreshold;
+      const isApproaching = rect.top > 0 && rect.top < 100;
 
       if (!isActive) {
         if (e.deltaY > 0 && (isAtTop || isApproaching)) {
@@ -293,7 +249,7 @@ const Projects: React.FC = () => {
 
         const currentX = x.get();
         const maxScroll = -trackWidth.current;
-        const delta = e.deltaY * PHYSICS.wheelMultiplier;
+        const delta = e.deltaY * 2.2;
 
         let newX = currentX - delta;
         
@@ -343,7 +299,6 @@ const Projects: React.FC = () => {
 
       <MotionDiv 
         ref={trackRef}
-        // Aggressive Whitespace: Increased gap-40 (10rem/160px) for premium feel
         className="flex gap-8 md:gap-40 px-5 md:px-20 w-max items-center h-[75vh] md:h-[80vh]"
         style={{ x: springX, cursor: isMobile ? 'grab' : isActive ? 'none' : 'default' }}
         drag={isMobile ? "x" : false}
@@ -395,15 +350,15 @@ const Projects: React.FC = () => {
         </div>
       </MotionDiv>
 
-      {/* LIGHTBOX OVERLAY */}
-      <AnimatePresence>
-        {selectedProject && (
-          <ProjectLightbox 
-            project={selectedProject} 
-            onClose={() => setSelectedProject(null)} 
-          />
-        )}
-      </AnimatePresence>
+      {/* NEW CONTENT MODAL (Replaces Old Lightbox) */}
+      <ContentModal 
+        isOpen={!!selectedProject} 
+        onClose={() => setSelectedProject(null)}
+        title={selectedProject?.title}
+        category={selectedProject?.category}
+      >
+        {selectedProject && <ProjectDetailContent project={selectedProject} />}
+      </ContentModal>
     </section>
   );
 };
@@ -418,10 +373,10 @@ const ProjectCard: React.FC<{
 
   return (
     <MotionDiv 
-      // Adjusted width for better ratio with large gaps
       className="relative w-[88vw] sm:w-[80vw] md:w-[55vw] h-[55vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-none select-none"
       onHoverStart={() => setIsHovered(true)}
       onHoverEnd={() => setIsHovered(false)}
+      onClick={onOpen} // Click entire card to open
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -431,6 +386,7 @@ const ProjectCard: React.FC<{
         src={project.image} 
         alt={project.title}
         loading="lazy"
+        decoding="async"
         className="absolute inset-0 w-full h-full object-cover z-[10] transition-transform duration-1000 ease-out group-hover:scale-105 will-change-transform"
       />
 
@@ -441,8 +397,7 @@ const ProjectCard: React.FC<{
       
       {isMobile && <div className="absolute inset-0 z-[21] bg-black/20" />}
 
-      {/* Aggressive padding inside card */}
-      <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between">
+      <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between pointer-events-none">
         <div className={`flex justify-between items-start transition-opacity duration-500 transform ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 -translate-y-4 group-hover:translate-y-0'}`}>
            <span className="px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
              {project.category}
@@ -459,19 +414,13 @@ const ProjectCard: React.FC<{
              {project.description}
            </p>
 
-           <div className="relative z-[60] flex flex-wrap gap-3 md:gap-4">
+           <div className="relative z-[60] flex flex-wrap gap-3 md:gap-4 pointer-events-auto">
               <button 
-                onClick={onOpen}
+                onClick={(e) => { e.stopPropagation(); onOpen(); }}
                 className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-xl w-full sm:w-auto justify-center"
               >
-                Ver Galeria <ImageIcon size={14} />
+                Ver Case Study <ImageIcon size={14} />
               </button>
-              <a 
-                href={project.link}
-                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-transparent border border-white/30 text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all shadow-lg backdrop-blur-sm w-full sm:w-auto justify-center"
-              >
-                Visitar Site <ArrowUpRight size={14} />
-              </a>
            </div>
         </div>
       </div>

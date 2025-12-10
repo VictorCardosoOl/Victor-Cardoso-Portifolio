@@ -76,7 +76,7 @@ const Lab: React.FC = () => {
   );
 };
 
-const ExperimentCard = ({ exp, index }: { exp: typeof EXPERIMENTS[number], index: number }) => {
+const ExperimentCard: React.FC<{ exp: typeof EXPERIMENTS[number], index: number }> = ({ exp, index }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 

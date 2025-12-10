@@ -43,6 +43,8 @@ const Hero: React.FC = () => {
                    <img 
                      src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800&h=1000" 
                      alt="Minimalist Workspace Architecture" 
+                     loading="lazy"
+                     decoding="async"
                      className="w-full h-full object-cover grayscale contrast-[1.1] brightness-105"
                    />
                    
