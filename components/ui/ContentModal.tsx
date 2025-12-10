@@ -1,5 +1,6 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useLenis } from '../ScrollContext';
@@ -21,26 +22,40 @@ const ContentModal: React.FC<ContentModalProps> = ({
   children 
 }) => {
   const lenis = useLenis();
+  const [mounted, setMounted] = useState(false);
 
-  // Scroll Locking Logic (Robust)
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  // Lógica de Travamento de Scroll Robusta
   useEffect(() => {
     if (isOpen) {
-      // 1. Pause Lenis (Global Smooth Scroll)
+      // 1. Parar Lenis
       lenis?.stop();
-      // 2. Lock Body to prevent native scroll leakage
+      
+      // 2. Prevenir Scroll Nativo e Layout Shift
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
       document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none'; 
     } else {
       lenis?.start();
+      document.body.style.paddingRight = '0px';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     }
 
     return () => {
       lenis?.start();
+      document.body.style.paddingRight = '0px';
       document.body.style.overflow = '';
+      document.body.style.touchAction = '';
     };
   }, [isOpen, lenis]);
 
-  // Close on Escape
+  // Fechar com ESC
   useEffect(() => {
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === 'Escape' && isOpen) onClose();
@@ -49,7 +64,10 @@ const ContentModal: React.FC<ContentModalProps> = ({
       return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
-  return (
+  if (!mounted) return null;
+
+  // Render via Portal no body para garantir z-index máximo
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -60,27 +78,27 @@ const ContentModal: React.FC<ContentModalProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
             onClick={onClose}
-            className="fixed inset-0 z-[9990] bg-slate-950/80 backdrop-blur-md cursor-pointer"
+            className="fixed inset-0 z-[9998] bg-slate-950/80 backdrop-blur-md cursor-pointer"
             aria-hidden="true"
           />
 
-          {/* Modal Panel */}
+          {/* Painel do Modal */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: "0%" }}
+            animate={{ y: "0%" }} 
             exit={{ y: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200, mass: 1 }}
-            className="fixed inset-x-0 bottom-0 z-[9999] h-[100dvh] md:h-[98vh] bg-slate-50 md:rounded-t-[3rem] shadow-2xl overflow-hidden flex flex-col border-t border-white/10"
+            className="fixed inset-x-0 bottom-0 z-[9999] h-[95vh] md:h-[98vh] bg-slate-50 rounded-t-[2rem] md:rounded-t-[3rem] shadow-2xl overflow-hidden flex flex-col border-t border-white/10"
           >
-            {/* Header */}
-            <div className="flex-shrink-0 px-5 py-4 md:px-12 md:py-6 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-xl z-20">
+            {/* Header Sticky dentro do Modal */}
+            <div className="flex-shrink-0 px-6 py-4 md:px-12 md:py-6 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-xl z-20 sticky top-0">
               <div className="flex flex-col">
                  {category && (
-                    <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                       {category}
                     </span>
                  )}
-                 <h2 className="text-base md:text-2xl font-serif font-medium text-slate-900 leading-none truncate max-w-[200px] md:max-w-md">
+                 <h2 className="text-lg md:text-2xl font-serif font-medium text-slate-900 leading-none truncate max-w-[200px] md:max-w-md">
                    {title || 'Detalhes do Projeto'}
                  </h2>
               </div>
@@ -88,27 +106,28 @@ const ContentModal: React.FC<ContentModalProps> = ({
               <Magnetic strength={0.3}>
                 <button 
                   onClick={onClose}
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 flex items-center justify-center transition-colors"
+                  className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900"
                 >
                   <X size={20} />
                 </button>
               </Magnetic>
             </div>
 
-            {/* Scrollable Body - ISOLATED SCROLL CONTEXT */}
+            {/* Corpo com Scroll Independente */}
             <div 
-              className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50"
-              data-lenis-prevent="true" // Lenis ignores wheel events here
-              onWheel={(e) => e.stopPropagation()} // Stop propagation to parent
-              onTouchMove={(e) => e.stopPropagation()} // Stop touch propagation
-              style={{ overscrollBehavior: 'contain' }} // CSS property to prevent chain scrolling
+              className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50 pb-20"
+              data-lenis-prevent="true"
+              onWheel={(e) => e.stopPropagation()} 
+              onTouchMove={(e) => e.stopPropagation()}
+              style={{ overscrollBehavior: 'contain' }}
             >
                {children}
             </div>
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
 
