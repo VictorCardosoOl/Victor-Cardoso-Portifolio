@@ -22,62 +22,67 @@ const ContentModal: React.FC<ContentModalProps> = ({
 }) => {
   const lenis = useLenis();
 
-  // Scroll Locking & Escape Key
+  // Scroll Locking Logic
   useEffect(() => {
     if (isOpen) {
-      // 1. Stop main page scroll
+      // Immediate stop of the main smooth scroll
       lenis?.stop();
-      
-      // 2. Lock body overflow to prevent background scrolling
+      // Lock html/body to prevent rubber-banding on iOS and main body scroll
+      document.documentElement.style.overflow = 'hidden';
       document.body.style.overflow = 'hidden';
-      
-      const handleEsc = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') onClose();
-      };
-      window.addEventListener('keydown', handleEsc);
-      
-      return () => {
-        // Cleanup: Resume main page scroll
-        lenis?.start();
-        document.body.style.overflow = '';
-        window.removeEventListener('keydown', handleEsc);
-      };
     } else {
+      // Resume scroll
       lenis?.start();
+      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     }
-  }, [isOpen, lenis, onClose]);
+
+    return () => {
+      // Safety cleanup
+      lenis?.start();
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, lenis]);
+
+  useEffect(() => {
+      const handleEsc = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' && isOpen) onClose();
+      };
+      window.addEventListener('keydown', handleEsc);
+      return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop (Darken background) */}
+          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
             onClick={onClose}
-            className="fixed inset-0 z-[90] bg-slate-950/60 backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 z-[9990] bg-slate-950/80 backdrop-blur-md cursor-pointer"
             aria-hidden="true"
           />
 
-          {/* Modal Panel */}
+          {/* Modal Panel - Z-Index 9999 garante que fique acima de tudo */}
           <motion.div
             initial={{ y: "100%" }}
-            animate={{ y: window.innerWidth < 768 ? "0%" : "2%" }}
+            animate={{ y: "2%" }} // Small gap at top for aesthetic
             exit={{ y: "100%" }}
             transition={{ 
               type: "spring", 
-              damping: 30, 
-              stiffness: 300, 
-              mass: 0.8 
+              damping: 25, 
+              stiffness: 200, 
+              mass: 1 
             }}
-            className="fixed inset-x-0 bottom-0 z-[100] h-[100vh] md:h-[98vh] bg-slate-50 rounded-t-[2rem] md:rounded-t-[3rem] shadow-[0_-20px_80px_rgba(0,0,0,0.2)] overflow-hidden flex flex-col"
+            className="fixed inset-x-0 bottom-0 z-[9999] h-[98vh] bg-slate-50 rounded-t-[2.5rem] md:rounded-t-[3rem] shadow-2xl overflow-hidden flex flex-col border-t border-white/10"
           >
             {/* Header */}
-            <div className="flex-shrink-0 px-6 py-5 md:px-12 md:py-6 flex items-center justify-between border-b border-slate-200 bg-white/50 backdrop-blur-xl z-20 sticky top-0">
+            <div className="flex-shrink-0 px-6 py-5 md:px-12 md:py-6 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-xl z-20 sticky top-0">
               <div className="flex flex-col">
                  {category && (
                     <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
@@ -85,7 +90,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
                     </span>
                  )}
                  {title && (
-                    <h2 className="text-xl md:text-2xl font-serif font-medium text-slate-900 leading-none">
+                    <h2 className="text-lg md:text-2xl font-serif font-medium text-slate-900 leading-none truncate max-w-[200px] md:max-w-md">
                       {title}
                     </h2>
                  )}
@@ -102,10 +107,11 @@ const ContentModal: React.FC<ContentModalProps> = ({
             </div>
 
             {/* Scrollable Content Body */}
-            {/* data-lenis-prevent attribute ensures Lenis doesn't hijack scroll inside this container */}
             <div 
-              className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50 overscroll-contain"
-              data-lenis-prevent="true" 
+              className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50"
+              data-lenis-prevent // Prevents scroll chaining to parent Lenis
+              // CRITICAL: overscroll-contain prevents the body from scrolling when modal ends
+              style={{ overscrollBehavior: 'contain' }} 
             >
                {children}
             </div>

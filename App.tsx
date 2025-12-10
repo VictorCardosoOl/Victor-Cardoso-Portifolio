@@ -72,7 +72,8 @@ const App: React.FC = () => {
     <GamificationProvider>
       <ScrollProvider>
         <PageTransitionProvider>
-          <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-slate-900 selection:text-white">
+          {/* Main Container - sem overflow hidden global para não quebrar o sticky */}
+          <div className="flex flex-col min-h-screen relative selection:bg-slate-900 selection:text-white">
             <AnimatePresence mode="wait">
               {loading && <Preloader onComplete={() => setLoading(false)} />}
             </AnimatePresence>

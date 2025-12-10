@@ -6,7 +6,8 @@ import {
   motion, 
   useScroll, 
   useTransform, 
-  useSpring
+  useSpring,
+  useInView
 } from 'framer-motion';
 import ContentModal from './ui/ContentModal';
 import { Reveal } from './ui/Reveal';
@@ -22,7 +23,7 @@ const ProgressIndicator: React.FC<{ progress: any; isVisible: boolean }> = ({ pr
       className="absolute bottom-6 right-6 md:bottom-12 md:right-12 z-[60] flex items-center gap-3 md:gap-4 bg-slate-950/80 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-full border border-white/10 shadow-2xl transition-all duration-500"
     >
       <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums w-12 text-right">
-         Scroll
+         Galeria
       </span>
       <div className="w-20 md:w-32 h-1 bg-white/10 rounded-full overflow-hidden">
         <MotionDiv 
@@ -153,58 +154,59 @@ const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   // --- LOGICA DE SCROLL (Sticky Method) ---
-  // A seção tem 400vh de altura. O useScroll monitora o progresso de 0 a 1 enquanto esses 400vh passam.
-  // O container interno é "sticky", então ele fica parado na tela.
-  // O valor "x" move o conteúdo horizontalmente baseado nesse progresso vertical.
-  
+  // Aumentamos a altura para 400vh para que o scroll horizontal seja mais lento e perceptível
   const { scrollYProgress } = useScroll({
     target: targetRef,
     offset: ["start start", "end end"] 
   });
 
-  // Smooth scroll progress
   const smoothProgress = useSpring(scrollYProgress, {
-    damping: 30,
-    stiffness: 200,
-    mass: 0.8
+    damping: 30, // Mais suave
+    stiffness: 100,
+    mass: 1
   });
 
-  // Calculate horizontal translation
-  // "1%" start padding -> "-85%" moves enough to show all items. 
-  // Adjust "-85%" based on the actual total width of items vs viewport.
-  const x = useTransform(smoothProgress, [0, 1], ["1%", "-90%"]);
+  // Ajuste fino do transform:
+  // Vai de 0% até -55% (valor aproximado para garantir que todos os cards passem mas não sobre espaço vazio)
+  // O valor exato depende da quantidade de conteúdo. Como temos Header + 3 Cards + End Card,
+  // e cada card ocupa ~45vw, o total é maior que 100vw.
+  const x = useTransform(smoothProgress, [0, 1], ["0%", "-55%"]);
 
   return (
     <section 
       id="projects" 
       ref={targetRef} 
-      className={`relative bg-slate-950 ${isMobile ? 'h-auto' : 'h-[400vh]'}`} // Height defines scroll distance
+      // Altura grande no desktop para "segurar" o scroll vertical
+      className={`relative bg-slate-950 ${isMobile ? 'h-auto py-24' : 'h-[400vh]'}`} 
       style={{ zIndex: 30 }}
     >
-      {/* Background Noise */}
+      {/* Background Noise & Gradient */}
       <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150 fixed"></div>
-
-      {/* Sticky Container */}
+      
       <div className={`
-        ${isMobile ? 'relative' : 'sticky top-0 h-screen overflow-hidden'} 
-        flex flex-col justify-center
+        ${isMobile ? 'relative flex flex-col' : 'sticky top-0 h-screen flex items-center overflow-hidden'} 
+        w-full z-[10]
       `}>
         
         {!isMobile && <ProgressIndicator progress={smoothProgress} isVisible={true} />}
 
         <MotionDiv 
-          className={`flex gap-8 md:gap-40 px-5 md:px-20 items-center ${isMobile ? 'flex-col py-20 overflow-x-hidden' : 'w-max h-[80vh]'}`}
-          style={!isMobile ? { x } : {}} // Apply horizontal transform only on desktop
+          className={`
+            flex items-center
+            ${isMobile ? 'flex-col gap-16 px-5 w-full' : 'gap-20 px-20 h-[80vh] w-max'}
+          `}
+          // Aplica o movimento horizontal APENAS se não for mobile
+          style={!isMobile ? { x } : {}}
         >
           {/* HEADER CARD */}
-          <div className="w-full md:w-[30vw] flex flex-col justify-center shrink-0 md:pr-12 z-[3]">
+          <div className="w-full md:w-[25vw] flex flex-col justify-center shrink-0">
              <div className="pl-4 border-l-2 border-white/20">
                 <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 md:mb-4 block">
                   Portfólio Selecionado
@@ -213,11 +215,11 @@ const Projects: React.FC = () => {
                   Projetos <br /> <span className="text-slate-500 italic">Recentes</span>
                 </h2>
                 <p className="text-slate-400 font-light leading-relaxed max-w-sm text-sm md:text-base">
-                   Explore uma seleção de trabalhos focados em performance, conversão e experiência do usuário.
+                   Uma curadoria de trabalhos focados em resolver problemas complexos com design elegante e código performático.
                    <br/><br/>
                    {!isMobile && (
-                     <span className="text-white font-medium flex items-center gap-2">
-                        Role para baixo para explorar <MoveRight size={16} className="rotate-90 md:rotate-0" />
+                     <span className="text-white font-medium flex items-center gap-2 text-xs uppercase tracking-widest">
+                        Role para explorar <MoveRight size={14} />
                      </span>
                    )}
                 </p>
@@ -236,15 +238,18 @@ const Projects: React.FC = () => {
           ))}
 
           {/* END CARD */}
-          <div className="w-full md:w-[30vw] h-[50vh] md:h-full flex items-center justify-center shrink-0 z-[3]">
-              <a href="#contact" className="group flex flex-col items-center justify-center gap-4 md:gap-6 text-center">
-                 <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
-                    <ArrowUpRight size={28} className="text-white group-hover:text-slate-900 md:w-8 md:h-8" />
+          <div className={`
+            ${isMobile ? 'w-full py-10' : 'w-[25vw] h-full'} 
+            flex items-center justify-center shrink-0
+          `}>
+              <a href="#contact" className="group flex flex-col items-center justify-center gap-6 text-center">
+                 <div className="w-20 h-20 md:w-32 md:h-32 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500 scale-100 group-hover:scale-110">
+                    <ArrowUpRight size={32} className="text-white group-hover:text-slate-900" />
                  </div>
                  <div>
-                   <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
+                   <h3 className="text-2xl md:text-4xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
                    <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest underline decoration-slate-700 underline-offset-4 group-hover:text-white group-hover:decoration-white transition-all">
-                     Iniciar Conversa
+                     Vamos conversar
                    </p>
                  </div>
               </a>
@@ -252,7 +257,7 @@ const Projects: React.FC = () => {
         </MotionDiv>
       </div>
 
-      {/* NEW CONTENT MODAL */}
+      {/* MODAL - Renderizado fora do container Sticky se possível, ou com Z-Index altíssimo */}
       <ContentModal 
         isOpen={!!selectedProject} 
         onClose={() => setSelectedProject(null)}
@@ -271,13 +276,12 @@ const ProjectCard: React.FC<{
   onOpen: () => void;
   isMobile: boolean;
 }> = ({ project, index, onOpen, isMobile }) => {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <MotionDiv 
-      className="relative w-full md:w-[55vw] h-[60vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-pointer select-none bg-slate-900 shadow-2xl"
-      onHoverStart={() => setIsHovered(true)}
-      onHoverEnd={() => setIsHovered(false)}
+      className={`
+        relative shrink-0 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden group cursor-pointer select-none bg-slate-900 shadow-2xl border border-white/5
+        ${isMobile ? 'w-full aspect-[4/5]' : 'w-[45vw] h-[70vh]'}
+      `}
       onClick={onOpen}
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -293,41 +297,36 @@ const ProjectCard: React.FC<{
       />
 
       <div 
-        className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent opacity-90 md:opacity-80 group-hover:opacity-95 transition-opacity duration-500"
-        style={{ mixBlendMode: 'multiply' }}
+        className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90 group-hover:opacity-80 transition-opacity duration-500"
       />
       
-      <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between pointer-events-none">
-        <div className={`flex justify-between items-start transition-opacity duration-500 transform ${isMobile ? 'opacity-100' : 'opacity-100'}`}>
-           <span className="px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
+      <div className="absolute inset-0 z-[30] p-6 md:p-12 flex flex-col justify-between pointer-events-none">
+        <div className="flex justify-between items-start">
+           <span className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
              {project.category}
            </span>
-           <span className="text-2xl md:text-4xl font-serif text-white/20 font-bold">0{index + 1}</span>
+           <span className="text-2xl md:text-5xl font-serif text-white/10 font-bold tabular-nums">0{index + 1}</span>
         </div>
 
-        <div className={`relative transform transition-transform duration-500 translate-y-0`}>
-           <h3 className="relative z-[40] text-3xl sm:text-4xl md:text-6xl font-serif font-medium text-white mb-2 md:mb-6 leading-none tracking-tight drop-shadow-lg">
+        <div className="transform transition-transform duration-500 md:translate-y-4 md:group-hover:translate-y-0">
+           <h3 className="text-3xl sm:text-4xl md:text-5xl font-serif font-medium text-white mb-3 md:mb-4 leading-none tracking-tight">
              {project.title}
            </h3>
 
-           <p className="relative z-[50] text-slate-300 font-light leading-relaxed max-w-lg mb-8 md:mb-10 text-sm md:text-base drop-shadow-md opacity-90 line-clamp-3 md:line-clamp-none">
+           <p className="text-slate-300 font-light leading-relaxed max-w-lg mb-6 md:mb-8 text-sm md:text-base opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 delay-100 line-clamp-3 md:line-clamp-none">
              {project.description}
            </p>
 
-           <div className="relative z-[60] flex flex-wrap gap-3 md:gap-4 pointer-events-auto">
+           <div className="flex flex-wrap gap-3 md:gap-4 pointer-events-auto opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 delay-200">
               <button 
                 onClick={(e) => { e.stopPropagation(); onOpen(); }}
-                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-xl w-full sm:w-auto justify-center"
+                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-lg w-auto"
               >
-                Ver Case Study <ImageIcon size={14} />
+                Ver Detalhes <ImageIcon size={14} />
               </button>
            </div>
         </div>
       </div>
-
-      <div 
-        className={`absolute inset-0 z-[70] pointer-events-none border-[1px] border-white/0 transition-all duration-500 ${isHovered ? 'border-white/20 inset-4 rounded-xl' : ''}`} 
-      />
     </MotionDiv>
   );
 };
