@@ -1,7 +1,7 @@
 
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpRight, MoveRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ContentModal from './ui/ContentModal';
 import { ProjectDetailContent } from './ProjectDetailContent';
@@ -9,134 +9,128 @@ import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 
 const Projects: React.FC = () => {
-  const [selectedProject, setSelectedProject] = React.useState<typeof PROJECTS[0] | null>(null);
-  const sliderRef = useRef<HTMLDivElement>(null);
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (sliderRef.current) {
-      const scrollAmount = direction === 'left' ? -400 : 400;
-      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
-  };
+  const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
 
   return (
-    <section id="projects" className="py-24 bg-slate-950 relative overflow-hidden border-t border-white/5">
-      {/* Background Noise */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
-      
+    <section id="projects" className="relative bg-slate-950 py-24 md:py-32 overflow-hidden">
+      {/* Background Noise & Gradient */}
+      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-900/10 rounded-full blur-[120px] pointer-events-none"></div>
+
       <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
         
-        {/* Header e Controles */}
-        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
-          <div className="max-w-2xl">
-            <Reveal>
-              <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 block">
-                Portfólio Selecionado
-              </span>
-            </Reveal>
-            <Reveal delay={100}>
-              <h2 className="text-3xl md:text-5xl font-serif font-medium text-white mb-4 tracking-tight">
-                Obras <span className="italic text-slate-600">Recentes</span>
-              </h2>
-            </Reveal>
-            <Reveal delay={200}>
-              <p className="text-slate-400 font-light text-sm md:text-base leading-relaxed max-w-lg">
-                 Design e engenharia convergem para resolver problemas complexos.
-              </p>
-            </Reveal>
-          </div>
-
-          {/* Botões de Navegação Desktop */}
-          <div className="hidden md:flex gap-3">
-             <button 
-               onClick={() => scroll('left')}
-               className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all active:scale-95"
-               aria-label="Scroll Left"
-             >
-               <ChevronLeft size={20} />
-             </button>
-             <button 
-               onClick={() => scroll('right')}
-               className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all active:scale-95"
-               aria-label="Scroll Right"
-             >
-               <ChevronRight size={20} />
-             </button>
-          </div>
-        </div>
-
-        {/* 
-            Carrossel Horizontal Nativo 
-            - data-lenis-prevent: Impede conflito com o scroll vertical da página
-            - snap-x: Garante que pare no lugar certo
-        */}
-        <div 
-          ref={sliderRef}
-          className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-12 -mx-6 px-6 md:mx-0 md:px-0 no-scrollbar"
-          data-lenis-prevent
-        >
-          {PROJECTS.map((project, index) => (
-            <div 
-              key={index} 
-              className="snap-center shrink-0 w-[85vw] md:w-[600px] lg:w-[700px] first:pl-0 last:pr-6 md:last:pr-0"
-            >
-              <Reveal delay={index * 100} width="100%" variant="scale">
-                <div 
-                  onClick={() => setSelectedProject(project)}
-                  className="group cursor-pointer relative aspect-[16/9] md:aspect-[21/9] rounded-[2rem] overflow-hidden border border-white/10 bg-slate-900 shadow-2xl"
-                >
-                  <div className="absolute inset-0 z-10 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
-                  
-                  <motion.img 
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.7 }}
-                    src={project.image} 
-                    alt={project.title}
-                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100"
-                    loading="lazy"
-                  />
-
-                  {/* Conteúdo Sobreposto */}
-                  <div className="absolute inset-0 z-20 p-6 md:p-10 flex flex-col justify-end">
-                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                        <div className="flex justify-between items-end border-b border-white/20 pb-4 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-                             {project.category}
-                           </span>
-                           <div className="flex items-center gap-2 text-white text-[10px] font-bold uppercase tracking-widest">
-                              Ver Detalhes <ArrowUpRight size={14} />
-                           </div>
-                        </div>
-                        
-                        <h3 className="text-2xl md:text-4xl font-serif font-medium text-white mb-2 drop-shadow-md">
-                          {project.title}
-                        </h3>
-                        <div className="flex flex-wrap gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                          {project.tags.map((tag, i) => (
-                            <span key={i} className="text-[10px] font-medium text-slate-300">#{tag}</span>
-                          ))}
-                        </div>
-                     </div>
-                  </div>
+        <div className="flex flex-col lg:flex-row gap-16 lg:gap-24">
+          
+          {/* COLUNA ESQUERDA: Título e Intro (Sticky no Desktop) */}
+          <div className="lg:w-1/3">
+            <div className="lg:sticky lg:top-32 lg:h-[calc(100vh-16rem)] flex flex-col">
+              <Reveal>
+                <div className="flex items-center gap-3 mb-6">
+                   <div className="w-10 h-[1px] bg-slate-700"></div>
+                   <span className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                     Portfólio
+                   </span>
                 </div>
               </Reveal>
+              
+              <Reveal delay={100}>
+                <h2 className="text-4xl md:text-6xl font-serif font-medium text-white mb-6 leading-tight">
+                  Obras <br />
+                  <span className="text-slate-600 italic">Selecionadas</span>
+                </h2>
+              </Reveal>
+              
+              <Reveal delay={200}>
+                <p className="text-slate-400 font-light text-base leading-relaxed mb-8 max-w-sm border-l border-slate-800 pl-6">
+                   Cada projeto é uma intersecção entre engenharia robusta e design narrativo. Soluções que não apenas funcionam, mas encantam.
+                </p>
+              </Reveal>
+
+              <div className="mt-auto hidden lg:block">
+                 <Reveal delay={300}>
+                    <Button 
+                      variant="outline" 
+                      className="border-slate-700 text-slate-300 hover:text-white hover:border-white hover:bg-white/5"
+                    >
+                      Ver Arquivo Completo <MoveRight className="ml-2 w-4 h-4" />
+                    </Button>
+                 </Reveal>
+              </div>
             </div>
-          ))}
-          
-          {/* Card Final de Chamada */}
-          <div className="snap-center shrink-0 w-[85vw] md:w-[400px] flex items-center">
-             <div className="w-full h-[60%] border border-dashed border-white/10 rounded-[2rem] flex flex-col items-center justify-center gap-6 text-center p-8 hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth'})}>
-                <div className="w-16 h-16 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                   <ArrowUpRight className="text-white" />
-                </div>
-                <div>
-                   <h3 className="text-xl font-serif text-white">Seu Projeto</h3>
-                   <p className="text-xs text-slate-500 mt-2">Vamos criar o próximo?</p>
-                </div>
+          </div>
+
+          {/* COLUNA DIREITA: Lista de Projetos (Scrollable) */}
+          <div className="lg:w-2/3 flex flex-col gap-12 md:gap-20">
+             {PROJECTS.map((project, index) => (
+                <Reveal key={index} width="100%" delay={index * 100}>
+                   <div 
+                      onClick={() => setSelectedProject(project)}
+                      className="group cursor-pointer block"
+                   >
+                      {/* Card Container */}
+                      <div className="relative aspect-[16/10] md:aspect-[16/9] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 shadow-2xl mb-6">
+                         
+                         {/* Imagem com Zoom Suave */}
+                         <div className="absolute inset-0 bg-slate-800 animate-pulse" /> {/* Placeholder loading */}
+                         <motion.img 
+                            whileHover={{ scale: 1.05 }}
+                            transition={{ duration: 0.7, ease: [0.33, 1, 0.68, 1] }}
+                            src={project.image} 
+                            alt={project.title}
+                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-500"
+                         />
+                         
+                         {/* Overlay Hover */}
+                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
+
+                         {/* Botão Flutuante (Aparece no Hover) */}
+                         <div className="absolute top-6 right-6 md:top-8 md:right-8 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-500 z-20">
+                            <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-white text-slate-900 flex items-center justify-center shadow-lg">
+                               <ArrowUpRight size={24} />
+                            </div>
+                         </div>
+                      </div>
+
+                      {/* Informações do Projeto (Abaixo da imagem para limpeza visual) */}
+                      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-white/10 pb-8 group-hover:border-white/30 transition-colors duration-500">
+                         <div>
+                            <div className="flex items-center gap-3 mb-2">
+                               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                 0{index + 1} &mdash; {project.year}
+                               </span>
+                               <span className="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-widest bg-white/5 text-slate-300 border border-white/5">
+                                 {project.category}
+                               </span>
+                            </div>
+                            <h3 className="text-3xl md:text-4xl font-serif font-medium text-white group-hover:text-slate-200 transition-colors">
+                              {project.title}
+                            </h3>
+                         </div>
+                         
+                         <div className="flex flex-wrap gap-2 md:justify-end max-w-xs">
+                            {project.tags.slice(0, 3).map((tag, i) => (
+                               <span key={i} className="text-xs text-slate-500 font-medium">
+                                 #{tag}
+                               </span>
+                            ))}
+                         </div>
+                      </div>
+                   </div>
+                </Reveal>
+             ))}
+
+             {/* Mobile CTA */}
+             <div className="block lg:hidden mt-8">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-center border-slate-700 text-slate-300 hover:text-white hover:border-white hover:bg-white/5"
+                >
+                  Ver Arquivo Completo
+                </Button>
              </div>
           </div>
-        </div>
 
+        </div>
       </div>
 
       <ContentModal 
