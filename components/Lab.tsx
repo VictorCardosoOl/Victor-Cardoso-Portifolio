@@ -4,7 +4,17 @@ import { ArrowUpRight, Play, Pause } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import Tilt from './ui/Tilt';
 
-const EXPERIMENTS = [
+interface Experiment {
+  id: number;
+  title: string;
+  category: string;
+  description: string;
+  image: string;
+  video: string | null;
+  link: string;
+}
+
+const EXPERIMENTS: Experiment[] = [
     {
         id: 1,
         title: "Liquid Metal",
@@ -76,7 +86,7 @@ const Lab: React.FC = () => {
   );
 };
 
-const ExperimentCard = ({ exp, index }: { exp: typeof EXPERIMENTS[number], index: number }) => {
+const ExperimentCard: React.FC<{ exp: Experiment, index: number }> = ({ exp, index }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState(false);
 

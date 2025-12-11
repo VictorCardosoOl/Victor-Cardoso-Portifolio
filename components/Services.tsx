@@ -1,17 +1,17 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { SERVICES, PROCESS_STEPS } from '../constants';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import Tilt from './ui/Tilt';
 import { usePageTransition } from './ui/PageTransition';
+import ContentModal from './ui/ContentModal';
 
 const Services: React.FC = () => {
   const { transitionTo } = usePageTransition();
+  const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
 
   return (
     <section id="services" className="py-24 md:py-40 bg-slate-950 text-white overflow-hidden relative rounded-[2rem] md:rounded-[3rem] -mt-10 z-10 pb-32 md:pb-48">
-      {/* Refined Background Elements */}
       <div className="absolute top-0 left-0 w-full h-full bg-[#050505]"></div>
       <div className="absolute top-[-20%] right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-slate-800/20 rounded-full blur-[150px] pointer-events-none mix-blend-screen opacity-50"></div>
       
@@ -39,19 +39,24 @@ const Services: React.FC = () => {
           </Reveal>
         </div>
 
-        {/* Services Grid with Tactile Tilt */}
+        {/* Services Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 mb-24 md:mb-40">
           {SERVICES.map((service, index) => {
             const Icon = service.icon;
             return (
               <Reveal key={index} delay={index * 150} width="100%" variant="scale">
                   <Tilt strength={8} className="h-full">
-                    {/* Increased padding for aggressive whitespace */}
-                    <div className="h-full bg-slate-950/80 backdrop-blur-md p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group shadow-xl">
-                       <div className="w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-8 md:mb-10 text-white transition-colors border border-white/5 shadow-inner">
+                    <div 
+                      onClick={() => setSelectedService(service)}
+                      className="h-full bg-slate-950/80 backdrop-blur-md p-8 md:p-10 rounded-[2rem] md:rounded-[2.5rem] hover:bg-slate-900/90 transition-all duration-300 border border-white/10 hover:border-white/20 group shadow-xl cursor-pointer"
+                    >
+                       <div className="w-12 h-12 md:w-14 md:h-14 bg-white/5 rounded-2xl flex items-center justify-center mb-8 md:mb-10 text-white transition-colors border border-white/5 shadow-inner group-hover:scale-110 duration-500">
                           <Icon size={24} strokeWidth={1.5} className="md:w-7 md:h-7" />
                        </div>
-                       <h3 className="text-xl md:text-2xl font-serif font-medium mb-4 text-slate-100">{service.title}</h3>
+                       <h3 className="text-xl md:text-2xl font-serif font-medium mb-4 text-slate-100 flex items-center justify-between">
+                         {service.title}
+                         <ArrowUpRight size={20} className="opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all text-slate-400" />
+                       </h3>
                        <p className="text-slate-300 text-base leading-relaxed mb-8 font-light">
                          {service.description}
                        </p>
@@ -112,6 +117,57 @@ const Services: React.FC = () => {
               </Reveal>
            </div>
         </div>
+
+        {/* Modal de Detalhes do Serviço */}
+        <ContentModal
+          isOpen={!!selectedService}
+          onClose={() => setSelectedService(null)}
+          title={selectedService?.title}
+          category="Solução"
+        >
+          {selectedService && (
+            <div className="max-w-4xl mx-auto px-6 md:px-12 py-12">
+              <div className="flex flex-col md:flex-row gap-8 mb-12">
+                 <div className="w-20 h-20 bg-slate-100 rounded-3xl flex items-center justify-center text-slate-900 border border-slate-200">
+                    <selectedService.icon size={32} strokeWidth={1.5} />
+                 </div>
+                 <div>
+                    <h3 className="text-2xl md:text-4xl font-serif font-medium text-slate-900 mb-4">
+                      Detalhes da Solução
+                    </h3>
+                    <p className="text-lg text-slate-600 font-light leading-relaxed">
+                      {selectedService.description} Focamos em entregar não apenas código, mas uma ferramenta estratégica para o crescimento do seu negócio.
+                    </p>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                 {['Planejamento Estratégico', 'Desenvolvimento Ágil', 'Testes Automatizados', 'Suporte Contínuo'].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                       <CheckCircle2 size={18} className="text-slate-400" />
+                       <span className="text-slate-700 font-medium">{item}</span>
+                    </div>
+                 ))}
+              </div>
+              
+              <div className="p-8 bg-slate-900 text-white rounded-[2rem] text-center">
+                 <h4 className="text-2xl font-serif mb-4">Pronto para começar?</h4>
+                 <p className="text-slate-400 mb-8 max-w-md mx-auto font-light">Vamos discutir como essa solução se aplica especificamente ao seu cenário.</p>
+                 <a 
+                   href="#contact" 
+                   onClick={(e) => { 
+                      e.preventDefault(); 
+                      setSelectedService(null);
+                      setTimeout(() => transitionTo('#contact'), 300);
+                   }}
+                   className="inline-block px-8 py-3 bg-white text-slate-900 rounded-full font-bold uppercase tracking-widest text-xs hover:bg-slate-200 transition-colors"
+                 >
+                   Solicitar Orçamento
+                 </a>
+              </div>
+            </div>
+          )}
+        </ContentModal>
 
       </div>
     </section>
