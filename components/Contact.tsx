@@ -14,7 +14,7 @@ const Contact: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   
   // Access Gamification Data
-  const { rank, level, getSessionDuration, getAllSectionTimes, quests } = useGamification();
+  const { rank, level, totalTime, sectionTimes, quests } = useGamification();
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -61,9 +61,6 @@ const Contact: React.FC = () => {
     
     try {
       // --- PREPARE LEAD SCORE DATA ---
-      const totalTime = getSessionDuration();
-      const sectionTimes = getAllSectionTimes();
-      
       // Fix: Ensure sectionTimes entries are treated as [string, number]
       const sortedSections = Object.entries(sectionTimes).sort(([, a], [, b]) => (b as number) - (a as number));
       const mostViewed = sortedSections[0] ? sortedSections[0][0] : 'N/A';

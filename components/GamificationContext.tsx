@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // --- Types ---
 
@@ -20,6 +20,8 @@ interface GamificationContextType {
   xp: number;
   level: number;
   rank: Rank;
+  totalTime: number;
+  sectionTimes: SectionTime;
   quests: Quest[];
   completeQuest: (id: string) => void;
   unlockAchievement: (label: string) => void; 
@@ -30,10 +32,6 @@ interface GamificationContextType {
   isModalOpen: boolean;
   openModal: () => void;
   closeModal: () => void;
-  // Getters for non-reactive data (Performance optimization)
-  getSessionDuration: () => number;
-  getSectionTime: (section: string) => number;
-  getAllSectionTimes: () => SectionTime;
 }
 
 const GamificationContext = createContext<GamificationContextType | null>(null);
@@ -56,16 +54,13 @@ const INITIAL_QUESTS: Quest[] = [
 ];
 
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // UI State (Triggers Renders)
+  // State: Pure React State resets on reload (Session Only)
   const [quests, setQuests] = useState<Quest[]>(INITIAL_QUESTS);
+  const [totalTime, setTotalTime] = useState(0);
+  const [sectionTimes, setSectionTimes] = useState<SectionTime>({});
   const [currentSection, setCurrentSection] = useState('hero');
   const [notification, setNotification] = useState<{ message: string; visible: boolean; type?: Rank } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Silent Refs (No Re-renders)
-  const startTimeRef = useRef<number>(Date.now());
-  const sectionTimesRef = useRef<SectionTime>({});
-  const lastSectionUpdateRef = useRef<number>(Date.now());
 
   // Derived State
   const xp = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
@@ -83,7 +78,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // --- Logic ---
 
-  const completeQuest = useCallback((id: string) => {
+  const completeQuest = (id: string) => {
     setQuests(prev => {
       const idx = prev.findIndex(q => q.id === id);
       if (idx === -1 || prev[idx].completed) return prev;
@@ -91,17 +86,15 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const newQuests = [...prev];
       newQuests[idx] = { ...newQuests[idx], completed: true };
       
+      // Calculate potential new rank for notification style
       const newXp = newQuests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
       const newLevel = Math.floor(newXp / 25) + 1;
       const newRank = getRank(newLevel);
 
-      // Trigger notification inside the setState callback to ensure we have fresh data
-      // Note: In a real app we might use a separate effect, but this works for simple sync logic
-      setTimeout(() => triggerNotification(`Conquista: ${newQuests[idx].label}`, newRank), 0);
-      
+      triggerNotification(`Conquista: ${newQuests[idx].label}`, newRank);
       return newQuests;
     });
-  }, []); // Empty dependency array as it uses functional update
+  };
 
   const unlockAchievement = (message: string) => {
     triggerNotification(message, rank);
@@ -109,73 +102,45 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const triggerNotification = (message: string, rankType: Rank) => {
     setNotification({ message, visible: true, type: rankType });
+    
+    // Auto hide
     setTimeout(() => {
         setNotification(prev => (prev?.message === message ? null : prev));
     }, 4500);
   };
 
   const hideNotification = () => setNotification(null);
+  
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // --- Getters (Performance Optimized) ---
-  
-  const getSessionDuration = useCallback(() => {
-    return Math.floor((Date.now() - startTimeRef.current) / 1000);
-  }, []);
+  // --- Timers & Section Tracking ---
 
-  const getSectionTime = useCallback((section: string) => {
-    return sectionTimesRef.current[section] || 0;
-  }, []);
-  
-  const getAllSectionTimes = useCallback(() => {
-     // Force update the current section time before returning
-     const now = Date.now();
-     const delta = Math.floor((now - lastSectionUpdateRef.current) / 1000);
-     if (delta > 0) {
-        sectionTimesRef.current[currentSection] = (sectionTimesRef.current[currentSection] || 0) + delta;
-        lastSectionUpdateRef.current = now; // Reset reference
-     }
-     return { ...sectionTimesRef.current };
+  useEffect(() => {
+    // 1. Total Session Timer
+    const globalTimer = setInterval(() => {
+      setTotalTime(prev => {
+        const newTime = prev + 1;
+        if (newTime === 60) completeQuest('time_spent');
+        return newTime;
+      });
+    }, 1000);
+
+    // 2. Section Timer
+    const sectionTimer = setInterval(() => {
+      setSectionTimes(prev => ({
+        ...prev,
+        [currentSection]: (prev[currentSection] || 0) + 1
+      }));
+    }, 1000);
+
+    return () => {
+      clearInterval(globalTimer);
+      clearInterval(sectionTimer);
+    };
   }, [currentSection]);
 
-  // --- Timers Logic (Silent) ---
-
-  // Check achievements without re-rendering
-  useEffect(() => {
-    const checkInterval = setInterval(() => {
-        const duration = Math.floor((Date.now() - startTimeRef.current) / 1000);
-        
-        // Quest: Time Spent
-        if (duration > 60) {
-            // This is safe because completeQuest checks if already completed internally
-            completeQuest('time_spent');
-        }
-    }, 2000); // Check every 2s is enough
-
-    return () => clearInterval(checkInterval);
-  }, [completeQuest]);
-
-  // Track Section Time silently
-  useEffect(() => {
-      // When section changes, update the previous section's accumulator
-      lastSectionUpdateRef.current = Date.now();
-      
-      const interval = setInterval(() => {
-         // We just update the ref, no re-render
-         const now = Date.now();
-         const delta = Math.floor((now - lastSectionUpdateRef.current) / 1000);
-         
-         if (delta >= 1) {
-            sectionTimesRef.current[currentSection] = (sectionTimesRef.current[currentSection] || 0) + delta;
-            lastSectionUpdateRef.current = now;
-         }
-      }, 1000);
-
-      return () => clearInterval(interval);
-  }, [currentSection]);
-
-  // Section Detection (Intersection Observer)
+  // 3. Section Detection (Intersection Observer)
   useEffect(() => {
     const sections = ['hero', 'projects', 'services', 'skills', 'about', 'education', 'lab', 'writing', 'contact'];
     
@@ -203,6 +168,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       xp,
       level,
       rank,
+      totalTime,
+      sectionTimes,
       quests,
       completeQuest,
       unlockAchievement,
@@ -211,10 +178,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       currentSection,
       isModalOpen,
       openModal,
-      closeModal,
-      getSessionDuration,
-      getSectionTime,
-      getAllSectionTimes
+      closeModal
     }}>
       {children}
     </GamificationContext.Provider>

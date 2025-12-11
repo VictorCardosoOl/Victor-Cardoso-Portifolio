@@ -1,259 +1,485 @@
 
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, MoveRight, ImageIcon, Maximize2 } from 'lucide-react';
+import { ArrowUpRight, MoveRight, X, ChevronLeft, ChevronRight, Image as ImageIcon } from 'lucide-react';
+import { useLenis } from './ScrollContext';
 import { 
   motion, 
-  useScroll, 
-  useTransform, 
-  useSpring,
-  useInView
+  useSpring, 
+  useMotionValue, 
+  AnimatePresence,
+  PanInfo
 } from 'framer-motion';
-import ContentModal from './ui/ContentModal';
-import { ProjectDetailContent } from './ProjectDetailContent';
 
 const MotionDiv = motion.div as any;
 const MotionImg = motion.img as any;
 
-// --- SUB-COMPONENT: Cartão do Projeto (Redesenhado) ---
+// --- CONFIGURAÇÃO DE FÍSICA E PARÂMETROS ---
+const PHYSICS = {
+  wheelMultiplier: 2.2,
+  spring: {
+    damping: 50,
+    stiffness: 250,
+    mass: 1.2
+  },
+  snapThreshold: 100,
+};
+
+// --- COMPONENTES AUXILIARES ---
+
+// 3. UI DE ESTADO (Barra de Progresso)
+const ProgressIndicator: React.FC<{ progress: number; isVisible: boolean }> = ({ progress, isVisible }) => {
+  return (
+    <MotionDiv 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 20 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      className="absolute bottom-6 right-6 md:bottom-12 md:right-12 z-[60] flex items-center gap-3 md:gap-4 bg-slate-950/80 backdrop-blur-md px-4 py-2 md:px-5 md:py-3 rounded-full border border-white/10 shadow-2xl"
+    >
+      <span className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest tabular-nums w-6 md:w-8 text-right">
+        {Math.round(progress * 100)}%
+      </span>
+      <div className="w-20 md:w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+        <MotionDiv 
+          className="h-full bg-white"
+          style={{ width: `${progress * 100}%` }}
+          layout 
+        />
+      </div>
+    </MotionDiv>
+  );
+};
+
+// --- COMPONENTE LIGHTBOX / GALERIA ---
+
+interface ProjectLightboxProps {
+  project: typeof PROJECTS[0];
+  onClose: () => void;
+}
+
+const ProjectLightbox: React.FC<ProjectLightboxProps> = ({ project, onClose }) => {
+  const images = [project.image, ...(project.gallery || [])];
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') paginate(1);
+      if (e.key === 'ArrowLeft') paginate(-1);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentIndex]); // eslint-disable-line
+
+  const paginate = (newDirection: number) => {
+    setDirection(newDirection);
+    setCurrentIndex((prev) => {
+      let nextIndex = prev + newDirection;
+      if (nextIndex < 0) nextIndex = images.length - 1;
+      if (nextIndex >= images.length) nextIndex = 0;
+      return nextIndex;
+    });
+  };
+
+  const handleDragEnd = (e: any, { offset }: PanInfo) => {
+    const swipe = offset.x;
+    const swipeThreshold = 50;
+    
+    if (swipe < -swipeThreshold) {
+      paginate(1);
+    } else if (swipe > swipeThreshold) {
+      paginate(-1);
+    }
+  };
+
+  const slideVariants = {
+    enter: (direction: number) => ({
+      x: direction > 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9
+    }),
+    center: {
+      zIndex: 1,
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (direction: number) => ({
+      zIndex: 0,
+      x: direction < 0 ? 1000 : -1000,
+      opacity: 0,
+      scale: 0.9
+    })
+  };
+
+  return (
+    <MotionDiv 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] bg-slate-950/95 backdrop-blur-xl flex flex-col"
+    >
+      <div className="flex justify-between items-center p-4 md:p-8 z-20">
+        <div>
+          <h3 className="text-white font-serif text-lg md:text-2xl">{project.title}</h3>
+          <p className="text-slate-400 text-[10px] md:text-xs uppercase tracking-widest">{currentIndex + 1} / {images.length}</p>
+        </div>
+        <button 
+          onClick={onClose}
+          className="p-2 md:p-3 bg-white/10 rounded-full hover:bg-white hover:text-slate-900 text-white transition-all"
+        >
+          <X size={20} className="md:w-6 md:h-6" />
+        </button>
+      </div>
+
+      <div className="flex-grow relative flex items-center justify-center overflow-hidden">
+        <button 
+          className="absolute left-4 md:left-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
+          onClick={() => paginate(-1)}
+        >
+          <ChevronLeft size={32} />
+        </button>
+        
+        <button 
+          className="absolute right-4 md:right-8 z-20 p-4 rounded-full bg-black/20 text-white hover:bg-white hover:text-black transition-all hidden md:block backdrop-blur-sm"
+          onClick={() => paginate(1)}
+        >
+          <ChevronRight size={32} />
+        </button>
+
+        <div className="relative w-full h-full max-w-6xl max-h-[60vh] md:max-h-[80vh] px-2 md:px-20">
+          <AnimatePresence initial={false} custom={direction} mode="popLayout">
+            <MotionImg
+              key={currentIndex}
+              src={images[currentIndex]}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{
+                x: { type: "spring", stiffness: 300, damping: 30 },
+                opacity: { duration: 0.2 }
+              }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={1}
+              onDragEnd={handleDragEnd}
+              className="w-full h-full object-contain rounded-xl shadow-2xl cursor-grab active:cursor-grabbing select-none"
+              alt={`${project.title} screenshot ${currentIndex + 1}`}
+            />
+          </AnimatePresence>
+        </div>
+      </div>
+
+      <div className="h-20 md:h-32 border-t border-white/10 bg-black/20 flex items-center justify-center gap-2 md:gap-4 px-4 overflow-x-auto pb-safe">
+        {images.map((img, idx) => (
+          <button
+            key={idx}
+            onClick={() => {
+              setDirection(idx > currentIndex ? 1 : -1);
+              setCurrentIndex(idx);
+            }}
+            className={`relative h-14 w-20 md:h-20 md:w-32 rounded-lg overflow-hidden transition-all duration-300 flex-shrink-0 ${
+              idx === currentIndex ? 'ring-2 ring-white scale-105 opacity-100' : 'opacity-50 hover:opacity-80'
+            }`}
+          >
+            <img src={img} alt={`Thumbnail ${idx}`} className="w-full h-full object-cover" />
+          </button>
+        ))}
+      </div>
+    </MotionDiv>
+  );
+};
+
+// --- COMPONENTE PRINCIPAL ---
+
+const Projects: React.FC = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const lenis = useLenis();
+
+  const [isActive, setIsActive] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
+
+  const x = useMotionValue(0);
+  const springX = useSpring(x, PHYSICS.spring);
+  const containerWidth = useRef(0);
+  const trackWidth = useRef(0);
+  const reverseScrollCount = useRef(0);
+
+  useEffect(() => {
+    if (selectedProject) {
+      lenis?.stop();
+    } else if (!isActive) {
+      lenis?.start();
+    }
+  }, [selectedProject, lenis, isActive]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (containerRef.current && trackRef.current) {
+        containerWidth.current = containerRef.current.offsetWidth;
+        trackWidth.current = trackRef.current.scrollWidth - containerWidth.current;
+      }
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    setTimeout(handleResize, 500);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting);
+        if (!entry.isIntersecting && isActive) {
+            setIsActive(false);
+            lenis?.start();
+        }
+      },
+      { threshold: 0 }
+    );
+
+    if (containerRef.current) observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, [isActive, lenis]);
+
+
+  useEffect(() => {
+    if (!isInView || isMobile || selectedProject) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (!containerRef.current) return;
+
+      const rect = containerRef.current.getBoundingClientRect();
+      const isAtTop = Math.abs(rect.top) < 2;
+      const isApproaching = rect.top > 0 && rect.top < PHYSICS.snapThreshold;
+
+      if (!isActive) {
+        if (e.deltaY > 0 && (isAtTop || isApproaching)) {
+            if (isApproaching && lenis) {
+                e.preventDefault();
+                lenis.scrollTo(containerRef.current, { 
+                    offset: 0, 
+                    immediate: false, 
+                    duration: 0.8,
+                    onComplete: () => {
+                        setIsActive(true);
+                        lenis.stop();
+                    }
+                });
+                return;
+            }
+
+            if (isAtTop) {
+                e.preventDefault();
+                setIsActive(true);
+                lenis?.stop();
+                window.scrollTo({ top: containerRef.current.offsetTop + 0.5 }); 
+            }
+        }
+        return;
+      }
+
+      if (isActive) {
+        e.preventDefault();
+
+        const currentX = x.get();
+        const maxScroll = -trackWidth.current;
+        const delta = e.deltaY * PHYSICS.wheelMultiplier;
+
+        let newX = currentX - delta;
+        
+        if (newX > 0) newX = 0;
+        if (newX < maxScroll) newX = maxScroll;
+
+        const newProgress = Math.abs(newX / maxScroll);
+        setProgress(Math.min(Math.max(newProgress, 0), 1));
+
+        if (currentX >= 0 && e.deltaY < 0) {
+            reverseScrollCount.current += 1;
+            if (reverseScrollCount.current > 3 || e.deltaY < -40) {
+                setIsActive(false);
+                lenis?.start();
+                reverseScrollCount.current = 0;
+            }
+        }
+        else if (currentX <= maxScroll && e.deltaY > 0) {
+            reverseScrollCount.current += 1;
+            if (reverseScrollCount.current > 3 || e.deltaY > 40) {
+                setIsActive(false);
+                lenis?.start();
+                reverseScrollCount.current = 0;
+            }
+        } else {
+            reverseScrollCount.current = 0;
+            x.set(newX);
+        }
+      }
+    };
+
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [isActive, isInView, isMobile, lenis, x, selectedProject]);
+
+
+  return (
+    <section 
+      ref={containerRef} 
+      id="projects"
+      className="relative h-screen w-full bg-slate-950 overflow-hidden flex flex-col justify-center"
+      style={{ zIndex: 30 }} 
+    >
+      <div className="absolute inset-0 z-[1] opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
+
+      {!isMobile && <ProgressIndicator progress={progress} isVisible={isActive} />}
+
+      <MotionDiv 
+        ref={trackRef}
+        // Aggressive Whitespace: Increased gap-40 (10rem/160px) for premium feel
+        className="flex gap-8 md:gap-40 px-5 md:px-20 w-max items-center h-[75vh] md:h-[80vh]"
+        style={{ x: springX, cursor: isMobile ? 'grab' : isActive ? 'none' : 'default' }}
+        drag={isMobile ? "x" : false}
+        dragConstraints={containerRef}
+      >
+        {/* HEADER CARD */}
+        <div className="w-[85vw] md:w-[30vw] h-full flex flex-col justify-center shrink-0 md:pr-12 z-[3]">
+           <div className="pl-4 border-l-2 border-white/20">
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 md:mb-4 block">
+                Portfólio Selecionado
+              </span>
+              <h2 className="text-4xl sm:text-5xl md:text-7xl font-serif font-medium text-white leading-none mb-4 md:mb-6">
+                Projetos <br /> <span className="text-slate-500 italic">Recentes</span>
+              </h2>
+              <p className="text-slate-400 font-light leading-relaxed max-w-sm text-sm md:text-base">
+                 Explore uma seleção de trabalhos focados em performance, conversão e experiência do usuário.
+                 <br/><br/>
+                 <span className="text-white font-medium flex items-center gap-2">
+                    {isMobile ? "Arraste para explorar" : "Continue rolando"} <MoveRight size={16} />
+                 </span>
+              </p>
+           </div>
+        </div>
+
+        {/* PROJECT CARDS */}
+        {PROJECTS.map((project, index) => (
+          <ProjectCard 
+            key={index} 
+            project={project} 
+            index={index} 
+            onOpen={() => setSelectedProject(project)}
+            isMobile={isMobile}
+          />
+        ))}
+
+        {/* END CARD */}
+        <div className="w-[85vw] md:w-[30vw] h-full flex items-center justify-center shrink-0 z-[3]">
+            <a href="#contact" className="group flex flex-col items-center justify-center gap-4 md:gap-6 text-center">
+               <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-slate-900 transition-all duration-500">
+                  <ArrowUpRight size={28} className="text-white group-hover:text-slate-900 md:w-8 md:h-8" />
+               </div>
+               <div>
+                 <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">Seu Projeto Aqui</h3>
+                 <p className="text-xs md:text-sm text-slate-400 font-bold uppercase tracking-widest underline decoration-slate-700 underline-offset-4 group-hover:text-white group-hover:decoration-white transition-all">
+                   Iniciar Conversa
+                 </p>
+               </div>
+            </a>
+        </div>
+      </MotionDiv>
+
+      {/* LIGHTBOX OVERLAY */}
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectLightbox 
+            project={selectedProject} 
+            onClose={() => setSelectedProject(null)} 
+          />
+        )}
+      </AnimatePresence>
+    </section>
+  );
+};
+
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0]; 
   index: number;
   onOpen: () => void;
   isMobile: boolean;
 }> = ({ project, index, onOpen, isMobile }) => {
-  return (
-    <div 
-      className={`
-        relative shrink-0 rounded-[2rem] md:rounded-[3rem] overflow-hidden group cursor-pointer bg-slate-900 border border-white/10 shadow-2xl
-        ${isMobile 
-          ? 'w-[85vw] h-[55vh] snap-center' 
-          : 'w-[550px] lg:w-[700px] h-[65vh] lg:h-[75vh] transition-all duration-700 hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)]' 
-        }
-      `}
-      onClick={onOpen}
-    >
-      {/* Imagem com Parallax suave no hover */}
-      <div className="absolute inset-0 overflow-hidden">
-        <MotionImg 
-          src={project.image} 
-          alt={project.title}
-          className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-110"
-          loading="lazy"
-        />
-      </div>
+  const [isHovered, setIsHovered] = useState(false);
 
-      {/* Overlay Gradiente */}
-      <div className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-500" />
+  return (
+    <MotionDiv 
+      // Adjusted width for better ratio with large gaps
+      className="relative w-[88vw] sm:w-[80vw] md:w-[55vw] h-[55vh] md:h-[75vh] shrink-0 rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group cursor-none select-none"
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, ease: "easeOut" }}
+      viewport={{ once: true, margin: "-10%" }}
+    >
+      <img 
+        src={project.image} 
+        alt={project.title}
+        loading="lazy"
+        className="absolute inset-0 w-full h-full object-cover z-[10] transition-transform duration-1000 ease-out group-hover:scale-105 will-change-transform"
+      />
+
+      <div 
+        className="absolute inset-0 z-[20] bg-gradient-to-t from-slate-950/95 via-slate-950/50 to-transparent opacity-90 md:opacity-80 group-hover:opacity-95 transition-opacity duration-500"
+        style={{ mixBlendMode: 'multiply' }}
+      />
       
-      {/* Conteúdo */}
-      <div className="absolute inset-0 z-[30] p-8 md:p-12 flex flex-col justify-between">
-        
-        {/* Topo do Card */}
-        <div className="flex justify-between items-start translate-y-0 transition-transform duration-500">
-           <span className="px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/10 text-[10px] md:text-xs font-bold uppercase tracking-widest text-white group-hover:bg-white group-hover:text-slate-900 transition-colors">
+      {isMobile && <div className="absolute inset-0 z-[21] bg-black/20" />}
+
+      {/* Aggressive padding inside card */}
+      <div className="absolute inset-0 z-[30] p-8 md:p-16 flex flex-col justify-between">
+        <div className={`flex justify-between items-start transition-opacity duration-500 transform ${isMobile ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 -translate-y-4 group-hover:translate-y-0'}`}>
+           <span className="px-3 py-1 md:px-4 md:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white shadow-lg">
              {project.category}
            </span>
-           <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10 text-white opacity-0 group-hover:opacity-100 transition-all duration-500 group-hover:scale-100 scale-50">
-              <Maximize2 size={18} />
-           </div>
+           <span className="text-2xl md:text-4xl font-serif text-white/20 font-bold">0{index + 1}</span>
         </div>
 
-        {/* Base do Card */}
-        <div className="transform transition-transform duration-500 translate-y-4 md:translate-y-8 group-hover:translate-y-0">
-           <span className="block text-4xl md:text-6xl font-serif font-bold text-white/20 mb-2 tabular-nums">
-             0{index + 1}
-           </span>
-           <h3 className="text-3xl md:text-5xl font-serif font-medium text-white mb-4 leading-none tracking-tight">
+        <div className={`relative transform transition-transform duration-500 ${isMobile ? 'translate-y-0' : 'translate-y-4 group-hover:translate-y-0'}`}>
+           <h3 className="relative z-[40] text-3xl sm:text-4xl md:text-6xl font-serif font-medium text-white mb-2 md:mb-6 leading-none tracking-tight drop-shadow-lg">
              {project.title}
            </h3>
-           
-           <div className="h-0 opacity-0 group-hover:h-auto group-hover:opacity-100 transition-all duration-500 overflow-hidden">
-             <p className="text-slate-300 font-light leading-relaxed max-w-lg mb-6 text-sm md:text-base line-clamp-2 md:line-clamp-none">
-               {project.description}
-             </p>
-             <div className="flex items-center gap-2 text-white text-xs font-bold uppercase tracking-widest border-b border-white/30 pb-1 w-max">
-               Ver Case Completo <ArrowUpRight size={14} />
-             </div>
+
+           <p className="relative z-[50] text-slate-300 font-light leading-relaxed max-w-lg mb-8 md:mb-10 text-sm md:text-base drop-shadow-md opacity-90 line-clamp-3 md:line-clamp-none">
+             {project.description}
+           </p>
+
+           <div className="relative z-[60] flex flex-wrap gap-3 md:gap-4">
+              <button 
+                onClick={onOpen}
+                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-white text-slate-900 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors shadow-xl w-full sm:w-auto justify-center"
+              >
+                Ver Galeria <ImageIcon size={14} />
+              </button>
+              <a 
+                href={project.link}
+                className="flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-transparent border border-white/30 text-white rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-slate-900 transition-all shadow-lg backdrop-blur-sm w-full sm:w-auto justify-center"
+              >
+                Visitar Site <ArrowUpRight size={14} />
+              </a>
            </div>
         </div>
       </div>
-    </div>
-  );
-};
 
-// --- COMPONENTE PRINCIPAL ---
-const Projects: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null); // Container fantasma (altura vertical)
-  const trackRef = useRef<HTMLDivElement>(null);     // Faixa horizontal (conteúdo)
-  
-  const [scrollRange, setScrollRange] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
-
-  // 1. Lógica de Redimensionamento (Robusta)
-  useLayoutEffect(() => {
-    const updateMeasurements = () => {
-      if (!trackRef.current) return;
-
-      const mobile = window.matchMedia("(max-width: 1023px)").matches;
-      setIsMobile(mobile);
-
-      if (!mobile) {
-        const trackWidth = trackRef.current.scrollWidth;
-        const viewportWidth = window.innerWidth;
-        // A distância que precisamos rolar é: Tamanho Total - Tamanho da Tela
-        const distance = trackWidth - viewportWidth;
-        // Adiciona um padding extra no final para não "cortar" seco (opcional, +100px)
-        setScrollRange(Math.max(0, distance));
-      } else {
-        setScrollRange(0);
-      }
-    };
-
-    updateMeasurements();
-
-    const resizeObserver = new ResizeObserver(() => {
-      // Pequeno delay para garantir que o layout estabilizou (evita flicker em fullscreen)
-      requestAnimationFrame(updateMeasurements);
-    });
-
-    if (trackRef.current) resizeObserver.observe(trackRef.current);
-    window.addEventListener('resize', updateMeasurements);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updateMeasurements);
-    };
-  }, []);
-
-  // 2. Framer Motion Scroll Hooks
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  });
-
-  // Física 1:1 (Sem spring para evitar sensação de "gelatina" no scroll preciso, ou spring bem rígido)
-  const x = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
-  
-  // Opção com Spring Suave (Descomente se preferir inércia)
-  const smoothX = useSpring(x, { damping: 40, stiffness: 200, mass: 0.5 });
-
-  return (
-    <section 
-      id="projects" 
-      ref={containerRef}
-      className="relative bg-slate-950 w-full"
-      style={{ 
-        // A altura da seção define quanto tempo o scroll dura.
-        // Altura = ScrollRange (distância horizontal) + ViewportHeight (uma tela inteira)
-        height: isMobile ? 'auto' : `${scrollRange + (typeof window !== 'undefined' ? window.innerHeight : 1000)}px`,
-      }}
-    >
-      {/* Background Noise & Grain */}
-      <div className="absolute inset-0 z-[0] opacity-30 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150 fixed mix-blend-overlay"></div>
-      
-      {/* STICKY CONTAINER: O palco onde a mágica acontece */}
       <div 
-        className={`
-          w-full bg-slate-950 overflow-hidden
-          ${isMobile 
-            ? 'relative py-24'  // Mobile: Fluxo normal
-            : 'sticky top-0 h-screen flex items-center' // Desktop: Preso no topo
-          }
-        `}
-      >
-        
-        {/* TRACK: O conteúdo que desliza */}
-        <MotionDiv 
-          ref={trackRef}
-          style={!isMobile ? { x: smoothX } : {}}
-          className={`
-            flex items-center 
-            ${isMobile 
-              ? 'w-full overflow-x-auto snap-x snap-mandatory px-6 gap-6 no-scrollbar pb-10' // Mobile Style
-              : 'h-full px-20 gap-20 w-max' // Desktop Style
-            }
-          `}
-        >
-          {/* HEADER (Intro) */}
-          <div className={`
-             flex flex-col justify-center shrink-0 
-             ${isMobile ? 'w-[85vw] snap-center pt-10' : 'w-[25vw] min-w-[350px]'}
-          `}>
-             <div className="border-l-2 border-white/20 pl-6 md:pl-8">
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 block">
-                  Portfólio
-                </span>
-                <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-white leading-[0.9] mb-6 md:mb-8">
-                  Obras <br /> <span className="text-slate-600 italic">Recentes</span>
-                </h2>
-                <p className="text-slate-400 font-light leading-relaxed max-w-sm text-sm md:text-base mb-8">
-                   Uma seleção de projetos onde design e engenharia se encontram para resolver problemas complexos.
-                </p>
-                
-                <div className="flex items-center gap-4 text-white font-bold text-xs uppercase tracking-widest">
-                   {isMobile ? (
-                     <>Deslize <MoveRight className="animate-pulse" size={16} /></>
-                   ) : (
-                     <>Scroll Down <MoveRight className="rotate-90" size={16} /></>
-                   )}
-                </div>
-             </div>
-          </div>
-
-          {/* LISTA DE PROJETOS */}
-          {PROJECTS.map((project, index) => (
-            <ProjectCard 
-              key={index} 
-              project={project} 
-              index={index} 
-              onOpen={() => setSelectedProject(project)}
-              isMobile={isMobile}
-            />
-          ))}
-
-          {/* FINAL CTA CARD */}
-          <div className={`
-            flex items-center justify-center shrink-0
-            ${isMobile ? 'w-[85vw] snap-center' : 'w-[25vw] min-w-[350px] h-[60vh]'}
-          `}>
-              <a href="#contact" className="group relative w-full h-full rounded-[3rem] border border-dashed border-white/10 flex flex-col items-center justify-center gap-6 hover:bg-white/5 transition-colors overflow-hidden">
-                 <div className="w-24 h-24 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 z-10">
-                    <ArrowUpRight size={32} className="text-white" />
-                 </div>
-                 <div className="text-center z-10">
-                   <h3 className="text-3xl font-serif text-white mb-2">Seu Projeto</h3>
-                   <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
-                     Iniciar conversa
-                   </p>
-                 </div>
-              </a>
-          </div>
-        </MotionDiv>
-        
-        {/* Barra de Progresso (Visual Desktop) */}
-        {!isMobile && (
-          <div className="absolute bottom-12 left-20 right-20 h-[1px] bg-white/10 rounded-full overflow-hidden">
-             <motion.div 
-               style={{ scaleX: scrollYProgress, transformOrigin: "left" }}
-               className="h-full bg-white"
-             />
-          </div>
-        )}
-
-      </div>
-
-      {/* Modal Renderizado */}
-      <ContentModal 
-        isOpen={!!selectedProject} 
-        onClose={() => setSelectedProject(null)}
-        title={selectedProject?.title}
-        category={selectedProject?.category}
-      >
-        {selectedProject && <ProjectDetailContent project={selectedProject} />}
-      </ContentModal>
-    </section>
+        className={`absolute inset-0 z-[70] pointer-events-none border-[1px] border-white/0 transition-all duration-500 ${isHovered ? 'border-white/20 inset-4 rounded-xl' : ''}`} 
+      />
+    </MotionDiv>
   );
 };
 

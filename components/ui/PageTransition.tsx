@@ -31,24 +31,6 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const lenis = useLenis();
 
   const transitionTo = (href: string) => {
-    // FIX: Se for link interno (#), apenas scrolla suavemente sem cortina.
-    if (href.startsWith('#')) {
-      const targetId = href.replace('#', '');
-      const element = document.getElementById(targetId);
-      
-      if (element) {
-        if (lenis) {
-          lenis.scrollTo(element, { 
-            duration: 1.5, 
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
-          });
-        } else {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-      return;
-    }
-
     if (isAnimating) return;
     setTargetHref(href);
     setIsAnimating(true);
@@ -56,9 +38,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
   useEffect(() => {
     if (isAnimating && targetHref) {
-      // Ajuste de Timing: 
-      // A cortina leva ~0.7s para cobrir a tela (duration no AnimatePresence)
-      // Esperamos 0.75s para garantir cobertura total antes de mover o scroll.
+      // Increased hold time for curtain
       const scrollTimer = setTimeout(() => {
         const targetId = targetHref.replace('#', '');
         const element = document.getElementById(targetId);
@@ -71,13 +51,9 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
           }
         }
         
-        // Mantém a tela coberta por mais 0.2s antes de revelar a nova seção
-        setTimeout(() => {
-           setIsAnimating(false);
-           setTargetHref(null);
-        }, 200);
-
-      }, 750); // Sincronizado com a animação da cortina (0.7s + buffer)
+        setIsAnimating(false);
+        setTargetHref(null);
+      }, 900); // 900ms hold
 
       return () => clearTimeout(scrollTimer);
     }
@@ -86,24 +62,24 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   return (
     <PageTransitionContext.Provider value={{ transitionTo }}>
       {children}
-      <AnimatePresence mode="wait">
+      <AnimatePresence>
         {isAnimating && (
           <MotionDiv
             key="page-transition-curtain"
-            initial={{ clipPath: "inset(100% 0 0 0)" }} // Começa invisível (em baixo)
-            animate={{ clipPath: "inset(0% 0 0 0)" }}   // Cobre a tela
-            exit={{ clipPath: "inset(0 0 100% 0)" }}    // Sai por cima
+            initial={{ y: '100%' }}
+            animate={{ y: '0%' }}
+            exit={{ y: '-100%' }}
             transition={{ 
-                duration: 0.7, // Duração de 0.7s conforme solicitado
-                ease: [0.76, 0, 0.24, 1] // Ease suave (Expo)
+                duration: 0.9, 
+                ease: [0.76, 0, 0.24, 1] // Quart ease
             }}
             className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center pointer-events-none"
           >
             <MotionDiv
-               initial={{ opacity: 0, y: 20 }}
+               initial={{ opacity: 0, y: 30 }}
                animate={{ opacity: 1, y: 0 }}
-               exit={{ opacity: 0, y: -20 }}
-               transition={{ delay: 0.2, duration: 0.4 }}
+               exit={{ opacity: 0, y: -30 }}
+               transition={{ delay: 0.2, duration: 0.5 }}
             >
                <span className="text-white font-serif text-4xl font-bold tracking-tight">V.</span>
             </MotionDiv>
