@@ -31,59 +31,61 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   const lenis = useLenis();
 
   const transitionTo = (href: string) => {
-    if (isAnimating) return;
+    if (isAnimating || href === targetHref) return;
     setTargetHref(href);
     setIsAnimating(true);
   };
 
   useEffect(() => {
     if (isAnimating && targetHref) {
-      // Increased hold time for curtain
+      // Total Duration: 0.7s (700ms)
+      // Curtain closes fully around: ~300ms
+      // We trigger the scroll while the screen is black.
+      
       const scrollTimer = setTimeout(() => {
         const targetId = targetHref.replace('#', '');
         const element = document.getElementById(targetId);
         
         if (element) {
           if (lenis) {
+            // immediate: true jumps instantly while hidden
             lenis.scrollTo(element, { immediate: true, force: true, offset: 0 });
           } else {
             element.scrollIntoView({ behavior: 'auto' });
           }
         }
-        
+      }, 350); // Fire at halfway point
+
+      // Finish animation state
+      const endTimer = setTimeout(() => {
         setIsAnimating(false);
         setTargetHref(null);
-      }, 900); // 900ms hold
+      }, 750); // Slightly longer than 700ms to ensure animation completes
 
-      return () => clearTimeout(scrollTimer);
+      return () => {
+        clearTimeout(scrollTimer);
+        clearTimeout(endTimer);
+      };
     }
   }, [isAnimating, targetHref, lenis]);
 
   return (
     <PageTransitionContext.Provider value={{ transitionTo }}>
       {children}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isAnimating && (
           <MotionDiv
             key="page-transition-curtain"
-            initial={{ y: '100%' }}
-            animate={{ y: '0%' }}
-            exit={{ y: '-100%' }}
+            initial={{ scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            exit={{ scaleY: 0 }}
+            style={{ originY: isAnimating ? 0 : 1 }} 
             transition={{ 
-                duration: 0.9, 
-                ease: [0.76, 0, 0.24, 1] // Quart ease
+                duration: 0.7, 
+                ease: [0.22, 1, 0.36, 1] // Custom smooth bezier
             }}
-            className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center pointer-events-none"
-          >
-            <MotionDiv
-               initial={{ opacity: 0, y: 30 }}
-               animate={{ opacity: 1, y: 0 }}
-               exit={{ opacity: 0, y: -30 }}
-               transition={{ delay: 0.2, duration: 0.5 }}
-            >
-               <span className="text-white font-serif text-4xl font-bold tracking-tight">V.</span>
-            </MotionDiv>
-          </MotionDiv>
+            className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center pointer-events-none origin-top"
+          />
         )}
       </AnimatePresence>
     </PageTransitionContext.Provider>

@@ -84,37 +84,39 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
              <div className="space-y-12 pt-8">
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                   <div className="p-8 bg-slate-100/50 rounded-[2rem] border border-slate-200/50">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-slate-900">
-                        <Layers size={20} />
+                   <div className="p-8 bg-slate-100/50 rounded-[2rem] border border-slate-200/50 hover:bg-white hover:border-slate-200 transition-colors duration-300">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm text-slate-900 border border-slate-100">
+                        <Layers size={22} strokeWidth={1.5} />
                       </div>
-                      <h4 className="text-xl font-serif font-medium text-slate-900 mb-3">O Desafio</h4>
-                      <p className="text-sm text-slate-600 leading-relaxed font-light">
+                      <h4 className="text-2xl font-serif font-medium text-slate-900 mb-4">O Desafio</h4>
+                      <p className="text-base text-slate-600 leading-relaxed font-light">
                         {project.caseStudy.challenge}
                       </p>
                    </div>
-                   <div className="p-8 bg-slate-100/50 rounded-[2rem] border border-slate-200/50">
-                      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm text-slate-900">
-                        <Cpu size={20} />
+                   <div className="p-8 bg-slate-100/50 rounded-[2rem] border border-slate-200/50 hover:bg-white hover:border-slate-200 transition-colors duration-300">
+                      <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-sm text-slate-900 border border-slate-100">
+                        <Cpu size={22} strokeWidth={1.5} />
                       </div>
-                      <h4 className="text-xl font-serif font-medium text-slate-900 mb-3">A Solução</h4>
-                      <p className="text-sm text-slate-600 leading-relaxed font-light">
+                      <h4 className="text-2xl font-serif font-medium text-slate-900 mb-4">A Solução</h4>
+                      <p className="text-base text-slate-600 leading-relaxed font-light">
                         {project.caseStudy.solution}
                       </p>
                    </div>
                 </div>
 
-                <div className="p-8 md:p-10 bg-slate-900 text-white rounded-[2rem] relative overflow-hidden">
+                <div className="p-8 md:p-12 bg-slate-900 text-white rounded-[2rem] relative overflow-hidden shadow-2xl">
                    <div className="relative z-10">
-                      <div className="flex items-center gap-3 mb-4">
-                        <BarChart className="text-green-400" />
+                      <div className="flex items-center gap-3 mb-6">
+                        <div className="p-2 bg-white/10 rounded-lg">
+                           <BarChart className="text-green-400" size={20} />
+                        </div>
                         <h4 className="text-xs font-bold uppercase tracking-widest text-slate-400">Resultados Chave</h4>
                       </div>
-                      <p className="text-2xl md:text-3xl font-serif font-medium leading-tight">
+                      <p className="text-3xl md:text-4xl font-serif font-medium leading-tight">
                         "{project.caseStudy.result}"
                       </p>
                    </div>
-                   <div className="absolute right-0 bottom-0 w-64 h-64 bg-white/5 rounded-full blur-3xl pointer-events-none -mr-16 -mb-16"></div>
+                   <div className="absolute right-0 bottom-0 w-80 h-80 bg-white/5 rounded-full blur-3xl pointer-events-none -mr-20 -mb-20"></div>
                 </div>
 
              </div>

@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Lenis from 'lenis';
 
@@ -16,7 +17,7 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       duration: 1.5, // Increased duration for smoother/heavier feel
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential easing
       orientation: 'vertical',
-      gestureOrientation: 'vertical',
+      gestureOrientation: 'vertical', // Force vertical gestures
       smoothWheel: true,
       wheelMultiplier: 1,
       touchMultiplier: 2,

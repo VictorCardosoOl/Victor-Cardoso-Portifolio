@@ -17,7 +17,6 @@ import { GamificationProvider } from './components/GamificationContext';
 import { PageTransitionProvider } from './components/ui/PageTransition';
 import { MessageCircle } from 'lucide-react';
 import Magnetic from './components/ui/Magnetic';
-import Cursor from './components/ui/Cursor';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const MotionDiv = motion.div as any;
@@ -77,7 +76,6 @@ const App: React.FC = () => {
               {loading && <Preloader onComplete={() => setLoading(false)} />}
             </AnimatePresence>
             
-            <Cursor />
             <GrainBackground />
             
             <Navbar />
@@ -100,7 +98,7 @@ const App: React.FC = () => {
                   href="https://wa.me/5511999999999" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-14 h-14 bg-white text-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 border border-slate-100 cursor-none"
+                  className="flex items-center justify-center w-14 h-14 bg-white text-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 border border-slate-100"
                   aria-label="Contato via WhatsApp"
                 >
                   <MessageCircle size={24} className="text-slate-900" />
