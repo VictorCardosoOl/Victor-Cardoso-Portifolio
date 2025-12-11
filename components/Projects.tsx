@@ -1,113 +1,144 @@
 
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, Plus } from 'lucide-react';
+import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ContentModal from './ui/ContentModal';
 import { ProjectDetailContent } from './ProjectDetailContent';
 import { Reveal } from './ui/Reveal';
+import Button from './ui/Button';
 
 const Projects: React.FC = () => {
-  const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
+  const [selectedProject, setSelectedProject] = React.useState<typeof PROJECTS[0] | null>(null);
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const scrollAmount = direction === 'left' ? -400 : 400;
+      sliderRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section id="projects" className="py-24 md:py-32 bg-slate-950 relative overflow-hidden">
-      {/* Background Noise/Texture */}
+    <section id="projects" className="py-24 bg-slate-950 relative overflow-hidden border-t border-white/5">
+      {/* Background Noise */}
       <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] brightness-50 contrast-150"></div>
       
       <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
         
-        {/* Header Simples */}
-        <div className="mb-16 md:mb-24 max-w-3xl">
-          <Reveal>
-            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 block">
-              Portfólio Selecionado
-            </span>
-          </Reveal>
-          <Reveal delay={100}>
-            <h2 className="text-4xl md:text-6xl font-serif font-medium text-white mb-6 tracking-tight">
-              Projetos <span className="italic text-slate-600">Recentes</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={200}>
-            <p className="text-slate-400 font-light text-lg leading-relaxed max-w-xl">
-               Uma seleção de trabalhos onde design e engenharia convergem para resolver problemas complexos.
-            </p>
-          </Reveal>
+        {/* Header e Controles */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="max-w-2xl">
+            <Reveal>
+              <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 block">
+                Portfólio Selecionado
+              </span>
+            </Reveal>
+            <Reveal delay={100}>
+              <h2 className="text-3xl md:text-5xl font-serif font-medium text-white mb-4 tracking-tight">
+                Obras <span className="italic text-slate-600">Recentes</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={200}>
+              <p className="text-slate-400 font-light text-sm md:text-base leading-relaxed max-w-lg">
+                 Design e engenharia convergem para resolver problemas complexos.
+              </p>
+            </Reveal>
+          </div>
+
+          {/* Botões de Navegação Desktop */}
+          <div className="hidden md:flex gap-3">
+             <button 
+               onClick={() => scroll('left')}
+               className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all active:scale-95"
+               aria-label="Scroll Left"
+             >
+               <ChevronLeft size={20} />
+             </button>
+             <button 
+               onClick={() => scroll('right')}
+               className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-white hover:text-slate-900 transition-all active:scale-95"
+               aria-label="Scroll Right"
+             >
+               <ChevronRight size={20} />
+             </button>
+          </div>
         </div>
 
-        {/* Grid Layout - A estrutura mais robusta e simples possível */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+        {/* 
+            Carrossel Horizontal Nativo 
+            - data-lenis-prevent: Impede conflito com o scroll vertical da página
+            - snap-x: Garante que pare no lugar certo
+        */}
+        <div 
+          ref={sliderRef}
+          className="flex gap-6 md:gap-8 overflow-x-auto snap-x snap-mandatory pb-12 -mx-6 px-6 md:mx-0 md:px-0 no-scrollbar"
+          data-lenis-prevent
+        >
           {PROJECTS.map((project, index) => (
-            <Reveal key={index} delay={index * 100} width="100%" variant="scale">
-              <div 
-                onClick={() => setSelectedProject(project)}
-                className="group cursor-pointer flex flex-col gap-4"
-              >
-                {/* Image Card */}
-                <div className="relative aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900 shadow-2xl">
-                  <div className="absolute inset-0 z-10 bg-slate-950/20 group-hover:bg-slate-950/0 transition-colors duration-500" />
+            <div 
+              key={index} 
+              className="snap-center shrink-0 w-[85vw] md:w-[600px] lg:w-[700px] first:pl-0 last:pr-6 md:last:pr-0"
+            >
+              <Reveal delay={index * 100} width="100%" variant="scale">
+                <div 
+                  onClick={() => setSelectedProject(project)}
+                  className="group cursor-pointer relative aspect-[16/9] md:aspect-[21/9] rounded-[2rem] overflow-hidden border border-white/10 bg-slate-900 shadow-2xl"
+                >
+                  <div className="absolute inset-0 z-10 bg-black/40 group-hover:bg-black/20 transition-colors duration-500" />
                   
                   <motion.img 
                     whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.7, ease: [0.33, 1, 0.68, 1] }}
+                    transition={{ duration: 0.7 }}
                     src={project.image} 
                     alt={project.title}
                     className="w-full h-full object-cover opacity-90 group-hover:opacity-100"
                     loading="lazy"
                   />
 
-                  {/* Hover Overlay Button */}
-                  <div className="absolute top-6 right-6 z-20 w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 text-white opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    <ArrowUpRight size={20} />
+                  {/* Conteúdo Sobreposto */}
+                  <div className="absolute inset-0 z-20 p-6 md:p-10 flex flex-col justify-end">
+                     <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                        <div className="flex justify-between items-end border-b border-white/20 pb-4 mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
+                             {project.category}
+                           </span>
+                           <div className="flex items-center gap-2 text-white text-[10px] font-bold uppercase tracking-widest">
+                              Ver Detalhes <ArrowUpRight size={14} />
+                           </div>
+                        </div>
+                        
+                        <h3 className="text-2xl md:text-4xl font-serif font-medium text-white mb-2 drop-shadow-md">
+                          {project.title}
+                        </h3>
+                        <div className="flex flex-wrap gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                          {project.tags.map((tag, i) => (
+                            <span key={i} className="text-[10px] font-medium text-slate-300">#{tag}</span>
+                          ))}
+                        </div>
+                     </div>
                   </div>
                 </div>
-
-                {/* Info */}
-                <div className="px-2">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-2xl md:text-3xl font-serif font-medium text-white group-hover:text-slate-200 transition-colors">
-                      {project.title}
-                    </h3>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 border border-slate-800 px-2 py-1 rounded-full">
-                      {project.year}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      {project.category}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-slate-600" />
-                    <span className="text-xs text-slate-500 truncate max-w-[200px]">
-                      {project.tags.join(', ')}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
+              </Reveal>
+            </div>
           ))}
-
-          {/* Placeholder Card para "Seu Projeto" (Opcional, mantém o grid equilibrado) */}
-          <Reveal delay={PROJECTS.length * 100} width="100%" variant="scale">
-            <a href="#contact" className="group cursor-pointer flex flex-col gap-4 h-full">
-              <div className="relative aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-[2rem] border border-dashed border-white/10 bg-white/5 hover:bg-white/10 transition-colors flex flex-col items-center justify-center gap-4 text-center p-8">
-                 <div className="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center border border-white/5 group-hover:scale-110 transition-transform duration-300">
-                    <Plus size={24} className="text-white" />
-                 </div>
-                 <div>
-                    <h3 className="text-xl font-serif text-white mb-1">Seu Projeto Aqui</h3>
-                    <p className="text-xs text-slate-500 font-light max-w-[200px] mx-auto">
-                      Vamos construir o próximo case de sucesso juntos.
-                    </p>
-                 </div>
-              </div>
-            </a>
-          </Reveal>
-
+          
+          {/* Card Final de Chamada */}
+          <div className="snap-center shrink-0 w-[85vw] md:w-[400px] flex items-center">
+             <div className="w-full h-[60%] border border-dashed border-white/10 rounded-[2rem] flex flex-col items-center justify-center gap-6 text-center p-8 hover:bg-white/5 transition-colors group cursor-pointer" onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth'})}>
+                <div className="w-16 h-16 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                   <ArrowUpRight className="text-white" />
+                </div>
+                <div>
+                   <h3 className="text-xl font-serif text-white">Seu Projeto</h3>
+                   <p className="text-xs text-slate-500 mt-2">Vamos criar o próximo?</p>
+                </div>
+             </div>
+          </div>
         </div>
+
       </div>
 
-      {/* Modal Fullscreen - Mantido pois funciona bem */}
       <ContentModal 
         isOpen={!!selectedProject} 
         onClose={() => setSelectedProject(null)}
