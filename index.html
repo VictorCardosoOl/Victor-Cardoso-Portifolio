@@ -12,7 +12,7 @@
     <meta property="og:description" content="Transformo ideias em negócios digitais. Desenvolvimento web focado em resultados, velocidade e experiência do usuário." />
     <meta property="og:image" content="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#F4F2ED" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -29,18 +29,20 @@
               serif: ['Zodiak', 'serif'],
             },
             colors: {
+              paper: '#F4F2ED', // Swiss Paper (Warmer, stone-like)
+              charcoal: '#141413', // Rich Warm Black
               slate: {
-                50: '#f8fafc',
-                100: '#f1f5f9',
-                200: '#e2e8f0',
-                300: '#cbd5e1',
-                400: '#94a3b8',
-                500: '#64748b', // Muted Blue Accent
-                600: '#475569',
-                700: '#334155',
-                800: '#1e293b',
-                900: '#0f172a',
-                950: '#020617',
+                50: '#F4F2ED', 
+                100: '#E8E6E1',
+                200: '#D6D4CE',
+                300: '#BDBBB6',
+                400: '#9E9C97',
+                500: '#807E7A',
+                600: '#63625E',
+                700: '#464542',
+                800: '#2A2927',
+                900: '#141413',
+                950: '#0A0A09', // Deepest warm black
               }
             },
             borderRadius: {
@@ -59,6 +61,8 @@
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        background-color: #F4F2ED;
+        color: #141413;
       }
       
       /* Custom scrollbar */
@@ -69,58 +73,46 @@
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: rgba(100, 116, 139, 0.5);
+        background: rgba(20, 20, 19, 0.2);
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: rgba(100, 116, 139, 0.8);
+        background: rgba(20, 20, 19, 0.5);
       }
       
-      /* Refined Glass Effect (Light) - V.2 Modern */
+      /* Refined Glass Effect (Premium) */
       .glass-panel {
-        background: rgba(255, 255, 255, 0.65);
-        backdrop-filter: blur(40px) saturate(160%);
-        -webkit-backdrop-filter: blur(40px) saturate(160%);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: rgba(244, 242, 237, 0.7);
+        backdrop-filter: blur(40px) saturate(120%);
+        -webkit-backdrop-filter: blur(40px) saturate(120%);
+        border: 1px solid rgba(20, 20, 19, 0.03);
         box-shadow: 
-          0 20px 80px rgba(0, 0, 0, 0.05),
-          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          0 20px 80px rgba(0, 0, 0, 0.02),
+          inset 0 1px 0 rgba(255, 255, 255, 0.4);
       }
       
-      /* Standard Glass Card (Light) - V.2 Tactile */
       .glass-card {
-        background: rgba(255, 255, 255, 0.45);
+        background: rgba(255, 255, 255, 0.5);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.4);
         box-shadow: 
-          0 10px 40px rgba(0, 0, 0, 0.03),
-          inset 0 1px 0 rgba(255, 255, 255, 0.5);
-        transition: all 0.5s cubic-bezier(0.2, 0, 0, 1);
-      }
-
-      /* Refined Glass Effect (Dark) - Optimized Contrast & Blur */
-      .glass-panel-dark {
-        background: rgba(15, 23, 42, 0.75);
-        backdrop-filter: blur(60px) saturate(140%);
-        -webkit-backdrop-filter: blur(60px) saturate(140%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        box-shadow: 
-          0 20px 80px rgba(0, 0, 0, 0.4),
-          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+          0 10px 40px rgba(0, 0, 0, 0.02),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
       }
 
       /* Custom Focus Ring for A11y */
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #fff, 0 0 0 4px #0f172a;
+        box-shadow: 0 0 0 2px #F4F2ED, 0 0 0 4px #141413;
         border-radius: 4px;
       }
       
       /* Selection Color */
       ::selection {
-        background: #0f172a;
-        color: #fff;
+        background: #141413;
+        color: #F4F2ED;
       }
 
       /* Lenis Recommended CSS */
@@ -156,7 +148,7 @@
 }
 </script>
 </head>
-  <body class="bg-slate-50 text-slate-900 antialiased">
+  <body class="bg-paper text-charcoal antialiased">
     <div id="root"></div>
   </body>
 </html>

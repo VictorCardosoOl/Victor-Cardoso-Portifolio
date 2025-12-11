@@ -12,6 +12,7 @@ import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import GrainBackground from './components/GrainBackground';
+import Gamification from './components/Gamification'; // Import UI component
 import { ScrollProvider } from './components/ScrollContext';
 import { GamificationProvider } from './components/GamificationContext'; 
 import { PageTransitionProvider } from './components/ui/PageTransition';
@@ -55,7 +56,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
     <MotionDiv
       initial={{ opacity: 1 }}
       exit={{ y: "-100%", transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } }}
-      className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center text-white"
+      className="fixed inset-0 z-[99999] bg-[#1C1C1C] flex items-center justify-center text-[#F2F0E9]"
     >
       <div className="text-9xl font-serif font-bold tracking-tighter">
         {Math.round(count)}%
@@ -71,13 +72,16 @@ const App: React.FC = () => {
     <GamificationProvider>
       <ScrollProvider>
         <PageTransitionProvider>
-          <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-slate-900 selection:text-white">
+          <div className="flex flex-col min-h-screen relative overflow-x-hidden selection:bg-[#1C1C1C] selection:text-[#F2F0E9]">
             <AnimatePresence mode="wait">
               {loading && <Preloader onComplete={() => setLoading(false)} />}
             </AnimatePresence>
             
             <GrainBackground />
             
+            {/* Logic container for footer popup */}
+            <Gamification />
+
             <Navbar />
             <main className="flex-grow">
               <Hero />
@@ -98,10 +102,10 @@ const App: React.FC = () => {
                   href="https://wa.me/5511999999999" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center w-14 h-14 bg-white text-slate-900 rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 border border-slate-100"
+                  className="flex items-center justify-center w-14 h-14 bg-[#F2F0E9] text-[#1C1C1C] rounded-full shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all hover:scale-110 border border-[#1C1C1C]/10"
                   aria-label="Contato via WhatsApp"
                 >
-                  <MessageCircle size={24} className="text-slate-900" />
+                  <MessageCircle size={24} className="text-[#1C1C1C]" />
                 </a>
               </Magnetic>
             </div>
