@@ -16,41 +16,41 @@ const Writing: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <Reveal>
                 <div>
-                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-4 block">Journal</span>
-                    <h2 className="text-5xl md:text-7xl font-serif font-medium text-slate-900">Insights</h2>
+                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-charcoal/40 mb-4 block">Journal</span>
+                    <h2 className="text-5xl md:text-7xl font-serif font-medium text-charcoal">Insights</h2>
                 </div>
             </Reveal>
             <Reveal delay={100}>
-                <a href="#" className="text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-900 transition-colors">
+                <a href="#" className="text-xs font-bold uppercase tracking-widest text-charcoal/50 hover:text-charcoal transition-colors">
                     Ver todos os artigos
                 </a>
             </Reveal>
         </div>
 
         {/* Editorial List Layout */}
-        <div className="flex flex-col border-t border-slate-200">
+        <div className="flex flex-col border-t border-charcoal/10">
           {WRITING.map((post, index) => (
              <Reveal key={index} delay={index * 50} width="100%">
                <div 
                  onClick={() => setSelectedArticle(post)}
-                 className="group cursor-pointer border-b border-slate-200 py-8 md:py-10 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-500 hover:bg-white hover:px-6 -mx-6 px-6"
+                 className="group cursor-pointer border-b border-charcoal/10 py-8 md:py-10 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-500 hover:bg-white/40 hover:px-6 -mx-6 px-6"
                >
                  <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2 opacity-50 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{post.category}</span>
-                        <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{post.date}</span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-charcoal/50">{post.category}</span>
+                        <span className="w-1 h-1 bg-charcoal/20 rounded-full"></span>
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-charcoal/50">{post.date}</span>
                     </div>
-                    <h3 className="text-2xl md:text-4xl font-serif font-medium text-slate-900 group-hover:italic transition-all">
+                    <h3 className="text-2xl md:text-4xl font-serif font-medium text-charcoal group-hover:italic transition-all">
                         {post.title}
                     </h3>
                  </div>
 
                  <div className="flex items-center gap-8 md:gap-16">
-                     <span className="text-xs font-mono text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                     <span className="text-xs font-mono text-charcoal/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                         {post.readTime} leitura
                      </span>
-                     <div className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 group-hover:border-slate-900 group-hover:text-slate-900 group-hover:bg-slate-900 group-hover:text-white transition-all duration-300">
+                     <div className="w-10 h-10 rounded-full border border-charcoal/10 flex items-center justify-center text-charcoal/30 group-hover:border-charcoal group-hover:text-white group-hover:bg-charcoal transition-all duration-300">
                         <ArrowUpRight size={16} />
                      </div>
                  </div>

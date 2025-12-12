@@ -2,32 +2,34 @@
 import { Monitor, Code, Layout, Database, Smartphone, Globe, Search, Rocket, Settings, MessageSquare, PenTool, CheckCircle } from 'lucide-react';
 
 export const NAV_LINKS = [
-  { name: 'Início', href: '#hero' },
-  { name: 'Projetos', href: '#projects' },
-  { name: 'Soluções', href: '#services' },
-  { name: 'Sobre', href: '#about' },
-  { name: 'Artigos', href: '#writing' },
+  { name: 'Obras', href: '#projects' },
+  { name: 'Expertise', href: '#services' },
+  { name: 'Perfil', href: '#about' },
+  { name: 'Lab', href: '#lab' },
   { name: 'Contato', href: '#contact' },
 ];
 
 export const SERVICES = [
   {
-    title: 'Sistemas Web & Dashboards',
-    description: 'Transformo processos manuais e planilhas em software de gestão eficiente. Automação, controle de dados e painéis administrativos que dão autonomia ao seu negócio.',
+    title: 'Engenharia de Software',
+    description: 'Desenvolvimento de aplicações web robustas e escaláveis. Transformo processos manuais e planilhas em software de gestão eficiente, com foco total em estabilidade e segurança.',
     icon: Database,
+    techStack: ['React / Next.js', 'Node.js', 'PostgreSQL', 'TypeScript', 'Docker', 'AWS'],
     tags: ['SaaS', 'Automação', 'Gestão']
   },
   {
-    title: 'Landing Pages de Alta Conversão',
-    description: 'Páginas desenvolvidas para vender. Foco total em velocidade de carregamento (SEO), design persuasivo e integração direta com suas ferramentas de marketing.',
-    icon: Rocket,
-    tags: ['Vendas', 'Performance', 'SEO']
+    title: 'Design & Interface',
+    description: 'Criação de experiências digitais memoráveis. Não apenas desenho telas, projeto jornadas de usuário que convertem e retêm clientes, utilizando princípios de psicologia cognitiva.',
+    icon: Layout,
+    techStack: ['Figma', 'UI/UX Strategy', 'Design Systems', 'Prototipagem', 'Micro-interactions'],
+    tags: ['UI/UX', 'Design System', 'Produto']
   },
   {
-    title: 'Otimização & Performance',
-    description: 'Seu site está lento? Clientes desistem se a página demora mais de 3 segundos. Faço auditoria técnica e otimização para recuperar essas vendas perdidas.',
-    icon: Settings,
-    tags: ['Speed', 'Audit', 'Core Web Vitals']
+    title: 'Performance & SEO',
+    description: 'Otimização técnica profunda. Sites lentos perdem dinheiro. Faço auditoria completa de Core Web Vitals e implemento estratégias de SEO Técnico para garantir visibilidade orgânica.',
+    icon: Rocket,
+    techStack: ['SEO Técnico', 'Core Web Vitals', 'Analytics', 'Conversion Rate Optimization'],
+    tags: ['Speed', 'Audit', 'Growth']
   }
 ];
 
@@ -115,34 +117,24 @@ export const PROJECTS = [
   }
 ];
 
-export const ARCHIVE_PROJECTS = [
+export const SKILLS = [
   {
-    title: 'Neon Banking App',
-    category: 'Fintech Mobile',
-    tech: 'React Native',
-    image: 'https://picsum.photos/id/445/800/600',
-    link: '#'
+    title: 'Engenharia Frontend',
+    description: 'Construção de interfaces pixel-perfect com atenção obsessiva aos detalhes e animações.',
+    icon: Monitor,
+    items: ['React / Next.js', 'TypeScript', 'TailwindCSS', 'Framer Motion', 'WebGL']
   },
   {
-    title: 'Urban Mobility',
-    category: 'Gestão de Frotas',
-    tech: 'Vue.js Dashboard',
-    image: 'https://picsum.photos/id/188/800/600',
-    link: '#'
+    title: 'Backend & DevOps',
+    description: 'Arquiteturas seguras e escaláveis para garantir que seu produto cresça sem dores.',
+    icon: Database,
+    items: ['Node.js', 'PostgreSQL', 'Docker', 'AWS', 'CI/CD']
   },
   {
-    title: 'Alpha Health',
-    category: 'Agendamento Médico',
-    tech: 'Angular / Node',
-    image: 'https://picsum.photos/id/201/800/600',
-    link: '#'
-  },
-  {
-    title: 'Kroma Design System',
-    category: 'Ferramenta Interna',
-    tech: 'Storybook',
-    image: 'https://picsum.photos/id/3/800/600',
-    link: '#'
+    title: 'Product Design',
+    description: 'Visão holística do produto, garantindo que o design sirva aos objetivos de negócio.',
+    icon: PenTool,
+    items: ['Figma', 'Design Systems', 'UX Research', 'Prototyping', 'Accessibility']
   }
 ];
 
@@ -151,59 +143,38 @@ export const EDUCATION = [
     period: '2019 - 2023',
     degree: 'Ciência da Computação',
     institution: 'Universidade de São Paulo (USP)',
-    description: 'Ênfase em Engenharia de Software e Inteligência Artificial. Participação em grupos de pesquisa focados em sistemas distribuídos.'
+    description: 'Foco em Engenharia de Software e Sistemas Distribuídos. Monitoria em Algoritmos e Estruturas de Dados. Iniciação Científica em Inteligência Artificial.'
   },
   {
     period: '2022',
     degree: 'Full Stack Web Development',
     institution: 'Le Wagon',
-    description: 'Bootcamp intensivo focado em desenvolvimento de produtos digitais com Ruby on Rails, React e prototipagem.'
+    description: 'Bootcamp intensivo de 9 semanas com foco em desenvolvimento de produtos digitais, metodologias ágeis (Scrum) e trabalho colaborativo. Projeto final eleito Top 3 do batch.'
   }
 ];
 
 export const WRITING = [
   {
-    title: "Como um site lento custa dinheiro para sua empresa",
-    date: "Mar 2024",
-    readTime: "5 min",
+    title: "O custo de um site lento",
     category: "Negócios",
-    link: "#"
+    link: "#",
+    date: "12 Mar, 2024",
+    readTime: "5 min"
   },
   {
-    title: "SaaS vs Planilhas: Quando migrar sua operação?",
-    date: "Fev 2024",
-    readTime: "8 min",
+    title: "SaaS vs Planilhas",
     category: "Gestão",
-    link: "#"
+    link: "#",
+    date: "28 Fev, 2024",
+    readTime: "7 min"
   },
   {
-    title: "A importância do SEO Técnico para negócios locais",
-    date: "Jan 2024",
-    readTime: "6 min",
+    title: "SEO Técnico Local",
     category: "Marketing",
-    link: "#"
+    link: "#",
+    date: "15 Jan, 2024",
+    readTime: "4 min"
   }
-];
-
-export const SKILLS = [
-  { 
-    title: 'Desenvolvimento Frontend',
-    description: 'Interfaces rápidas, responsivas e focadas na experiência do seu cliente. O site funciona perfeitamente no celular e no computador.',
-    icon: Layout,
-    items: ['React.js', 'Next.js', 'Tailwind CSS', 'Mobile First'] 
-  },
-  { 
-    title: 'Soluções Backend & API',
-    description: 'A inteligência por trás do sistema. Integrações com pagamentos, gestão de banco de dados e segurança da informação.',
-    icon: Database,
-    items: ['Node.js', 'API Integrações', 'PostgreSQL', 'Segurança'] 
-  },
-  { 
-    title: 'Estratégia & Design',
-    description: 'Mais que código, entrego o produto visual. Prototipagem e estratégia de usuário para garantir que o sistema seja fácil de usar.',
-    icon: Monitor,
-    items: ['UI/UX Design', 'Figma', 'Prototipagem', 'Arquitetura de Info'] 
-  },
 ];
 
 export const CONTACT_INFO = {

@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
@@ -6,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- SEO & Open Graph -->
-    <title>Victor Cardoso | Desenvolvedor Full Stack & Soluções Digitais</title>
+    <title>Victor Cardoso | Soluções Digitais & Engenharia de Software</title>
     <meta name="description" content="Especialista em React e Node.js. Ajudo empresas a escalar operações com software sob medida, landing pages de alta conversão e arquitetura robusta." />
     <meta property="og:title" content="Victor Cardoso | Soluções Digitais de Alta Performance" />
     <meta property="og:description" content="Transformo ideias em negócios digitais. Desenvolvimento web focado em resultados, velocidade e experiência do usuário." />
     <meta property="og:image" content="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200" />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#F4F2ED" />
+    <meta name="theme-color" content="#FFFFFF" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -29,20 +28,34 @@
               serif: ['Zodiak', 'serif'],
             },
             colors: {
-              paper: '#F4F2ED', // Swiss Paper (Warmer, stone-like)
-              charcoal: '#141413', // Rich Warm Black
+              paper: '#FFFFFF', // Pure White
+              surface: '#F8FAFC', // Slate 50 (Very light cool grey)
+              charcoal: '#0F172A', // Slate 900 (Dark Petrol Blue)
+              petrol: {
+                50: '#f0f9ff',
+                100: '#e0f2fe',
+                200: '#bae6fd',
+                300: '#7dd3fc',
+                400: '#38bdf8',
+                500: '#0ea5e9',
+                600: '#0284c7',
+                700: '#0369a1',
+                800: '#075985',
+                900: '#0c4a6e',
+                950: '#082f49', // Deep Petrol
+              },
               slate: {
-                50: '#F4F2ED', 
-                100: '#E8E6E1',
-                200: '#D6D4CE',
-                300: '#BDBBB6',
-                400: '#9E9C97',
-                500: '#807E7A',
-                600: '#63625E',
-                700: '#464542',
-                800: '#2A2927',
-                900: '#141413',
-                950: '#0A0A09', // Deepest warm black
+                50: '#f8fafc',
+                100: '#f1f5f9',
+                200: '#e2e8f0',
+                300: '#cbd5e1',
+                400: '#94a3b8',
+                500: '#64748b',
+                600: '#475569',
+                700: '#334155',
+                800: '#1e293b',
+                900: '#0f172a', // Main Dark Text
+                950: '#020617',
               }
             },
             borderRadius: {
@@ -61,8 +74,15 @@
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        background-color: #F4F2ED;
-        color: #141413;
+        background-color: #FFFFFF;
+        color: #0F172A;
+      }
+      
+      .font-elegant {
+        font-feature-settings: "dlig", "liga", "kern"; 
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
       }
       
       /* Custom scrollbar */
@@ -73,46 +93,46 @@
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: rgba(20, 20, 19, 0.2);
+        background: rgba(15, 23, 42, 0.2);
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: rgba(20, 20, 19, 0.5);
+        background: rgba(15, 23, 42, 0.4);
       }
       
-      /* Refined Glass Effect (Premium) */
+      /* Refined Glass Effect */
       .glass-panel {
-        background: rgba(244, 242, 237, 0.7);
-        backdrop-filter: blur(40px) saturate(120%);
-        -webkit-backdrop-filter: blur(40px) saturate(120%);
-        border: 1px solid rgba(20, 20, 19, 0.03);
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(24px) saturate(140%);
+        -webkit-backdrop-filter: blur(24px) saturate(140%);
+        border: 1px solid rgba(15, 23, 42, 0.05);
         box-shadow: 
-          0 20px 80px rgba(0, 0, 0, 0.02),
-          inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          0 4px 20px rgba(0, 0, 0, 0.03),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
       }
       
       .glass-card {
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.4);
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(15, 23, 42, 0.05);
         box-shadow: 
-          0 10px 40px rgba(0, 0, 0, 0.02),
-          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+          0 4px 24px -4px rgba(0, 0, 0, 0.04),
+          inset 0 1px 0 rgba(255, 255, 255, 0.9);
         transition: all 0.6s cubic-bezier(0.19, 1, 0.22, 1);
       }
 
       /* Custom Focus Ring for A11y */
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #F4F2ED, 0 0 0 4px #141413;
+        box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px #0F172A;
         border-radius: 4px;
       }
       
       /* Selection Color */
       ::selection {
-        background: #141413;
-        color: #F4F2ED;
+        background: #0F172A;
+        color: #FFFFFF;
       }
 
       /* Lenis Recommended CSS */

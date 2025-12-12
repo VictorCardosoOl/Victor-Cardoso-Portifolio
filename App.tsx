@@ -5,14 +5,11 @@ import Hero from './components/Hero';
 import Services from './components/Services';
 import Projects from './components/Projects';
 import Lab from './components/Lab';
-import Writing from './components/Writing';
-import Skills from './components/Skills';
-import Education from './components/Education';
 import About from './components/About';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import GrainBackground from './components/GrainBackground';
-import Gamification from './components/Gamification'; // Import UI component
+import Gamification from './components/Gamification';
 import { ScrollProvider } from './components/ScrollContext';
 import { GamificationProvider } from './components/GamificationContext'; 
 import { PageTransitionProvider } from './components/ui/PageTransition';
@@ -22,7 +19,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const MotionDiv = motion.div as any;
 
-// Simple Preloader Component
 const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const [count, setCount] = useState(0);
 
@@ -78,23 +74,20 @@ const App: React.FC = () => {
             </AnimatePresence>
             
             <GrainBackground />
-            
-            {/* Logic container for footer popup */}
             <Gamification />
 
             <Navbar />
+            
             <main className="flex-grow">
               <Hero />
               <Projects />
-              <Services />
-              <Skills />
-              <About />
-              <Education />
-              <Lab />
-              <Writing />
+              <Services /> {/* Agora contém Skills/Capabilities */}
+              <About />    {/* Agora contém Education */}
+              <Lab />      {/* Galeria Horizontal */}
               <Contact />
             </main>
-            <Footer />
+            
+            <Footer /> {/* Agora contém links para Writing/Journal */}
             
             <div className="fixed bottom-8 right-8 z-40">
               <Magnetic strength={0.3}>
