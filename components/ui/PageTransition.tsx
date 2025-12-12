@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLenis } from '../ScrollContext';
@@ -38,9 +37,6 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
 
   useEffect(() => {
     if (isAnimating && targetHref) {
-      // Total Duration: 0.7s (700ms)
-      // Curtain closes fully around: ~300ms
-      // We trigger the scroll while the screen is black.
       
       const scrollTimer = setTimeout(() => {
         const targetId = targetHref.replace('#', '');
@@ -48,19 +44,17 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
         
         if (element) {
           if (lenis) {
-            // immediate: true jumps instantly while hidden
             lenis.scrollTo(element, { immediate: true, force: true, offset: 0 });
           } else {
             element.scrollIntoView({ behavior: 'auto' });
           }
         }
-      }, 350); // Fire at halfway point
+      }, 350); 
 
-      // Finish animation state
       const endTimer = setTimeout(() => {
         setIsAnimating(false);
         setTargetHref(null);
-      }, 750); // Slightly longer than 700ms to ensure animation completes
+      }, 750); 
 
       return () => {
         clearTimeout(scrollTimer);
@@ -82,10 +76,13 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
             style={{ originY: isAnimating ? 0 : 1 }} 
             transition={{ 
                 duration: 0.7, 
-                ease: [0.22, 1, 0.36, 1] // Custom smooth bezier
+                ease: [0.22, 1, 0.36, 1] 
             }}
-            className="fixed inset-0 z-[99999] bg-slate-950 flex items-center justify-center pointer-events-none origin-top"
-          />
+            className="fixed inset-0 z-[99999] bg-[#0F2A36] flex items-center justify-center pointer-events-none origin-top"
+          >
+             {/* Optional Logo during transition */}
+             <div className="text-white font-serif text-3xl font-bold opacity-20">V.</div>
+          </MotionDiv>
         )}
       </AnimatePresence>
     </PageTransitionContext.Provider>

@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowRight, ChevronDown } from 'lucide-react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { Reveal } from './ui/Reveal';
 import { TextReveal } from './ui/TextReveal';
@@ -12,9 +11,10 @@ const MotionDiv = motion.div as any;
 const Hero: React.FC = () => {
   const { scrollY } = useScroll();
   
-  // Add spring physics to scrollY for a "heavier", smoother parallax feel
-  const smoothY = useSpring(scrollY, { damping: 15, stiffness: 100, mass: 0.5 });
-  const y = useTransform(smoothY, [0, 1000], [0, 200]); 
+  // Heavier physics for "Archive" feel (Mass 0.8)
+  const smoothY = useSpring(scrollY, { damping: 20, stiffness: 100, mass: 0.8 });
+  const y = useTransform(smoothY, [0, 1000], [0, 250]); 
+  const opacity = useTransform(smoothY, [0, 500], [1, 0.5]);
 
   const { transitionTo } = usePageTransition();
 
@@ -24,76 +24,81 @@ const Hero: React.FC = () => {
   };
 
   return (
-    <section id="hero" className="min-h-screen flex flex-col justify-center pt-32 pb-20 relative overflow-hidden bg-white text-[#0F172A]">
+    <section id="hero" className="min-h-screen flex flex-col justify-center pt-32 pb-20 relative overflow-hidden bg-paper text-petrol-base">
+      
+      {/* Decorative Grid Lines - Blueprint Style */}
+      <div className="absolute top-0 left-12 w-[1px] h-full bg-petrol-base/5 hidden md:block" />
+      <div className="absolute top-0 right-12 w-[1px] h-full bg-petrol-base/5 hidden md:block" />
       
       <div className="container mx-auto px-5 sm:px-6 md:px-12 xl:px-20 relative z-10">
         <div className="flex flex-col gap-12">
           
-          {/* Header Area - DRAMATIC SCALE */}
-          <div className="relative">
+          {/* Header Metadata */}
+          <div className="relative pl-0 md:pl-8">
              <Reveal width="100%">
-                <div className="flex items-center gap-4 mb-4">
-                   <div className="w-1.5 h-1.5 bg-[#0F172A] rounded-full animate-pulse"></div>
-                   <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-slate-500">
-                     Portfolio 2024
+                <div className="flex items-center gap-4 mb-6 border-l border-petrol-base/20 pl-4">
+                   <div className="w-1.5 h-1.5 bg-petrol-accent rounded-full animate-pulse"></div>
+                   <span className="font-mono text-[10px] uppercase tracking-widest text-ink-300">
+                     sys.profile / v.2024
                    </span>
                 </div>
              </Reveal>
 
-             {/* Massive Typography Block */}
-             <div className="relative -ml-2 md:-ml-4">
-               <h1 className="font-serif font-medium leading-[0.8] tracking-[-0.05em] text-[#0F172A]">
-                 <div className="text-[16vw] md:text-[13vw] lg:text-[11rem] xl:text-[13rem]">
-                    <TextReveal delay={100}>Transformo</TextReveal>
+             {/* Main Headline - Tight Typography Applied */}
+             <div className="relative">
+               <h1 className="font-serif font-medium tracking-tighter text-petrol-base font-heading-tight">
+                 <div className="text-[15vw] md:text-[13vw] lg:text-[11rem] xl:text-[12rem] leading-[0.8]">
+                    <TextReveal delay={100}>Engenharia</TextReveal>
                  </div>
                  <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-12">
-                    <div className="text-[16vw] md:text-[13vw] lg:text-[11rem] xl:text-[13rem]">
-                        <TextReveal delay={200}>ideias</TextReveal>
+                    <div className="text-[15vw] md:text-[13vw] lg:text-[11rem] xl:text-[12rem] leading-[0.8] italic text-petrol-light/40">
+                        <TextReveal delay={200}>Digital</TextReveal>
                     </div>
                     
-                    {/* Tiny Supporting Text inserted into the massive headline flow */}
-                    <div className="hidden md:block max-w-[200px] mt-8">
+                    {/* Documentary Caption */}
+                    <div className="hidden md:block max-w-[240px] mt-8 self-center">
                        <Reveal delay={400}>
-                          <p className="text-[10px] leading-relaxed font-bold uppercase tracking-widest text-slate-500 border-l border-slate-200 pl-4">
-                             Engenharia de Software & <br/>
-                             Design de Interface para <br/>
-                             Produtos Digitais
+                          <p className="font-mono text-[9px] leading-relaxed uppercase tracking-wider text-ink-300 border-l border-petrol-base/10 pl-4">
+                             Fig 01. Arquitetura de Software<br/>
+                             Design de Interface<br/>
+                             Performance Audit
                           </p>
                        </Reveal>
                     </div>
 
-                    <div className="text-[16vw] md:text-[13vw] lg:text-[11rem] xl:text-[13rem] italic text-slate-300 font-light">
-                        <TextReveal delay={300}>negócios.</TextReveal>
+                    <div className="text-[15vw] md:text-[13vw] lg:text-[11rem] xl:text-[12rem] leading-[0.8]">
+                        <TextReveal delay={300}>& Arte</TextReveal>
                     </div>
                  </div>
                </h1>
              </div>
           </div>
 
-          {/* Lower Layout - Asymmetrical */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-end mt-12 lg:mt-0">
+          {/* Lower Section: Image & CTAs */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-end mt-8 lg:mt-0 pl-0 md:pl-8">
              
-             {/* Left: Image (Small/Medium) */}
-             <div className="lg:col-span-4 order-2 lg:order-1 relative">
+             {/* Left: Documentary Image (Full Color, No Grayscale) */}
+             <div className="lg:col-span-5 order-2 lg:order-1 relative">
                 <Reveal width="100%">
-                   <div className="relative w-full max-w-[280px] aspect-[3/4]">
-                      <MotionDiv style={{ y }} className="w-full h-full overflow-hidden rounded-sm bg-slate-100">
+                   <div className="relative w-full max-w-[320px] aspect-[4/5]">
+                      {/* Image Frame */}
+                      <MotionDiv style={{ y, opacity }} className="w-full h-full overflow-hidden bg-slate-200 relative z-10 border border-white/50 shadow-2xl">
                          <img 
                            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=600&h=800" 
                            alt="Workspace" 
-                           className="w-full h-full object-cover" // Removed grayscale opacity
+                           className="w-full h-full object-cover" 
                          />
                       </MotionDiv>
                       
-                      {/* Floating Badge */}
-                      <div className="absolute -right-12 bottom-12 bg-white/80 backdrop-blur-md border border-white/40 p-5 shadow-2xl max-w-[150px] hidden md:block">
-                         <span className="text-[9px] font-bold uppercase tracking-widest text-slate-400 block mb-2">Status</span>
+                      {/* Technical Decoration Behind */}
+                      <div className="absolute -top-4 -right-4 w-full h-full border border-petrol-base/10 z-0"></div>
+                      
+                      {/* Status Badge */}
+                      <div className="absolute -right-8 bottom-8 bg-paper/90 backdrop-blur-md border border-petrol-base/10 p-4 shadow-lg max-w-[140px] hidden md:block z-20">
+                         <span className="font-mono text-[9px] uppercase tracking-widest text-ink-300 block mb-1">Status</span>
                          <div className="flex items-center gap-2">
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                            <span className="text-xs font-bold text-[#0F172A]">Disponível</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span className="text-xs font-bold text-petrol-base">Disponível</span>
                          </div>
                       </div>
                    </div>
@@ -101,10 +106,11 @@ const Hero: React.FC = () => {
              </div>
 
              {/* Right: Intro & CTAs */}
-             <div className="lg:col-span-8 order-1 lg:order-2 flex flex-col items-start justify-end pb-4">
+             <div className="lg:col-span-7 order-1 lg:order-2 flex flex-col items-start justify-end pb-4">
                 <Reveal delay={400} width="100%">
-                   <p className="text-xl md:text-3xl text-slate-600 font-light leading-relaxed max-w-2xl mb-12">
-                      Ajudo empresas a escalar operações com aplicações web <span className="font-serif italic text-[#0F172A]">rápidas</span>, <span className="font-serif italic text-[#0F172A]">modernas</span> e focadas em conversão.
+                   <p className="text-xl md:text-2xl text-ink-300 font-light leading-relaxed max-w-2xl mb-12">
+                      Transformo ideias complexas em <span className="text-petrol-base font-medium">software robusto</span>. 
+                      Uma abordagem arquivista para construir o futuro digital.
                    </p>
                 </Reveal>
 
@@ -115,9 +121,9 @@ const Hero: React.FC = () => {
                           <Button 
                             variant="primary" 
                             size="lg" 
-                            className="bg-[#0F172A] text-white hover:bg-black rounded-none px-10 py-5 text-xs tracking-widest shadow-lg shadow-slate-900/10"
+                            className="bg-petrol-base text-white hover:bg-petrol-mid rounded-none px-10 py-4 text-xs tracking-widest"
                           >
-                            Solicitar Orçamento
+                            Iniciar Projeto
                           </Button>
                         </a>
                     </Magnetic>
@@ -127,9 +133,9 @@ const Hero: React.FC = () => {
                           <Button 
                             variant="outline" 
                             size="lg" 
-                            className="border-slate-200 text-[#0F172A] hover:bg-[#0F172A] hover:text-white rounded-none px-10 py-5 text-xs tracking-widest bg-transparent"
+                            className="border-petrol-base/20 text-petrol-base hover:bg-petrol-base hover:text-white rounded-none px-10 py-4 text-xs tracking-widest bg-transparent"
                           >
-                            Ver Portfolio
+                            Arquivo de Obras
                           </Button>
                         </a>
                     </Magnetic>
