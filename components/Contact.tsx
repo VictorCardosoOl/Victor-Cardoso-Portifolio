@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CONTACT_INFO } from '../constants';
-import { ArrowUpRight, Send, Check, AlertCircle, Mail, Phone, Loader2 } from 'lucide-react';
+import { ArrowUpRight, Send, Check, AlertTriangle, Mail, Phone, Loader2 } from 'lucide-react';
 import Button from './ui/Button';
 import { Reveal } from './ui/Reveal';
 import Magnetic from './ui/Magnetic';
@@ -41,7 +41,7 @@ const Contact: React.FC = () => {
     }
 
     if (!formState.message.trim()) {
-      newErrors.message = 'Mensagem é obrigatória';
+      newErrors.message = 'A mensagem não pode estar vazia';
       isValid = false;
     }
 
@@ -53,6 +53,7 @@ const Contact: React.FC = () => {
     e.preventDefault();
     
     if (!validate()) {
+      // Shake effect or visual feedback could be added here
       return;
     }
     
@@ -99,11 +100,11 @@ const Contact: React.FC = () => {
     const hasError = !!errors[id];
     
     return (
-      <div className="relative group pb-4">
+      <div className="relative group pb-6">
         <label 
           htmlFor={id} 
           className={`block text-[9px] md:text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors duration-300 ${
-            hasError ? 'text-red-500' : focusedField === id ? 'text-petrol-base' : 'text-petrol-base/40'
+            hasError ? 'text-red-600' : focusedField === id ? 'text-petrol-base' : 'text-petrol-base/40'
           }`}
         >
           {label} {required && '*'}
@@ -125,29 +126,32 @@ const Contact: React.FC = () => {
             }}
             onFocus={() => setFocusedField(id)}
             onBlur={() => setFocusedField(null)}
-            className={`w-full bg-transparent border-b py-3 px-2 text-base text-petrol-base placeholder-petrol-base/20 focus:outline-none transition-all duration-300 rounded-t-md ${
+            className={`w-full bg-transparent border-b-2 py-3 px-2 text-base placeholder-petrol-base/20 focus:outline-none transition-all duration-300 rounded-t-md ${
               hasError 
-                ? 'border-red-400 bg-red-50/50' 
-                : 'border-petrol-base/10 hover:bg-white'
+                ? 'border-red-600 bg-red-100 text-red-900 placeholder-red-300' 
+                : 'border-petrol-base/10 text-petrol-base hover:bg-white focus:border-petrol-base'
             }`}
             placeholder={placeholder}
             disabled={status === 'loading'}
             style={{ fontSize: '16px' }} 
           />
-          <div 
-            className={`absolute bottom-0 left-0 h-[2px] bg-petrol-base transition-all duration-500 ease-out z-10 ${
-              focusedField === id && !hasError ? 'w-full' : 'w-0'
-            }`}
-          />
-          <div 
-            className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${
-              hasError ? 'w-full' : 'w-0'
-            }`}
-          />
+          
+          {/* Animated Error Border Override */}
+          {!hasError && (
+             <div 
+               className={`absolute bottom-[-2px] left-0 h-[2px] bg-petrol-base transition-all duration-500 ease-out z-10 ${
+                 focusedField === id ? 'w-full' : 'w-0'
+               }`}
+             />
+          )}
         </div>
+        
         {hasError && (
-          <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
-             <AlertCircle size={10} /> {errors[id]}
+          <div className="absolute -bottom-0 left-0 flex items-center gap-2 mt-1 animate-in fade-in slide-in-from-top-1 bg-red-100 px-2 py-1 rounded-br-md rounded-bl-md w-full">
+             <AlertTriangle size={12} className="text-red-600 fill-red-100" strokeWidth={2.5} /> 
+             <span className="text-[10px] font-bold uppercase tracking-wide text-red-600">
+               {errors[id]}
+             </span>
           </div>
         )}
       </div>
@@ -258,11 +262,11 @@ const Contact: React.FC = () => {
 
                     <InputGroup id="company" label="Empresa (Opcional)" placeholder="Nome da organização" value={formState.company} />
 
-                    <div className="relative group pb-4">
+                    <div className="relative group pb-6">
                       <label 
                         htmlFor="message" 
                         className={`block text-[9px] md:text-[10px] font-bold uppercase tracking-widest mb-1 transition-colors duration-300 ${
-                          errors.message ? 'text-red-500' : focusedField === 'message' ? 'text-petrol-base' : 'text-petrol-base/40'
+                          errors.message ? 'text-red-600' : focusedField === 'message' ? 'text-petrol-base' : 'text-petrol-base/40'
                         }`}
                       >
                         Mensagem *
@@ -278,19 +282,26 @@ const Contact: React.FC = () => {
                           }}
                           onFocus={() => setFocusedField('message')}
                           onBlur={() => setFocusedField(null)}
-                          className={`w-full bg-transparent border-b py-3 px-2 text-base text-petrol-base placeholder-petrol-base/20 focus:outline-none transition-all duration-300 resize-none rounded-t-md ${
-                             errors.message ? 'border-red-400 bg-red-50/50' : 'border-petrol-base/10 hover:bg-white'
+                          className={`w-full bg-transparent border-b-2 py-3 px-2 text-base placeholder-petrol-base/20 focus:outline-none transition-all duration-300 resize-none rounded-t-md ${
+                             errors.message 
+                             ? 'border-red-600 bg-red-100 text-red-900 placeholder-red-300' 
+                             : 'border-petrol-base/10 text-petrol-base hover:bg-white focus:border-petrol-base'
                           }`}
                           placeholder="Fale um pouco sobre seu projeto..."
                           disabled={status === 'loading'}
                           style={{ fontSize: '16px' }} 
                         />
-                        <div className={`absolute bottom-0 left-0 h-[2px] bg-petrol-base transition-all duration-500 ease-out z-10 ${focusedField === 'message' && !errors.message ? 'w-full' : 'w-0'}`} />
-                        <div className={`absolute bottom-0 left-0 h-[2px] bg-red-500 transition-all duration-500 ease-out z-10 ${errors.message ? 'w-full' : 'w-0'}`} />
+                        {!errors.message && (
+                            <div className={`absolute bottom-[-2px] left-0 h-[2px] bg-petrol-base transition-all duration-500 ease-out z-10 ${focusedField === 'message' ? 'w-full' : 'w-0'}`} />
+                        )}
                       </div>
+                      
                       {errors.message && (
-                        <div className="absolute -bottom-1 left-0 flex items-center gap-1 text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-wider animate-in fade-in slide-in-from-top-1 pt-1">
-                           <AlertCircle size={10} /> {errors.message}
+                        <div className="absolute -bottom-0 left-0 flex items-center gap-2 mt-1 animate-in fade-in slide-in-from-top-1 bg-red-100 px-2 py-1 rounded-br-md rounded-bl-md w-full">
+                           <AlertTriangle size={12} className="text-red-600 fill-red-100" strokeWidth={2.5} /> 
+                           <span className="text-[10px] font-bold uppercase tracking-wide text-red-600">
+                             {errors.message}
+                           </span>
                         </div>
                       )}
                     </div>

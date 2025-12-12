@@ -94,8 +94,21 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 };
 
 const App: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+  // Initialize loading state based on Session Storage
+  const [loading, setLoading] = useState(() => {
+    // If running in browser and key exists, skip loading
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('hasSeenIntro');
+    }
+    return true;
+  });
+  
   const [isWhatsappHovered, setIsWhatsappHovered] = useState(false);
+
+  const handlePreloaderComplete = () => {
+    setLoading(false);
+    sessionStorage.setItem('hasSeenIntro', 'true');
+  };
 
   return (
     <GamificationProvider>
@@ -105,7 +118,7 @@ const App: React.FC = () => {
             
             {/* Preloader Phase */}
             <AnimatePresence mode="wait">
-              {loading && <Preloader onComplete={() => setLoading(false)} />}
+              {loading && <Preloader onComplete={handlePreloaderComplete} />}
             </AnimatePresence>
             
             {/* Global Visual Effects */}
