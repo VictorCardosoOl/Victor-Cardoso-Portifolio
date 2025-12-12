@@ -1,22 +1,35 @@
 import React from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, CheckCircle2, Layers, Cpu, BarChart } from 'lucide-react';
+import { ArrowUpRight, Layers, Cpu, BarChart } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
+import { motion } from 'framer-motion';
+
+const MotionImg = motion.img as any;
 
 interface ProjectDetailContentProps {
   project: typeof PROJECTS[0];
+  layoutId?: string; // Optional layoutId for shared element transition
 }
 
-export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ project }) => {
+export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ project, layoutId }) => {
+  // We construct the image layoutId based on the title to match the parent if not explicitly passed,
+  // but usually it comes via ContentModal context or we manually reconstruct it.
+  // The Projects.tsx passes `project-container-${title}` to the modal, 
+  // but the image inside needs to match `project-image-${title}` if we want the IMAGE to morph.
+  // To keep it simple based on the prompt, we will use the image specific ID on the image element.
+  
+  const imageLayoutId = `project-image-${project.title}`;
+
   return (
     <div className="max-w-7xl mx-auto px-6 md:px-12 py-10 md:py-16">
       
-      {/* Hero Image */}
+      {/* Hero Image with Shared Layout ID */}
       <div className="w-full aspect-video rounded-[2rem] overflow-hidden mb-12 shadow-xl border border-slate-200 bg-slate-100 relative group">
-        <img 
+        <MotionImg 
+          layoutId={imageLayoutId}
           src={project.image} 
           alt={project.title} 
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+          className="w-full h-full object-cover"
         />
       </div>
 
@@ -24,7 +37,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
         
         {/* Sidebar Info */}
         <div className="lg:col-span-4 space-y-8 order-2 lg:order-1">
-           <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+           <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm sticky top-10">
               <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-6 border-b border-slate-100 pb-2">
                 Dados do Projeto
               </h3>

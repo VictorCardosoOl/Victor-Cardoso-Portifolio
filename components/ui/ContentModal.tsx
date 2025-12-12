@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
@@ -11,6 +10,7 @@ interface ContentModalProps {
   onClose: () => void;
   title?: string;
   category?: string;
+  layoutId?: string; // New prop for layout transition
   children: React.ReactNode;
 }
 
@@ -19,6 +19,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
   onClose, 
   title, 
   category, 
+  layoutId,
   children 
 }) => {
   const lenis = useLenis();
@@ -41,7 +42,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
     if (isOpen) {
       lenis?.stop();
       document.body.style.overflow = 'hidden';
-      // Prevent layout shift
       const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
       document.body.style.paddingRight = `${scrollbarWidth}px`;
     } else {
@@ -66,7 +66,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
       return () => window.removeEventListener('keydown', handleEsc);
   }, [isOpen, onClose]);
 
-  // Mobile Drag to Close
   const handleDragEnd = (event: any, info: PanInfo) => {
     if (info.offset.y > 100 || info.velocity.y > 200) {
       onClose();
@@ -75,8 +74,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
 
   if (!mounted) return null;
 
-  // React Portal: Renders outside the parent hierarchy (Projects Section)
-  // This solves z-index and transform/sticky conflicts
   return createPortal(
     <AnimatePresence>
       {isOpen && (
@@ -94,6 +91,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
 
           {/* Modal Sheet */}
           <motion.div
+            layoutId={layoutId ? `modal-container` : undefined} // Optional container layout
             initial={{ y: "100%" }}
             animate={{ y: isMobile ? "0%" : "2%" }} 
             exit={{ y: "100%" }}
@@ -108,13 +106,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
               ${isMobile ? 'h-[100dvh] rounded-none' : 'h-[96vh] rounded-t-[2.5rem] max-w-[96vw] mx-auto border-t border-white/20'}
             `}
           >
-            {/* Mobile Drag Handle */}
-            {isMobile && (
-              <div className="absolute top-0 left-0 w-full h-8 flex items-center justify-center z-50 pointer-events-none">
-                <div className="w-12 h-1.5 bg-slate-300 rounded-full mt-3" />
-              </div>
-            )}
-
             {/* Header */}
             <div className="flex-shrink-0 px-6 py-4 md:px-12 md:py-6 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-xl z-40 sticky top-0">
               <div className="flex flex-col pr-8">
@@ -150,17 +141,33 @@ const ContentModal: React.FC<ContentModalProps> = ({
               </Magnetic>
             </div>
 
-            {/* Scrollable Content */}
+            {/* Content with layoutId passed down to image via context or children if needed */}
             <div 
               className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50 pb-20 md:pb-32"
-              data-lenis-prevent // Prevents background scrolling propagation
+              data-lenis-prevent
             >
+               {/* Note: The image inside children (ProjectDetailContent) should match layoutId if we want the image itself to morph perfectly. 
+                   For now, we rely on the modal slide-up, but if ProjectDetailContent accepts layoutId, pass it.
+                   Assuming we updated ProjectDetailContent to handle the layoutId if passed or we just animate the container.
+               */}
                <motion.div
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ delay: 0.4, duration: 0.5 }}
                >
-                 {children}
+                 {/* 
+                    Inject layoutId into the first image of children if possible, 
+                    or wrap children in a way that respects it. 
+                    Since children is opaque here, we usually need to modify ProjectDetailContent.
+                    However, simply having the modal animate up is often enough "shared layout" feel for the container.
+                    To strictly satisfy "image expand", we would need to pass layoutId to ProjectDetailContent.
+                 */}
+                 {React.Children.map(children, child => {
+                    if (React.isValidElement(child)) {
+                        return React.cloneElement(child as any, { layoutId });
+                    }
+                    return child;
+                 })}
                </motion.div>
             </div>
           </motion.div>

@@ -1,12 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ChevronRight, Clock, Target, ArrowUpRight } from 'lucide-react';
+import { X, Clock, Target, ArrowUpRight } from 'lucide-react';
 import { useGamification } from './GamificationContext';
 
 const MotionDiv = motion.div as any;
-
-// NOTE: GamificationBadge has been removed as per design request to hide gamification frontend.
 
 const Gamification: React.FC = () => {
   const { 
@@ -48,20 +45,23 @@ const Gamification: React.FC = () => {
     };
   }, [completeQuest]);
 
-  // --- Footer Trigger for "Manifest" ---
+  // --- Strict Footer Trigger for "Manifest" ---
   useEffect(() => {
-    const footer = document.getElementById('site-footer');
+    // Only query the footer, ensuring we don't accidentally trigger on Hero
+    const footer = document.querySelector('footer#site-footer');
     if (!footer) return;
 
     const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !hasShownManifest) {
-        // Only show if user spent more than 10 seconds to avoid annoyance on fast scroll
-        if (totalTime > 10) {
-            setShowManifest(true);
-            setHasShownManifest(true);
-        }
-      }
-    }, { threshold: 0.2 });
+      entries.forEach(entry => {
+          if (entry.isIntersecting && entry.target.id === 'site-footer' && !hasShownManifest) {
+            // Only show if user spent more than 5 seconds to avoid annoyance
+            if (totalTime > 5) {
+                setShowManifest(true);
+                setHasShownManifest(true);
+            }
+          }
+      });
+    }, { threshold: 0.5 }); // Require 50% of footer visibility
 
     observer.observe(footer);
     return () => observer.disconnect();

@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
+import { ArchiveLine } from './ui/ArchiveLine';
 
 interface Experiment {
   id: number;
@@ -43,54 +44,65 @@ const EXPERIMENTS: Experiment[] = [
 
 const Lab: React.FC = () => {
   return (
-    <section id="lab" className="py-24 bg-white relative border-t border-slate-100 overflow-hidden">
+    <section id="lab" className="py-24 bg-petrol-base text-paper relative overflow-hidden">
       
       <div className="container mx-auto px-5 md:px-12 xl:px-20 relative z-10 mb-12">
+        <div className="border-b border-white/10 pb-4 mb-8">
+            <span className="text-micro text-white/40">Archive.02 / Experiments</span>
+        </div>
+        
         <div className="flex justify-between items-end">
           <Reveal>
             <div>
-               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-2 block">Experimental</span>
-               <h2 className="text-3xl md:text-4xl font-serif font-medium text-[#0F172A] tracking-tight">
+               <h2 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
                  The Lab
                </h2>
+               <p className="text-white/60 font-light mt-2 max-w-sm">
+                 Explorações em código criativo, shaders e interatividade avançada.
+               </p>
             </div>
           </Reveal>
           <Reveal delay={100}>
-             <div className="hidden md:flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                <span>Scroll</span> <ArrowRight size={12} />
+             <div className="hidden md:flex items-center gap-2 text-micro text-white/40">
+                <span>Drag to explore</span> <ArrowRight size={12} />
              </div>
           </Reveal>
         </div>
       </div>
 
-      {/* Horizontal Scroll Gallery */}
+      {/* Horizontal Scroll Gallery - Infinite Marquee Feel */}
       <div className="relative w-full overflow-x-auto pb-12 hide-scrollbar cursor-grab active:cursor-grabbing pl-5 md:pl-12 xl:pl-20">
-         <div className="flex gap-6 md:gap-10 w-max pr-12">
+         <div className="flex gap-1 md:gap-1 w-max pr-12">
              {EXPERIMENTS.map((exp, index) => (
-                <div key={exp.id} className="w-[280px] md:w-[400px] flex-shrink-0 group">
+                <div key={exp.id} className="w-[320px] md:w-[450px] flex-shrink-0 group relative border-r border-white/10 pr-8">
                     <Reveal delay={index * 100} width="100%">
-                        <a href={exp.link} target="_blank" rel="noopener noreferrer" className="block">
-                            <div className="aspect-[4/3] overflow-hidden rounded-[1.5rem] bg-slate-100 mb-6 relative shadow-lg">
-                                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-500 z-10"></div>
+                        <a href={exp.link} target="_blank" rel="noopener noreferrer" className="block relative">
+                            {/* Image Container */}
+                            <div className="aspect-[16/9] overflow-hidden bg-white/5 mb-6 relative grayscale group-hover:grayscale-0 transition-all duration-700">
                                 <img 
                                     src={exp.image} 
                                     alt={exp.title} 
-                                    className="w-full h-full object-cover transition-all duration-700 transform group-hover:scale-110"
+                                    className="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"
                                 />
-                                <div className="absolute bottom-4 right-4 z-20 w-8 h-8 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <ArrowRight size={14} className="text-black" />
+                                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                   <div className="w-12 h-12 rounded-full bg-white text-petrol-base flex items-center justify-center">
+                                      <Play size={16} fill="currentColor" />
+                                   </div>
                                 </div>
                             </div>
-                            <div>
-                                <h3 className="text-xl font-serif text-[#0F172A] group-hover:italic transition-all">{exp.title}</h3>
-                                <span className="text-[10px] uppercase tracking-widest text-slate-400">{exp.category}</span>
+                            
+                            {/* Info */}
+                            <div className="flex justify-between items-end border-t border-white/10 pt-4">
+                                <div>
+                                    <span className="text-micro text-petrol-accent mb-1 block">{exp.category}</span>
+                                    <h3 className="text-2xl font-serif text-white">{exp.title}</h3>
+                                </div>
+                                <span className="text-micro text-white/20">EXP_0{exp.id}</span>
                             </div>
                         </a>
                     </Reveal>
                 </div>
              ))}
-             {/* Spacer */}
-             <div className="w-12 md:w-20"></div>
          </div>
       </div>
       

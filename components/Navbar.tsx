@@ -6,34 +6,47 @@ import StaggeredMenu from './ui/StaggeredMenu';
 const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [readingProgress, setReadingProgress] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   
   const { transitionTo } = usePageTransition();
 
-  // Scroll Progress
+  // Scroll Progress & Smart Visibility
   useEffect(() => {
     const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollTop;
+      const currentScrollY = window.scrollY;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scroll = windowHeight > 0 ? totalScroll / windowHeight : 0;
-      setReadingProgress(Number(scroll));
+      const scrollProgress = windowHeight > 0 ? currentScrollY / windowHeight : 0;
+      
+      setReadingProgress(Number(scrollProgress));
+
+      // Smart Navigation Logic
+      if (currentScrollY > 100) {
+        if (currentScrollY > lastScrollY + 5) {
+          // Scrolling Down -> Hide
+          setIsVisible(false);
+        } else if (currentScrollY < lastScrollY - 5) {
+          // Scrolling Up -> Show
+          setIsVisible(true);
+        }
+      } else {
+        // Top of page -> Show
+        setIsVisible(true);
+      }
+
+      setLastScrollY(currentScrollY);
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [lastScrollY]);
 
-  // Intersection Observer for Active Section
+  // Intersection Observer
   useEffect(() => {
-    const options = {
-      root: null,
-      rootMargin: "-20% 0px -60% 0px",
-      threshold: 0
-    };
-
+    const options = { root: null, rootMargin: "-20% 0px -60% 0px", threshold: 0 };
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          setActiveSection(entry.target.id);
-        }
+        if (entry.isIntersecting) setActiveSection(entry.target.id);
       });
     }, options);
 
@@ -55,12 +68,9 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      {/* Reading Progress Line - Electric Cyan */}
       <div 
-        className="fixed top-0 left-0 h-[3px] bg-petrol-accent z-[60] transition-opacity duration-300 origin-left" 
-        style={{ 
-          transform: `scaleX(${readingProgress})`
-        }} 
+        className="fixed top-0 left-0 h-[3px] bg-petrol-accent z-[9999] transition-opacity duration-300 origin-left" 
+        style={{ transform: `scaleX(${readingProgress})` }} 
       />
 
       <StaggeredMenu 
@@ -68,6 +78,7 @@ const Navbar: React.FC = () => {
         socialItems={socialItems} 
         onNavClick={handleNavClick} 
         activeSection={activeSection}
+        visible={isVisible}
       />
     </>
   );

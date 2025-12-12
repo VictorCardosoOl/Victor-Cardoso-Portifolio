@@ -7,7 +7,7 @@
     <!-- SEO & Open Graph -->
     <title>Victor Cardoso | Engenharia de Software & Design</title>
     <meta name="description" content="Engenharia de software de alta precisão e design de interface. Portfólio documental." />
-    <meta name="theme-color" content="#0F2A36" />
+    <meta name="theme-color" content="#0B232E" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -25,24 +25,23 @@
               mono: ['JetBrains Mono', 'monospace'],
             },
             colors: {
-              paper: '#F8FAFC', // Slate 50 - Paper White
+              paper: '#F2F4F6', // Ice Grey / Paper White
               petrol: {
-                base: '#0F2A36', // Deep Petrol (Primary Dark)
-                mid: '#064E5E',  // Midnight Teal
-                light: '#155E75', // Cyan 800
-                accent: '#38BDF8', // Electric Cyan
-                text: '#F0F9FF', // Sky 50
+                base: '#0B232E', // Deep Petrol (Primary Dark) - Almost Black
+                mid: '#153A48',  // Mid tone for hovers
+                ink: '#1E3A45',  // Text Ink
+                accent: '#2DD4BF', // Electric Teal/Cyan for sparks
               },
               ink: {
                 100: '#94a3b8',
                 200: '#64748b',
-                300: '#475569', // Primary Grey Text
+                300: '#475569', 
                 400: '#334155',
                 900: '#0F172A',
               }
             },
             backgroundImage: {
-              'petrol-gradient': 'linear-gradient(135deg, #0F2A36 0%, #0B3B4A 50%, #064E5E 100%)',
+              'petrol-gradient': 'linear-gradient(135deg, #0B232E 0%, #0F2A36 100%)',
             },
             transitionTimingFunction: {
               'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
@@ -56,8 +55,9 @@
       body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        background-color: #F8FAFC;
-        color: #0F2A36;
+        background-color: #F2F4F6;
+        color: #0B232E;
+        overflow-x: hidden; /* Prevent horizontal scroll */
       }
       
       .font-elegant {
@@ -69,10 +69,17 @@
         letter-spacing: -0.04em;
         line-height: 0.9;
       }
+      
+      .text-micro {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+      }
 
       /* Archive/Technical Lines */
-      .border-tech {
-        border-color: rgba(15, 42, 54, 0.08);
+      .border-doc {
+        border-color: rgba(11, 35, 46, 0.08);
       }
       
       /* Custom scrollbar */
@@ -83,23 +90,23 @@
         background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: rgba(15, 42, 54, 0.3);
+        background: rgba(11, 35, 46, 0.3);
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #064E5E;
+        background: #153A48;
       }
 
       /* Enhanced Accessibility Focus Ring */
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #F8FAFC, 0 0 0 4px #38BDF8; /* Electric Cyan Focus */
+        box-shadow: 0 0 0 2px #F2F4F6, 0 0 0 4px #2DD4BF;
         border-radius: 2px;
       }
       
       ::selection {
-        background: #0F2A36;
-        color: #38BDF8;
+        background: #0B232E;
+        color: #2DD4BF;
       }
 
       /* Lenis */
@@ -109,132 +116,46 @@
       .lenis.lenis-stopped { overflow: hidden; }
       .lenis.lenis-scrolling iframe { pointer-events: none; }
 
-      /* --- STAGGERED MENU STYLES --- */
+      /* --- STAGGERED MENU CSS --- */
       .staggered-menu-wrapper {
         position: relative;
-        /* z-index managed by component logic/portal */
+        z-index: 9990; /* High z-index */
       }
-
+      
       .staggered-menu-wrapper.fixed-wrapper {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        z-index: 40;
-        overflow: hidden;
-        pointer-events: none; /* Allow clicking through when closed */
-      }
-      
-      .staggered-menu-wrapper[data-open="true"].fixed-wrapper {
-         pointer-events: auto;
+        pointer-events: none; /* Let clicks pass through when closed */
       }
 
-      .staggered-menu-header {
-        position: fixed; /* Changed to fixed to stay on top */
-        top: 0;
-        left: 0;
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 2em;
-        background: transparent;
-        pointer-events: none;
-        z-index: 50;
-      }
-
-      .staggered-menu-header > * {
+      .staggered-menu-wrapper.fixed-wrapper.open {
         pointer-events: auto;
-      }
-
-      .sm-toggle {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        color: #0F2A36;
-        font-weight: 500;
-        line-height: 1;
-        overflow: visible;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(8px);
-        border-radius: 999px;
-        border: 1px solid rgba(15, 42, 54, 0.1);
-        transition: all 0.3s ease;
-      }
-      
-      .staggered-menu-wrapper[data-open="true"] .sm-toggle {
-         color: white;
-         background: transparent;
-         border-color: rgba(255,255,255,0.2);
-      }
-
-      .sm-toggle:hover {
-        background: #0F2A36;
-        color: white;
-      }
-
-      .staggered-menu-wrapper[data-open="true"] .sm-toggle:hover {
-        background: rgba(255,255,255,0.1);
-      }
-
-      .sm-toggle-textWrap {
-        position: relative;
-        display: inline-block;
-        height: 1em;
-        overflow: hidden;
-        white-space: nowrap;
-      }
-
-      .sm-toggle-textInner {
-        display: flex;
-        flex-direction: column;
-        line-height: 1;
-        transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
-      }
-      
-      .staggered-menu-wrapper[data-open="true"] .sm-toggle-textInner {
-         transform: translateY(-50%);
-      }
-
-      .sm-toggle-line {
-        display: block;
-        height: 1em;
-        line-height: 1;
       }
 
       .staggered-menu-panel {
         position: absolute;
         top: 0;
         right: 0;
-        width: 100%; 
-        height: 100%;
-        background: #0F2A36; /* Deep Petrol */
+        width: 100%;
+        height: 100vh;
+        background: #0B232E; /* Deep Petrol */
         display: flex;
         flex-direction: column;
         padding: 8em 2em 2em 2em;
         overflow-y: auto;
         z-index: 40;
-        transform: translateX(100%);
-        transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
+        /* Animation handled by Framer Motion */
       }
-      
+
       @media (min-width: 768px) {
         .staggered-menu-panel {
             width: clamp(400px, 40vw, 600px);
         }
       }
 
-      .staggered-menu-wrapper[data-open="true"] .staggered-menu-panel {
-        transform: translateX(0);
-      }
-
-      /* Layers effect */
       .sm-prelayers {
         position: absolute;
         top: 0;
@@ -259,46 +180,19 @@
         right: 0;
         height: 100%;
         width: 100%;
-        background: #064E5E; /* Midnight Teal */
-        transform: translateX(100%);
-        transition: transform 0.6s cubic-bezier(0.76, 0, 0.24, 1);
-      }
-      
-      .staggered-menu-wrapper[data-open="true"] .sm-prelayer:nth-child(1) {
-         transform: translateX(0);
-         transition-delay: 0s;
-      }
-      
-      /* Delay the main panel slightly if using prelayers, but here we manage via CSS delays logic if needed. 
-         For simplicity in this implementation, we will use Framer Motion in the component to orchestrate. 
-      */
-
-      .sm-panel-inner {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-        justify-content: center;
-      }
-
-      .sm-panel-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
+        background: #153A48; /* Mid Petrol */
+        /* Animation handled by Framer Motion */
       }
 
       .sm-panel-item {
         position: relative;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255,255,255,0.4);
         font-family: 'Zodiak', serif;
         font-weight: 500;
-        font-size: 3rem;
+        font-size: 3.5rem; /* Massive Links */
         cursor: pointer;
-        line-height: 1;
-        letter-spacing: -0.02em;
+        line-height: 1.1;
+        letter-spacing: -0.03em;
         transition: color 0.3s;
         text-decoration: none;
         display: inline-block;
@@ -306,12 +200,23 @@
 
       @media (min-width: 768px) {
         .sm-panel-item {
-            font-size: 4rem;
+            font-size: 5rem;
         }
       }
 
       .sm-panel-item:hover, .sm-panel-item.active {
-        color: #38BDF8; /* Electric Cyan */
+        color: #FFFFFF;
+      }
+
+      /* Numbering */
+      .sm-panel-list {
+        counter-reset: smItem;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
       }
 
       .sm-panel-item::before {
@@ -325,42 +230,26 @@
         transform: translateY(-50%);
         opacity: 0;
         transition: opacity 0.3s;
-        color: #38BDF8;
-      }
-      
-      .sm-panel-list {
-        counter-reset: smItem;
+        color: #2DD4BF;
       }
       
       .sm-panel-item:hover::before {
         opacity: 1;
       }
 
-      .sm-socials-list {
-        display: flex;
-        gap: 1.5rem;
-        margin-top: 2rem;
-      }
-
       .sm-socials-link {
-        color: white;
+        color: rgba(255,255,255,0.6);
         font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
-        opacity: 0.6;
-        transition: opacity 0.3s;
+        transition: color 0.3s;
       }
 
       .sm-socials-link:hover {
-        opacity: 1;
-        color: #38BDF8;
+        color: #2DD4BF;
       }
 
-      /* Logo inversion */
-      .staggered-menu-wrapper[data-open="true"] .logo-text {
-         color: white;
-      }
     </style>
   <script type="importmap">
 {
