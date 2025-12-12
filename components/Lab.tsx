@@ -1,9 +1,22 @@
-import React from 'react';
-import { Play, Maximize2, Terminal } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Play, Terminal } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import { motion, useScroll, useVelocity, useTransform, useSpring } from 'framer-motion';
 
 const MotionDiv = motion.div as any;
+
+/**
+ * COMPONENTE: Lab
+ * ---------------
+ * Apresenta experimentos de WebGL/Creative Coding.
+ * 
+ * INTERAÇÃO "CURTAIN" (Tema Escuro):
+ * - Diferente das outras seções (Fundo Claro), o Lab é Fundo Escuro.
+ * - Para suavizar a entrada, usamos um efeito de "Cortina" ou "Expansão".
+ * - O container começa com um `clip-path: inset(...)` que recorta o elemento.
+ * - Conforme o scroll entra na seção, o clip-path se expande para 0 (full width),
+ *   dando a impressão que a escuridão está consumindo a tela organicamente.
+ */
 
 interface Experiment {
   id: number;
@@ -58,100 +71,127 @@ const EXPERIMENTS: Experiment[] = [
 ];
 
 const Lab: React.FC = () => {
-  // Global Skew for physics feel
+  const containerRef = useRef(null);
+
+  // --- SCROLL PHYSICS & TRANSITIONS ---
+
+  // 1. Skew Animation (Weight Feel)
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
-  const skew = useTransform(scrollVelocity, [-1000, 1000], [-1, 1]); // Subtle skew
+  const skew = useTransform(scrollVelocity, [-1000, 1000], [-1, 1]); 
   const smoothSkew = useSpring(skew, { damping: 20, stiffness: 400 });
 
+  // 2. Curtain Transition (Dark Mode Reveal)
+  // Rastreia o progresso do elemento na viewport
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "center center"] // Começa quando o topo toca o fim da tela
+  });
+
+  // Transforma o progresso em um clip-path
+  // Início (0): Recortado nas laterais e fundo (inset 0 10% 0 10%)
+  // Fim (1): Totalmente expandido (inset 0 0% 0 0%)
+  const clipPath = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["inset(5% 5% 5% 5% round 40px)", "inset(0% 0% 0% 0% round 0px)"]
+  );
+
   return (
-    <section id="lab" className="py-24 bg-petrol-base text-paper relative overflow-hidden">
+    <section id="lab" className="py-12 bg-paper relative z-20">
       
-      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
-        
-        {/* Header Control Panel Style */}
-        <div className="flex justify-between items-end border-b border-white/10 pb-6 mb-12">
-          <Reveal>
-            <div className="flex flex-col"> 
-               <div className="flex items-center gap-2 mb-2">
-                 <Terminal size={14} className="text-petrol-electric" />
-                 <span className="text-micro text-white/40">Arquivo.02 / R&D</span>
-               </div>
-               <h2 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
-                 Laboratório
-               </h2>
+      {/* Wrapper Animado (The Curtain) */}
+      <MotionDiv 
+        ref={containerRef}
+        style={{ clipPath }}
+        className="w-full bg-petrol-base text-paper py-24 relative overflow-hidden"
+      >
+        <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
+            
+            {/* Header Control Panel Style */}
+            <div className="flex justify-between items-end border-b border-white/10 pb-6 mb-12">
+            <Reveal>
+                <div className="flex flex-col"> 
+                <div className="flex items-center gap-2 mb-2">
+                    <Terminal size={14} className="text-petrol-electric" />
+                    <span className="text-micro text-white/40">Arquivo.02 / R&D</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
+                    Laboratório
+                </h2>
+                </div>
+            </Reveal>
+            <Reveal delay={100}>
+                <div className="hidden md:block text-right">
+                    <span className="text-micro text-petrol-electric block">STATUS: ONLINE</span>
+                    <span className="text-[10px] font-mono text-white/40">Compilado: {new Date().toLocaleDateString()}</span>
+                </div>
+            </Reveal>
             </div>
-          </Reveal>
-          <Reveal delay={100}>
-             <div className="hidden md:block text-right">
-                <span className="text-micro text-petrol-electric block">STATUS: ONLINE</span>
-                <span className="text-[10px] font-mono text-white/40">Compilado: {new Date().toLocaleDateString()}</span>
-             </div>
-          </Reveal>
-        </div>
 
-        {/* MOSAIC GRID */}
-        <MotionDiv 
-          style={{ skewY: smoothSkew }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-white/5 border border-white/10 p-1"
-        >
-             {EXPERIMENTS.map((exp, index) => (
-                <div 
-                  key={exp.id} 
-                  className={`relative group h-[300px] md:h-[350px] overflow-hidden bg-petrol-mid ${exp.colSpan || 'md:col-span-1'}`}
-                >
-                    <Reveal delay={index * 50} width="100%" className="h-full">
-                        <a href={exp.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full relative">
-                            
-                            {/* Image: Grayscale to Color */}
-                            <div className="absolute inset-0 z-0">
-                                <img 
-                                    src={exp.image} 
-                                    alt={exp.title} 
-                                    className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                                />
-                                {/* Scanline Effect Overlay */}
-                                <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')] opacity-30 pointer-events-none"></div>
-                            </div>
+            {/* MOSAIC GRID */}
+            <MotionDiv 
+            style={{ skewY: smoothSkew }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-white/5 border border-white/10 p-1"
+            >
+                {EXPERIMENTS.map((exp, index) => (
+                    <div 
+                    key={exp.id} 
+                    className={`relative group h-[300px] md:h-[350px] overflow-hidden bg-petrol-mid ${exp.colSpan || 'md:col-span-1'}`}
+                    >
+                        <Reveal delay={index * 50} width="100%" className="h-full">
+                            <a href={exp.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full relative">
+                                
+                                {/* Image: Grayscale to Color */}
+                                <div className="absolute inset-0 z-0">
+                                    <img 
+                                        src={exp.image} 
+                                        alt={exp.title} 
+                                        className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
+                                    />
+                                    {/* Scanline Effect Overlay (Base64 SVG pattern) */}
+                                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')] opacity-30 pointer-events-none"></div>
+                                </div>
 
-                            {/* Hover Overlay */}
-                            <div className="absolute inset-0 bg-petrol-base/80 opacity-0 group-hover:opacity-0 transition-opacity duration-300"></div>
-                            
-                            {/* Content UI */}
-                            <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
-                                {/* Top: ID & Icon */}
-                                <div className="flex justify-between items-start opacity-60 group-hover:opacity-100 transition-opacity">
-                                    <span className="text-[10px] font-mono border border-white/20 px-1.5 py-0.5 rounded text-white bg-black/40 backdrop-blur-md">
-                                        EXP_0{exp.id}
-                                    </span>
-                                    <div className="w-8 h-8 rounded-full bg-petrol-electric text-petrol-base flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300 shadow-[0_0_15px_rgba(45,212,191,0.5)]">
-                                        <Play size={12} fill="currentColor" />
+                                {/* Hover Overlay */}
+                                <div className="absolute inset-0 bg-petrol-base/80 opacity-0 group-hover:opacity-0 transition-opacity duration-300"></div>
+                                
+                                {/* Content UI */}
+                                <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                                    {/* Top: ID & Icon */}
+                                    <div className="flex justify-between items-start opacity-60 group-hover:opacity-100 transition-opacity">
+                                        <span className="text-[10px] font-mono border border-white/20 px-1.5 py-0.5 rounded text-white bg-black/40 backdrop-blur-md">
+                                            EXP_0{exp.id}
+                                        </span>
+                                        <div className="w-8 h-8 rounded-full bg-petrol-electric text-petrol-base flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300 shadow-[0_0_15px_rgba(45,212,191,0.5)]">
+                                            <Play size={12} fill="currentColor" />
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom: Info */}
+                                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                        <span className="text-[9px] font-bold uppercase tracking-widest text-petrol-electric mb-1 block">
+                                            {exp.category}
+                                        </span>
+                                        <h3 className="text-2xl font-serif text-white group-hover:text-white transition-colors">
+                                            {exp.title}
+                                        </h3>
                                     </div>
                                 </div>
 
-                                {/* Bottom: Info */}
-                                <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                    <span className="text-[9px] font-bold uppercase tracking-widest text-petrol-electric mb-1 block">
-                                        {exp.category}
-                                    </span>
-                                    <h3 className="text-2xl font-serif text-white group-hover:text-white transition-colors">
-                                        {exp.title}
-                                    </h3>
-                                </div>
-                            </div>
+                            </a>
+                        </Reveal>
+                    </div>
+                ))}
+            </MotionDiv>
+            
+            <div className="mt-4 flex justify-between items-center text-[9px] font-mono text-white/30 uppercase tracking-widest">
+            <span>Total: {EXPERIMENTS.length} unidades</span>
+            <span>Code Sandbox / WebGL / Canvas</span>
+            </div>
 
-                        </a>
-                    </Reveal>
-                </div>
-             ))}
-        </MotionDiv>
-        
-        <div className="mt-4 flex justify-between items-center text-[9px] font-mono text-white/30 uppercase tracking-widest">
-           <span>Total: {EXPERIMENTS.length} unidades</span>
-           <span>Code Sandbox / WebGL / Canvas</span>
         </div>
-
-      </div>
+      </MotionDiv>
     </section>
   );
 };

@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import Services from './components/Services';
-import Projects from './components/Projects';
-import Lab from './components/Lab';
-import About from './components/About';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
 import GrainBackground from './components/GrainBackground';
 import Gamification from './components/Gamification';
 import { ScrollProvider } from './components/ScrollContext';
@@ -16,9 +10,31 @@ import { MessageCircle } from 'lucide-react';
 import Magnetic from './components/ui/Magnetic';
 import { motion, AnimatePresence } from 'framer-motion';
 
+/**
+ * COMPONENTE: App (Root)
+ * ----------------------
+ * ARQUITETURA DE PERFORMANCE (Code Splitting):
+ * Para garantir um LCP (Largest Contentful Paint) rápido, o Hero e Navbar são importados estaticamente.
+ * Todas as seções abaixo da dobra (Projects, Services, Lab, etc.) são carregadas via React.lazy.
+ * Isso divide o bundle JS, permitindo que o navegador renderize a primeira tela quase instantaneamente.
+ */
+
+// Lazy Loaded Components
+const Services = lazy(() => import('./components/Services'));
+const Projects = lazy(() => import('./components/Projects'));
+const Lab = lazy(() => import('./components/Lab'));
+const About = lazy(() => import('./components/About'));
+const Contact = lazy(() => import('./components/Contact'));
+const Footer = lazy(() => import('./components/Footer'));
+
 const MotionDiv = motion.div as any;
 
-// Narrative Preloader - Deep Archive Theme
+/**
+ * COMPONENTE: Preloader
+ * ---------------------
+ * Uma tela de introdução narrativa que mascara o carregamento inicial dos assets.
+ * Usa um array de palavras para criar uma micro-narrativa técnica ("INICIALIZANDO", etc).
+ */
 const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const [textIndex, setTextIndex] = useState(0);
   const words = ["INICIALIZANDO", "ESTRATÉGIA", "DESIGN", "SISTEMA PRONTO"];
@@ -85,30 +101,46 @@ const App: React.FC = () => {
       <ScrollProvider>
         <PageTransitionProvider>
           <div className="flex flex-col min-h-screen relative overflow-x-hidden bg-paper selection:bg-petrol-base selection:text-white">
+            
+            {/* Preloader Phase */}
             <AnimatePresence mode="wait">
               {loading && <Preloader onComplete={() => setLoading(false)} />}
             </AnimatePresence>
             
+            {/* Global Visual Effects */}
             <GrainBackground />
             <Gamification />
 
+            {/* Navigation (Always Visible) */}
             <Navbar />
             
             {/* Main Content with Sticky Footer Logic */}
             <main className="relative z-10 bg-paper mb-[90vh] shadow-[0_20px_50px_-12px_rgba(11,35,46,0.3)] rounded-b-[3rem] border-b border-doc">
+              
+              {/* Eager Loaded Hero for LCP */}
               <Hero />
-              <Projects />
-              <Services /> 
-              <Lab />
-              <About />    
-              <Contact />
+
+              {/* Lazy Loaded Sections wrapped in Suspense
+                  O fallback é nulo aqui porque o Preloader cobre o tempo inicial,
+                  e o carregamento subsequente geralmente é rápido o suficiente.
+               */}
+              <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-xs font-mono text-petrol-base/30">Carregando módulos...</div>}>
+                <Projects />
+                <Services /> 
+                <Lab />
+                <About />    
+                <Contact />
+              </Suspense>
             </main>
             
-            {/* Sticky Footer - Fullscreen */}
+            {/* Sticky Footer - Fullscreen Reveal Effect */}
             <div className="fixed bottom-0 left-0 w-full z-0 min-h-[90vh]">
-               <Footer />
+               <Suspense fallback={null}>
+                  <Footer />
+               </Suspense>
             </div>
             
+            {/* WhatsApp Floating Action Button */}
             <div className="fixed bottom-8 right-8 z-40">
               <Magnetic strength={0.3}>
                 <a 
