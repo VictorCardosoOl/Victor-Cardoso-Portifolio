@@ -1,9 +1,8 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 // --- Types ---
 
-export type Rank = 'Bronze' | 'Prata' | 'Ouro';
+export type Rank = 'Bronze' | 'Prata' | 'Ouro' | 'Hacker';
 
 export interface Quest {
   id: string;
@@ -32,6 +31,8 @@ interface GamificationContextType {
   isModalOpen: boolean;
   openModal: () => void;
   closeModal: () => void;
+  // Easter Egg
+  isHackerMode: boolean;
 }
 
 const GamificationContext = createContext<GamificationContextType | null>(null);
@@ -51,27 +52,66 @@ const INITIAL_QUESTS: Quest[] = [
   { id: 'time_spent', label: 'Leitura Atenta (> 1min)', xp: 15, completed: false },
   { id: 'click_github', label: 'Auditoria Técnica (GitHub)', xp: 20, completed: false, link: '#lab' },
   { id: 'click_contact', label: 'Interesse em Contato', xp: 30, completed: false, link: '#contact' },
+  { id: 'konami_code', label: 'GOD MODE (Konami Code)', xp: 999, completed: false },
 ];
 
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // State: Pure React State resets on reload (Session Only)
-  const [quests, setQuests] = useState<Quest[]>(INITIAL_QUESTS);
-  const [totalTime, setTotalTime] = useState(0);
+  // --- STATE ---
+  // Lazy initialization from LocalStorage where possible
+  const [quests, setQuests] = useState<Quest[]>(() => {
+    if (typeof window === 'undefined') return INITIAL_QUESTS;
+    const saved = localStorage.getItem('v_quests');
+    return saved ? JSON.parse(saved) : INITIAL_QUESTS;
+  });
+  
+  const [totalTime, setTotalTime] = useState(0); // Session time is usually ephemeral, but could be persisted
   const [sectionTimes, setSectionTimes] = useState<SectionTime>({});
   const [currentSection, setCurrentSection] = useState('hero');
   const [notification, setNotification] = useState<{ message: string; visible: boolean; type?: Rank } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isHackerMode, setIsHackerMode] = useState(false);
+
+  // --- PERSISTENCE ---
+  useEffect(() => {
+    localStorage.setItem('v_quests', JSON.stringify(quests));
+  }, [quests]);
+
+  // --- KONAMI CODE LISTENER ---
+  useEffect(() => {
+    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+    let cursor = 0;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === konamiCode[cursor]) {
+        cursor++;
+        if (cursor === konamiCode.length) {
+          activateHackerMode();
+          cursor = 0;
+        }
+      } else {
+        cursor = 0;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  const activateHackerMode = () => {
+    setIsHackerMode(true);
+    document.body.classList.add('hacker-mode');
+    completeQuest('konami_code');
+    triggerNotification('GOD MODE ATIVADO', 'Hacker');
+  };
 
   // Derived State
   const xp = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
-  
-  // Level Calculation: Simple linear progression
   const level = Math.floor(xp / 25) + 1;
 
-  // Rank Calculation based on Level
   const getRank = (lvl: number): Rank => {
-    if (lvl >= 5) return 'Ouro';
-    if (lvl >= 3) return 'Prata';
+    if (isHackerMode) return 'Hacker';
+    if (lvl >= 8) return 'Ouro';
+    if (lvl >= 4) return 'Prata';
     return 'Bronze';
   };
   const rank = getRank(level);
@@ -86,7 +126,6 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       const newQuests = [...prev];
       newQuests[idx] = { ...newQuests[idx], completed: true };
       
-      // Calculate potential new rank for notification style
       const newXp = newQuests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
       const newLevel = Math.floor(newXp / 25) + 1;
       const newRank = getRank(newLevel);
@@ -102,22 +141,17 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   const triggerNotification = (message: string, rankType: Rank) => {
     setNotification({ message, visible: true, type: rankType });
-    
-    // Auto hide
     setTimeout(() => {
         setNotification(prev => (prev?.message === message ? null : prev));
     }, 4500);
   };
 
   const hideNotification = () => setNotification(null);
-  
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  // --- Timers & Section Tracking ---
-
+  // --- Timers & Observers ---
   useEffect(() => {
-    // 1. Total Session Timer
     const globalTimer = setInterval(() => {
       setTotalTime(prev => {
         const newTime = prev + 1;
@@ -126,7 +160,6 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       });
     }, 1000);
 
-    // 2. Section Timer
     const sectionTimer = setInterval(() => {
       setSectionTimes(prev => ({
         ...prev,
@@ -140,10 +173,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     };
   }, [currentSection]);
 
-  // 3. Section Detection (Intersection Observer)
   useEffect(() => {
     const sections = ['hero', 'projects', 'services', 'skills', 'about', 'education', 'lab', 'writing', 'contact'];
-    
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -178,7 +209,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       currentSection,
       isModalOpen,
       openModal,
-      closeModal
+      closeModal,
+      isHackerMode
     }}>
       {children}
     </GamificationContext.Provider>

@@ -59,60 +59,57 @@ export const PROCESS_STEPS = [
 export const PROJECTS = [
   {
     title: 'Lumina Architecture',
-    category: 'Plataforma Institucional',
+    category: 'SaaS / Plataforma',
     year: '2024',
-    description: 'Solução digital completa para escritório de arquitetura, focada em captação de clientes de alto padrão.',
-    tags: ['React', 'SEO Técnico', 'Lead Generation'],
-    image: 'https://picsum.photos/id/10/1200/800',
+    description: 'Sistema completo de gestão de ativos digitais para arquitetos, incluindo renderização na nuvem e vitrine de projetos.',
+    tags: ['Next.js 14', 'AWS S3', 'Stripe Connect', 'Tailwind'],
+    image: 'https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=1200',
     gallery: [
-      'https://picsum.photos/id/10/1200/800',
-      'https://picsum.photos/id/11/1200/800',
-      'https://picsum.photos/id/12/1200/800',
-      'https://picsum.photos/id/13/1200/800'
+      'https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1600566752355-35792bedcfe1?auto=format&fit=crop&q=80&w=800'
     ],
     link: '#',
     caseStudy: {
-      challenge: 'O cliente possuía um portfólio em PDF difícil de atualizar e que não indexava no Google, perdendo oportunidades orgânicas.',
-      solution: 'Desenvolvi um CMS personalizado (Painel Administrativo) onde o próprio arquiteto atualiza os projetos. Otimização técnica de SEO para termos locais.',
-      result: 'Primeira página do Google em 3 meses e aumento de 40% nos pedidos de orçamento.'
+      challenge: 'O cliente enfrentava alta latência ao carregar portfólios 4K para leads internacionais, resultando em uma taxa de rejeição de 65%. O sistema antigo em WordPress não suportava uploads concorrentes.',
+      solution: 'Reescrevi a arquitetura usando Next.js com Image Optimization na borda (Edge). Implementei uploads diretos para S3 com presigned URLs para remover a carga do servidor principal.',
+      result: 'Tempo de carregamento (LCP) reduzido de 4.2s para 0.8s. A taxa de conversão de leads aumentou 40% no primeiro mês.'
     }
   },
   {
-    title: 'Apex Finance',
-    category: 'SaaS / Dashboard',
+    title: 'Apex Finance Dashboard',
+    category: 'Fintech / Dashboard',
     year: '2023',
-    description: 'Sistema de gestão financeira para pequenas empresas, substituindo planilhas complexas de Excel.',
-    tags: ['Node.js', 'Automação', 'SaaS'],
-    image: 'https://picsum.photos/id/160/1200/800',
+    description: 'Painel de controle financeiro em tempo real para traders institucionais, processando milhares de eventos por segundo.',
+    tags: ['WebSockets', 'D3.js', 'Node.js', 'Redis'],
+    image: 'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&q=80&w=1200',
     gallery: [
-      'https://picsum.photos/id/160/1200/800',
-      'https://picsum.photos/id/161/1200/800',
-      'https://picsum.photos/id/162/1200/800'
+      'https://images.unsplash.com/photo-1642543492481-44e81e3914a7?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&q=80&w=800'
     ],
     link: '#',
     caseStudy: {
-      challenge: 'O cliente perdia horas semanais consolidando dados financeiros manualmente, gerando erros de caixa.',
-      solution: 'Plataforma centralizada com gráficos em tempo real e relatórios automáticos. Interface simplificada para usuários não-técnicos.',
-      result: 'Redução de 15 horas mensais em tarefas operacionais para a equipe financeira.'
+      challenge: 'A versão anterior sofria com "stale data" (dados obsoletos) e travamentos do navegador ao renderizar gráficos complexos de candlestick com mais de 10.000 pontos.',
+      solution: 'Implementei WebSockets para streaming de dados em tempo real e utilizei Canvas API ao invés de SVG para renderização dos gráficos, liberando a thread principal do navegador.',
+      result: 'Capacidade de processar 5x mais dados sem lag. A satisfação do usuário (NPS) subiu de 40 para 85.'
     }
   },
   {
-    title: 'Velvet Store',
-    category: 'E-commerce',
+    title: 'Velvet E-commerce',
+    category: 'Headless Commerce',
     year: '2023',
-    description: 'Loja virtual de alta performance integrada com sistemas de pagamento e logística.',
-    tags: ['Shopify Headless', 'Conversão', 'React'],
-    image: 'https://picsum.photos/id/338/1200/800',
+    description: 'Loja conceito para marca de luxo, focada em animações fluídas e experiência de compra imersiva.',
+    tags: ['Shopify Headless', 'Framer Motion', 'WebGL'],
+    image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200',
     gallery: [
-      'https://picsum.photos/id/338/1200/800',
-      'https://picsum.photos/id/339/1200/800',
-      'https://picsum.photos/id/340/1200/800'
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=800'
     ],
     link: '#',
     caseStudy: {
-      challenge: 'A loja antiga travava durante picos de acesso (lançamentos) e tinha um checkout complicado, gerando abandono de carrinho.',
-      solution: 'Implementação de arquitetura Headless para carregamento instantâneo. Redesenho do fluxo de checkout para compra em 3 cliques.',
-      result: 'Aumento de 25% na taxa de conversão e zero quedas durante a Black Friday.'
+      challenge: 'A marca desejava uma experiência de "app nativo" na web, com transições de página sem refresh, mas precisava manter o SEO forte do Shopify.',
+      solution: 'Desenvolvi um frontend Headless usando Next.js. Implementei transições de "Shared Element" nas imagens de produtos e carregamento preditivo de páginas.',
+      result: 'Zero "layout shift" (CLS). Aumento de 25% no ticket médio devido à fluidez da experiência de "Add to Cart".'
     }
   }
 ];
@@ -156,20 +153,20 @@ export const EDUCATION = [
 export const WRITING = [
   {
     title: "O custo de um site lento",
-    category: "Negócios",
+    category: "Engenharia",
     link: "#",
     date: "12 Mar, 2024",
     readTime: "5 min"
   },
   {
-    title: "SaaS vs Planilhas",
-    category: "Gestão",
+    title: "SaaS: Monólitos vs Microserviços",
+    category: "Arquitetura",
     link: "#",
     date: "28 Fev, 2024",
     readTime: "7 min"
   },
   {
-    title: "SEO Técnico Local",
+    title: "SEO Técnico para SPAs",
     category: "Marketing",
     link: "#",
     date: "15 Jan, 2024",
@@ -178,7 +175,7 @@ export const WRITING = [
 ];
 
 export const CONTACT_INFO = {
-  email: 'contato@seudominio.com',
+  email: 'victor@exemplo.com.br',
   phone: '+55 (11) 99999-9999',
   location: 'São Paulo, SP - Brasil',
   whatsapp: 'https://wa.me/5511999999999',

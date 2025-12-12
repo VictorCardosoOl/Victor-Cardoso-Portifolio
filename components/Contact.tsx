@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { CONTACT_INFO } from '../constants';
-import { ArrowUpRight, Send, Check, AlertCircle, Mail, Phone } from 'lucide-react';
+import { ArrowUpRight, Send, Check, AlertCircle, Mail, Phone, Loader2 } from 'lucide-react';
 import Button from './ui/Button';
 import { Reveal } from './ui/Reveal';
 import Magnetic from './ui/Magnetic';
@@ -58,7 +58,9 @@ const Contact: React.FC = () => {
     
     setStatus('loading');
     
+    // Simulate complex backend processing delay
     try {
+      // Prepare rich payload (simulating what would be sent to EmailJS/Hubspot)
       const sortedSections = Object.entries(sectionTimes).sort(([, a], [, b]) => (b as number) - (a as number));
       const mostViewed = sortedSections[0] ? sortedSections[0][0] : 'N/A';
 
@@ -72,16 +74,22 @@ const Contact: React.FC = () => {
         completedQuests: quests.filter(q => q.completed).map(q => q.label)
       };
 
-      console.log("--- SUBMITTING FORM WITH GAMIFICATION DATA ---");
+      console.group("🚀 Sending Lead to Backend...");
       console.log("User Data:", formState);
-      console.log("Lead Score (Gamification):", gamificationPayload);
+      console.log("Contextual Data (Gamification):", gamificationPayload);
+      console.groupEnd();
       
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Simulate network request
+      await new Promise(resolve => setTimeout(resolve, 2500));
+      
       setStatus('success');
       setFormState({ name: '', email: '', company: '', message: '' });
       setErrors({});
-      setTimeout(() => setStatus('idle'), 5000);
+      
+      // Reset status after success message is shown
+      setTimeout(() => setStatus('idle'), 6000);
     } catch (error) {
+      console.error(error);
       setStatus('error');
       setTimeout(() => setStatus('idle'), 5000);
     }
@@ -223,19 +231,26 @@ const Contact: React.FC = () => {
           {/* Right Column: Form */}
           <div className="lg:col-span-6">
             <Reveal delay={200} width="100%" variant="scale">
-              <div className="glass-panel p-6 md:p-10 rounded-[2rem] relative overflow-hidden bg-white/50 border border-white/20">
+              <div className="glass-panel p-6 md:p-10 rounded-[2rem] relative overflow-hidden bg-white/50 border border-white/20 min-h-[500px] flex flex-col justify-center">
                  {status === 'success' && (
-                    <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center text-center animate-in fade-in duration-500">
-                       <div className="w-16 h-16 bg-green-50 text-green-700 rounded-full flex items-center justify-center mb-4">
-                         <Check size={32} />
+                    <div className="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center text-center animate-in fade-in duration-500 p-8">
+                       <div className="w-20 h-20 bg-green-50 text-green-700 rounded-full flex items-center justify-center mb-6 shadow-lg border border-green-100">
+                         <Check size={40} />
                        </div>
-                       <h3 className="text-2xl font-serif text-petrol-base mb-2">Mensagem Enviada</h3>
-                       <p className="text-petrol-ink text-sm">Entrarei em contato em breve.</p>
-                       <button onClick={() => setStatus('idle')} className="mt-6 text-xs font-bold uppercase tracking-widest underline">Nova mensagem</button>
+                       <h3 className="text-3xl font-serif text-petrol-base mb-3">Recebido!</h3>
+                       <p className="text-petrol-ink text-base max-w-xs mx-auto mb-8">
+                         Sua mensagem foi enviada para o meu sistema pessoal. Responderei em até 24h.
+                       </p>
+                       <button 
+                         onClick={() => setStatus('idle')} 
+                         className="px-6 py-3 bg-paper text-petrol-base rounded-full text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-colors"
+                       >
+                         Enviar outra
+                       </button>
                     </div>
                  )}
 
-                 <form onSubmit={handleSubmit} noValidate className="space-y-6 md:space-y-8 relative z-10">
+                 <form onSubmit={handleSubmit} noValidate className={`space-y-6 md:space-y-8 relative z-10 transition-opacity duration-300 ${status === 'success' ? 'opacity-0' : 'opacity-100'}`}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                        <InputGroup id="name" label="Nome" placeholder="Seu nome" value={formState.name} required />
                        <InputGroup id="email" label="Email" type="email" placeholder="email@exemplo.com" value={formState.email} required />
@@ -266,7 +281,7 @@ const Contact: React.FC = () => {
                           className={`w-full bg-transparent border-b py-3 px-2 text-base text-petrol-base placeholder-petrol-base/20 focus:outline-none transition-all duration-300 resize-none rounded-t-md ${
                              errors.message ? 'border-red-400 bg-red-50/50' : 'border-petrol-base/10 hover:bg-white'
                           }`}
-                          placeholder="Como posso ajudar?"
+                          placeholder="Fale um pouco sobre seu projeto..."
                           disabled={status === 'loading'}
                           style={{ fontSize: '16px' }} 
                         />
@@ -289,7 +304,11 @@ const Contact: React.FC = () => {
                             className="w-full md:w-auto justify-center bg-petrol-base text-white hover:bg-petrol-mid shadow-lg"
                             disabled={status === 'loading'}
                           >
-                            {status === 'loading' ? 'Enviando...' : 'Enviar Agora'}
+                            {status === 'loading' ? (
+                                <span className="flex items-center gap-2">
+                                    <Loader2 size={16} className="animate-spin" /> Enviando
+                                </span>
+                            ) : 'Enviar Agora'}
                             {status !== 'loading' && <Send size={14} className="ml-2" />}
                           </Button>
                        </Magnetic>

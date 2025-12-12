@@ -15,8 +15,9 @@ const ProjectImage: React.FC<{
   project: typeof PROJECTS[0], 
   onClick: () => void, 
   aspectClass?: string,
-  style?: React.CSSProperties 
-}> = ({ project, onClick, aspectClass = "aspect-[16/10]", style }) => {
+  style?: React.CSSProperties,
+  layoutId?: string
+}> = ({ project, onClick, aspectClass = "aspect-[16/10]", style, layoutId }) => {
   const containerRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -38,7 +39,7 @@ const ProjectImage: React.FC<{
   return (
     <div 
       ref={containerRef}
-      className={`relative ${aspectClass} overflow-hidden cursor-pointer bg-petrol-base/5 group`}
+      className={`relative ${aspectClass} overflow-hidden cursor-pointer bg-petrol-base/5 group liquid-hover-parent`}
       onClick={onClick}
       style={style}
     >
@@ -46,12 +47,13 @@ const ProjectImage: React.FC<{
             style={{ clipPath }}
             className="w-full h-full relative will-change-transform"
         >
+          {/* LIQUID HOVER EFFECT: The class 'liquid-hover-target' applies the SVG filter from index.html */}
           <MotionImg 
-            layoutId={`project-image-${project.title}`}
+            layoutId={layoutId} // Morphing Magic Key
             src={project.image} 
             alt={project.title} 
             style={{ scale }} 
-            className="w-full h-full object-cover transition-all duration-1000 ease-out opacity-90 group-hover:opacity-100 grayscale-[0.3] group-hover:grayscale-0"
+            className="w-full h-full object-cover transition-all duration-700 ease-out opacity-90 group-hover:opacity-100 grayscale-[0.3] group-hover:grayscale-0 liquid-hover-target"
           />
         </MotionDiv>
         
@@ -90,6 +92,7 @@ const Projects: React.FC = () => {
         <div className="flex flex-col gap-32 md:gap-56">
           {PROJECTS.map((project, index) => {
              const layout = getLayoutClass(index);
+             const uniqueLayoutId = `project-img-${index}`; // Unique ID for shared transition
              
              return (
                <div key={index} className="w-full relative group">
@@ -105,7 +108,8 @@ const Projects: React.FC = () => {
                         <div className="lg:col-span-7">
                            <ProjectImage 
                               project={project} 
-                              onClick={() => setSelectedProject(project)} 
+                              onClick={() => setSelectedProject(project)}
+                              layoutId={uniqueLayoutId}
                            />
                         </div>
                         <div className="lg:col-span-5 flex flex-col items-start pt-4 lg:sticky lg:top-32 h-fit lg:pl-12">
@@ -165,6 +169,7 @@ const Projects: React.FC = () => {
                               project={project} 
                               onClick={() => setSelectedProject(project)}
                               aspectClass="aspect-[4/5] lg:w-[85%] ml-auto"
+                              layoutId={uniqueLayoutId}
                            />
                         </div>
                     </div>
@@ -178,6 +183,7 @@ const Projects: React.FC = () => {
                             onClick={() => setSelectedProject(project)}
                             aspectClass="w-full aspect-[21/9] mb-16 shadow-2xl"
                             style={{ objectPosition: 'center 40%' }}
+                            layoutId={uniqueLayoutId}
                          />
 
                          <Reveal delay={100} variant="translate" width="100%">
@@ -214,9 +220,16 @@ const Projects: React.FC = () => {
         onClose={() => setSelectedProject(null)}
         title={selectedProject?.title}
         category={selectedProject?.category}
-        layoutId={selectedProject ? `project-image-${selectedProject.title}` : undefined}
+        // Pass the calculated layoutId to the modal so it knows which image to morph from
+        layoutId={selectedProject ? `project-img-${PROJECTS.findIndex(p => p.title === selectedProject.title)}` : undefined}
       >
-        {selectedProject && <ProjectDetailContent project={selectedProject} />}
+        {selectedProject && (
+            <ProjectDetailContent 
+                project={selectedProject} 
+                // Pass layoutId down to the content image
+                layoutId={selectedProject ? `project-img-${PROJECTS.findIndex(p => p.title === selectedProject.title)}` : undefined}
+            />
+        )}
       </ContentModal>
     </section>
   );
