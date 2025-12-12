@@ -5,12 +5,12 @@ import { ProjectDetailContent } from './ProjectDetailContent';
 import { Reveal } from './ui/Reveal';
 import { ArrowUpRight } from 'lucide-react';
 import { ArchiveLine } from './ui/ArchiveLine';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
 const MotionImg = motion.img as any;
 const MotionDiv = motion.div as any;
 
-// Helper Component for Scroll-Linked Image Animation
+// Helper Component for Scroll-Linked Image Animation (Slit Scan Effect)
 const ProjectImage: React.FC<{ 
   project: typeof PROJECTS[0], 
   onClick: () => void, 
@@ -21,23 +21,24 @@ const ProjectImage: React.FC<{
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "center center"] 
+    offset: ["start 0.9", "center center"] 
   });
 
-  // Center-out reveal effect (Slit Scan)
+  // Center-out reveal effect (Unmasking)
   const clipPath = useTransform(
     scrollYProgress,
     [0, 1], 
-    ["inset(45% 0 45% 0)", "inset(0% 0 0% 0)"]
+    ["inset(20% 10% 20% 10%)", "inset(0% 0% 0% 0%)"]
   );
-
-  // Subtle Parallax Scale (No Hover Scale)
-  const scale = useTransform(scrollYProgress, [0, 1], [1.2, 1.05]);
+  
+  // Smooth Physics Scale
+  const smoothProgress = useSpring(scrollYProgress, { damping: 20, stiffness: 100 });
+  const scale = useTransform(smoothProgress, [0, 1], [1.1, 1.0]);
   
   return (
     <div 
       ref={containerRef}
-      className={`relative ${aspectClass} overflow-hidden cursor-pointer bg-petrol-base/5 group`}
+      className={`relative ${aspectClass} overflow-hidden cursor-pointer bg-petrol-base/5 group border border-petrol-base/5`}
       onClick={onClick}
       style={style}
     >
@@ -50,11 +51,11 @@ const ProjectImage: React.FC<{
             src={project.image} 
             alt={project.title} 
             style={{ scale }} 
-            className="w-full h-full object-cover transition-opacity duration-700 opacity-90 group-hover:opacity-100"
+            className="w-full h-full object-cover transition-all duration-700 opacity-90 group-hover:opacity-100 grayscale-[0.2] group-hover:grayscale-0"
           />
         </MotionDiv>
         
-        {/* Subtle Overlay that fades out on hover */}
+        {/* Hover Overlay */}
         <div className="absolute inset-0 bg-petrol-base/10 transition-opacity duration-500 group-hover:opacity-0 pointer-events-none" />
     </div>
   );
@@ -70,10 +71,13 @@ const Projects: React.FC = () => {
   return (
     <section id="projects" className="relative bg-paper py-32 md:py-48 z-10 overflow-hidden">
       
+      {/* --- SPINE LINE --- */}
+      <div className="absolute top-0 bottom-0 left-6 md:left-1/2 w-px bg-petrol-base/5 z-0" />
+
       <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
         
         {/* Archive Header */}
-        <div className="mb-32 md:mb-40">
+        <div className="mb-32 md:mb-40 pl-8 md:pl-0">
           <ArchiveLine index="01" label="OBRAS SELECIONADAS" className="mb-8" />
           <Reveal>
              <h2 className="text-6xl md:text-8xl font-serif font-medium text-petrol-base font-heading-tight mb-6">
@@ -90,36 +94,37 @@ const Projects: React.FC = () => {
              return (
                <div key={index} className="w-full relative group">
                   
-                  {index > 0 && <div className="w-full h-px bg-petrol-base/10 mb-24 md:mb-32"></div>}
+                  {/* Visual Connection Point on the Spine */}
+                  <div className="absolute left-0 md:left-1/2 -translate-x-1/2 top-0 w-3 h-3 bg-paper border border-petrol-base/20 rounded-full z-20 mt-2 hidden md:block">
+                     <div className="w-1 h-1 bg-petrol-base/40 rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                  </div>
 
                   {/* LAYOUT 0: Large Left Image, Text Right (Sticky) */}
                   {layout === 0 && (
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                        <div className="lg:col-span-8">
+                        <div className="lg:col-span-7">
                            <ProjectImage 
                               project={project} 
                               onClick={() => setSelectedProject(project)} 
                            />
                         </div>
-                        <div className="lg:col-span-4 flex flex-col items-start pt-4 lg:sticky lg:top-32 h-fit">
+                        <div className="lg:col-span-5 flex flex-col items-start pt-4 lg:sticky lg:top-32 h-fit lg:pl-12">
                            <Reveal delay={100} variant="translate">
-                              <div className="flex flex-col gap-6 pl-0 lg:pl-6 border-l-0 lg:border-l border-doc">
+                              <div className="flex flex-col gap-6">
                                   <div>
                                      <span className="text-micro text-petrol-base/40 block mb-1">Index</span>
                                      <span className="font-mono text-lg text-petrol-base">PRJ-0{index+1}</span>
                                   </div>
                                   <div>
-                                     <span className="text-micro text-petrol-base/40 block mb-1">Cliente</span>
-                                     <h3 className="text-3xl font-serif font-medium text-petrol-base cursor-pointer hover:opacity-60 transition-opacity" onClick={() => setSelectedProject(project)}>
+                                     <h3 className="text-4xl font-serif font-medium text-petrol-base cursor-pointer hover:text-petrol-mid transition-colors" onClick={() => setSelectedProject(project)}>
                                         {project.title}
                                      </h3>
                                   </div>
-                                  <div>
-                                     <span className="text-micro text-petrol-base/40 block mb-1">Serviço</span>
-                                     <span className="text-sm font-light text-petrol-ink">{project.category}</span>
+                                  <div className="max-w-xs">
+                                     <p className="text-sm font-light text-petrol-ink leading-relaxed">{project.description}</p>
                                   </div>
                                   <div className="pt-4">
-                                    <button onClick={() => setSelectedProject(project)} className="text-xs font-bold uppercase tracking-widest text-petrol-base hover:text-petrol-mid flex items-center gap-2">
+                                    <button onClick={() => setSelectedProject(project)} className="text-xs font-bold uppercase tracking-widest text-petrol-base hover:text-petrol-electric flex items-center gap-2 transition-colors">
                                        Ver Detalhes <ArrowUpRight size={12} />
                                     </button>
                                   </div>
@@ -132,25 +137,23 @@ const Projects: React.FC = () => {
                   {/* LAYOUT 1: Text Left (Sticky), Small Image Right */}
                   {layout === 1 && (
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                         <div className="lg:col-span-5 order-2 lg:order-1 pt-4 lg:sticky lg:top-32 h-fit">
+                         <div className="lg:col-span-5 order-2 lg:order-1 pt-4 lg:sticky lg:top-32 h-fit lg:text-right lg:items-end lg:pr-12">
                            <Reveal delay={100} variant="translate">
-                              <div className="flex flex-col gap-6 lg:text-right lg:items-end lg:pr-6 lg:border-r border-doc">
+                              <div className="flex flex-col gap-6 lg:items-end">
                                   <div>
                                      <span className="text-micro text-petrol-base/40 block mb-1">Index</span>
                                      <span className="font-mono text-lg text-petrol-base">PRJ-0{index+1}</span>
                                   </div>
                                   <div>
-                                     <span className="text-micro text-petrol-base/40 block mb-1">Cliente</span>
-                                     <h3 className="text-3xl font-serif font-medium text-petrol-base cursor-pointer hover:opacity-60 transition-opacity" onClick={() => setSelectedProject(project)}>
+                                     <h3 className="text-4xl font-serif font-medium text-petrol-base cursor-pointer hover:text-petrol-mid transition-colors" onClick={() => setSelectedProject(project)}>
                                         {project.title}
                                      </h3>
                                   </div>
-                                  <div>
-                                     <span className="text-micro text-petrol-base/40 block mb-1">Serviço</span>
-                                     <span className="text-sm font-light text-petrol-ink">{project.category}</span>
+                                  <div className="max-w-xs">
+                                     <p className="text-sm font-light text-petrol-ink leading-relaxed">{project.description}</p>
                                   </div>
                                   <div className="pt-4">
-                                    <button onClick={() => setSelectedProject(project)} className="text-xs font-bold uppercase tracking-widest text-petrol-base hover:text-petrol-mid flex items-center gap-2 lg:flex-row-reverse">
+                                    <button onClick={() => setSelectedProject(project)} className="text-xs font-bold uppercase tracking-widest text-petrol-base hover:text-petrol-electric flex items-center gap-2 lg:flex-row-reverse transition-colors">
                                        Ver Detalhes <ArrowUpRight size={12} />
                                     </button>
                                   </div>
@@ -178,12 +181,12 @@ const Projects: React.FC = () => {
                          />
 
                          <Reveal delay={100} variant="translate" width="100%">
-                            <div className="flex flex-col md:flex-row justify-between items-end w-full max-w-5xl mx-auto border-t border-doc pt-6">
+                            <div className="flex flex-col md:flex-row justify-between items-end w-full max-w-5xl mx-auto border-t border-petrol-base/10 pt-6">
                                 <div>
                                    <span className="text-micro text-petrol-base/40 block mb-2">PRJ-0{index+1}</span>
                                    <h3 
                                      onClick={() => setSelectedProject(project)}
-                                     className="text-4xl md:text-6xl font-serif font-medium text-petrol-base cursor-pointer hover:opacity-60 transition-opacity"
+                                     className="text-4xl md:text-5xl font-serif font-medium text-petrol-base cursor-pointer hover:text-petrol-mid transition-colors"
                                    >
                                      {project.title}
                                    </h3>

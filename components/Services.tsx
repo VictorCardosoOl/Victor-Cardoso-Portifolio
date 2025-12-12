@@ -1,136 +1,119 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { SERVICES } from '../constants';
-import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
-import Tilt from './ui/Tilt';
 import { usePageTransition } from './ui/PageTransition';
 import ContentModal from './ui/ContentModal';
-import { motion, useScroll, useTransform } from 'framer-motion';
-
-const MotionDiv = motion.div as any;
-
-const ServiceCard: React.FC<{ service: typeof SERVICES[0], onClick: () => void }> = ({ service, onClick }) => {
-    const cardRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: cardRef,
-        offset: ["start end", "end start"]
-    });
-
-    // Parallax Effect for the Icon
-    const iconY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
-    const Icon = service.icon;
-
-    return (
-        <div 
-            ref={cardRef}
-            onClick={onClick}
-            className="group relative bg-white/[0.03] border border-white/5 hover:bg-white/[0.08] hover:border-white/20 rounded-[2rem] p-8 md:p-12 transition-all duration-500 cursor-pointer overflow-hidden"
-        >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
-                    
-                    {/* Icon & Title */}
-                    <div className="lg:col-span-4">
-                        <MotionDiv style={{ y: iconY }} className="w-12 h-12 flex items-center justify-center text-white/40 group-hover:text-white transition-colors duration-500 mb-6 relative z-10">
-                            <Icon size={32} strokeWidth={1} />
-                        </MotionDiv>
-                        <h3 className="text-3xl md:text-4xl font-serif font-medium text-paper group-hover:text-white transition-colors relative z-10">
-                            {service.title}
-                        </h3>
-                    </div>
-
-                    {/* Description & Tech Stack */}
-                    <div className="lg:col-span-5 relative z-10">
-                        <p className="text-white/60 text-sm leading-relaxed mb-8 font-light">
-                            {service.description}
-                        </p>
-                        
-                        {/* Tech Stack Mini-Grid */}
-                        <div className="pt-6 border-t border-white/10">
-                            <span className="text-[9px] font-bold uppercase tracking-widest text-white/30 block mb-3">Ferramentas</span>
-                            <div className="flex flex-wrap gap-2">
-                                {service.techStack?.map((tech, t) => (
-                                    <span key={t} className="px-3 py-1.5 rounded-full bg-white/5 text-white/70 text-[10px] uppercase tracking-wide border border-white/5 group-hover:border-white/20 transition-colors">
-                                    {tech}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Arrow Action */}
-                    <div className="lg:col-span-3 flex justify-end items-start h-full">
-                        <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-white/40 group-hover:bg-white group-hover:text-petrol-base transition-all duration-500">
-                            <ArrowUpRight size={20} />
-                        </div>
-                    </div>
-
-                </div>
-        </div>
-    );
-};
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Services: React.FC = () => {
   const { transitionTo } = usePageTransition();
   const [selectedService, setSelectedService] = useState<typeof SERVICES[0] | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   return (
-    // Background updated to Deep Petrol Base
-    <section id="services" className="py-32 md:py-48 bg-[#0B232E] text-paper relative -mt-10 z-10 rounded-t-[3rem] md:rounded-t-[4rem] overflow-hidden">
+    <section id="services" className="py-32 md:py-48 bg-paper text-petrol-base relative z-10 overflow-hidden">
       
-      {/* Subtle Gradient Atmosphere inside the dark section */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-      <div className="container mx-auto px-5 md:px-12 xl:px-20 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
         
-        {/* Header - Layout Assimétrico */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-24 md:mb-32 border-b border-white/10 pb-12">
-          <div className="lg:col-span-5">
-            <Reveal variant="translate">
-              <span className="text-[10px] font-bold tracking-[0.2em] text-white/40 uppercase block mb-4">
-                Competências
-              </span>
-              <h2 className="text-5xl md:text-7xl font-serif font-medium text-white tracking-tight leading-[0.9]">
-                Expertise <br/> <span className="text-white/40 italic">& Ferramentas</span>
+        {/* Header Minimalista */}
+        <div className="flex flex-col md:flex-row justify-between items-end mb-24 pb-8 border-b border-petrol-base/10">
+            <Reveal>
+              <h2 className="text-5xl md:text-7xl font-serif font-medium text-petrol-base tracking-tight leading-[0.9]">
+                Expertise
               </h2>
             </Reveal>
-          </div>
-          
-          <div className="lg:col-span-7 flex items-end justify-end">
-             <Reveal delay={200} variant="blur">
-                <p className="max-w-md text-white/60 text-sm leading-relaxed font-light text-right md:text-left">
-                    Uma abordagem integral. Unifico engenharia de software robusta com design estratégico para eliminar a lacuna entre código e produto.
-                </p>
-             </Reveal>
-          </div>
+            <Reveal delay={100}>
+              <span className="text-xs font-mono text-petrol-base/40 uppercase tracking-widest block mt-4 md:mt-0">
+                Abordagem Técnica & Estratégica
+              </span>
+            </Reveal>
         </div>
 
-        {/* Services List */}
-        <div className="flex flex-col gap-8 md:gap-12">
-          {SERVICES.map((service, index) => (
-              <Reveal key={index} delay={index * 100} width="100%" variant="translate">
-                  <ServiceCard service={service} onClick={() => setSelectedService(service)} />
-              </Reveal>
-          ))}
+        {/* --- EDITORIAL LIST LAYOUT --- */}
+        <div className="flex flex-col">
+          {SERVICES.map((service, index) => {
+             const isHovered = hoveredIndex === index;
+
+             return (
+               <Reveal key={index} width="100%" delay={index * 50}>
+                 <div 
+                    className="group relative border-b border-petrol-base/10 transition-colors duration-500 hover:bg-white"
+                    onMouseEnter={() => setHoveredIndex(index)}
+                    onMouseLeave={() => setHoveredIndex(null)}
+                    onClick={() => setSelectedService(service)}
+                 >
+                    <div className="py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-0 cursor-pointer items-baseline">
+                        
+                        {/* 01. Index */}
+                        <div className="md:w-1/12">
+                            <span className="text-xs font-mono text-petrol-base/30 group-hover:text-petrol-electric transition-colors">
+                                0{index + 1}.
+                            </span>
+                        </div>
+
+                        {/* 02. Title */}
+                        <div className="md:w-4/12">
+                            <h3 className="text-3xl md:text-5xl font-serif text-petrol-base transition-transform duration-500 group-hover:translate-x-2">
+                               {service.title}
+                            </h3>
+                        </div>
+
+                        {/* 03. Description & Tech (Reveals/Highlights on Hover) */}
+                        <div className="md:w-5/12 pr-8 relative">
+                            <p className="text-sm md:text-base font-light leading-relaxed text-petrol-ink/60 group-hover:text-petrol-ink transition-colors">
+                               {service.description}
+                            </p>
+                            
+                            {/* Tech Stack Animated Reveal */}
+                            <AnimatePresence>
+                                {isHovered && (
+                                    <motion.div 
+                                        initial={{ height: 0, opacity: 0, marginTop: 0 }}
+                                        animate={{ height: 'auto', opacity: 1, marginTop: 16 }}
+                                        exit={{ height: 0, opacity: 0, marginTop: 0 }}
+                                        className="overflow-hidden hidden md:block"
+                                    >
+                                        <div className="flex flex-wrap gap-2">
+                                            {service.techStack?.map((tech, i) => (
+                                                <span key={i} className="text-[10px] font-mono border border-petrol-base/10 px-2 py-1 rounded-full text-petrol-base/60 bg-paper">
+                                                    {tech}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        {/* 04. Action Icon */}
+                        <div className="md:w-2/12 flex justify-end items-center">
+                           <div className={`w-12 h-12 rounded-full border border-petrol-base/10 flex items-center justify-center transition-all duration-500 ${isHovered ? 'bg-petrol-base text-white rotate-[-45deg]' : 'text-petrol-base/30'}`}>
+                               <ArrowRight size={18} />
+                           </div>
+                        </div>
+
+                    </div>
+                 </div>
+               </Reveal>
+             );
+          })}
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-32 md:mt-48 text-center">
-           <Reveal delay={200} variant="scale">
-              <a 
-                href="#contact" 
-                onClick={(e) => { e.preventDefault(); transitionTo('#contact'); }}
-                className="inline-block relative group"
-              >
-                 <span className="text-xl font-serif text-white/40 italic mr-4">Pronto para começar?</span>
-                 <span className="text-4xl md:text-6xl font-serif text-white transition-colors duration-500">
-                     Solicitar Proposta
-                 </span>
-                 <div className="h-[1px] w-0 group-hover:w-full bg-white transition-all duration-500 mt-2"></div>
-              </a>
-           </Reveal>
+        {/* Footer / CTA */}
+        <div className="mt-24 text-center">
+            <Reveal variant="scale">
+                <a 
+                  href="#contact" 
+                  onClick={(e) => { e.preventDefault(); transitionTo('#contact'); }}
+                  className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-petrol-electric transition-colors border-b border-transparent hover:border-petrol-electric pb-1"
+                >
+                    Iniciar um Projeto <ArrowRight size={14} />
+                </a>
+            </Reveal>
         </div>
 
-        {/* Modal de Detalhes */}
+        {/* Modal Logic */}
         <ContentModal
           isOpen={!!selectedService}
           onClose={() => setSelectedService(null)}
@@ -153,22 +136,17 @@ const Services: React.FC = () => {
                     <ul className="space-y-2">
                         {selectedService?.techStack?.map((tech, i) => (
                             <li key={i} className="flex items-center gap-2 text-petrol-base font-medium">
-                                <span className="w-1.5 h-1.5 rounded-full bg-petrol-mid"></span> {tech}
+                                <span className="w-1.5 h-1.5 rounded-full bg-petrol-electric"></span> {tech}
                             </li>
                         ))}
                     </ul>
                  </div>
                  
                  <div>
-                    <h4 className="text-xs font-bold uppercase tracking-widest text-petrol-base/40 mb-4">Entregáveis</h4>
-                    <div className="space-y-3">
-                         {['Código Fonte Documentado', 'Sessão de Treinamento', '30 Dias de Suporte'].map((item, i) => (
-                             <div key={i} className="flex items-center gap-2 p-3 bg-paper border border-petrol-base/5 rounded-lg">
-                                <CheckCircle2 size={14} className="text-petrol-base" />
-                                <span className="text-xs font-bold uppercase text-petrol-base">{item}</span>
-                             </div>
-                         ))}
-                    </div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-petrol-base/40 mb-4">Metodologia</h4>
+                     <p className="text-sm text-petrol-ink/80 font-light leading-relaxed">
+                        Abordagem modular focada em desacoplamento e escalabilidade. Cada componente é desenhado para sobreviver a mudanças de requisitos.
+                     </p>
                  </div>
               </div>
               
