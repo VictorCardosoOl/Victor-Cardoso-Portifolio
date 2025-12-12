@@ -89,12 +89,11 @@ const Lab: React.FC = () => {
   });
 
   // Transforma o progresso em um clip-path
-  // Início (0): Recortado nas laterais e fundo (inset 0 10% 0 10%)
-  // Fim (1): Totalmente expandido (inset 0 0% 0 0%)
+  // Ajuste solicitado: inset inicial mais agressivo (15% 10%) para transição mais dramática e suave.
   const clipPath = useTransform(
     scrollYProgress,
     [0, 1],
-    ["inset(5% 5% 5% 5% round 40px)", "inset(0% 0% 0% 0% round 0px)"]
+    ["inset(15% 10% 15% 10% round 40px)", "inset(0% 0% 0% 0% round 0px)"]
   );
 
   return (

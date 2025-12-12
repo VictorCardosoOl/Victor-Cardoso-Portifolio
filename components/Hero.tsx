@@ -4,7 +4,7 @@ import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 import Magnetic from './ui/Magnetic';
 import { usePageTransition } from './ui/PageTransition';
-import { MapPin, Globe, ArrowDown, ArrowRight } from 'lucide-react';
+import { Globe, ArrowDown, ArrowRight } from 'lucide-react';
 
 const MotionDiv = motion.div as any;
 const MotionImg = motion.img as any;
@@ -18,16 +18,14 @@ const Hero: React.FC = () => {
   // --- PHYSICS & PARALLAX ---
   const smoothY = useSpring(scrollY, { damping: 20, stiffness: 100 });
   
-  // Parallax diferenciado para criar profundidade
-  // Texto sobe devagar
-  const textY = useTransform(smoothY, [0, 1000], [0, -100]); 
-  // Imagem sobe mais rápido (plano de fundo/médio)
-  const imageY = useTransform(smoothY, [0, 1000], [0, -200]);
+  // Parallax diferenciado: Texto sobe mais devagar que a imagem para criar separação
+  const textY = useTransform(smoothY, [0, 1000], [0, -50]); 
+  const imageY = useTransform(smoothY, [0, 1000], [0, -150]);
   const opacity = useTransform(smoothY, [0, 500], [1, 0]);
 
   // Velocity Typography (Distorção sutil baseada na velocidade do scroll)
   const scrollVelocity = useVelocity(scrollY);
-  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-5, 5]); // Reduzi o skew para ser mais elegante
+  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-2, 2]); 
   const skewVelocity = useSpring(rawSkew, { damping: 50, stiffness: 200 });
 
   const handleNav = (e: React.MouseEvent, href: string) => {
@@ -39,85 +37,92 @@ const Hero: React.FC = () => {
     <section 
       id="hero" 
       ref={containerRef}
-      className="min-h-screen relative bg-paper text-petrol-base pt-32 pb-20 flex flex-col justify-center overflow-hidden"
+      className="min-h-screen relative bg-paper text-petrol-base pt-32 pb-12 flex flex-col justify-end md:justify-center overflow-hidden"
     >
       
-      {/* --- GRID LINES (Editorial Guides) --- */}
+      {/* --- GRID LINES (Editorial Guides - Asymmetric) --- */}
       <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0" />
-      <div className="absolute top-0 right-6 md:right-1/3 w-px h-full bg-petrol-base/[0.03] z-0 hidden md:block" />
+      <div className="absolute top-0 right-12 w-px h-full bg-petrol-base/[0.03] z-0 hidden md:block" />
 
-      <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10 h-full flex flex-col justify-center">
         
         {/* --- META HEADER --- */}
-        <div className="flex justify-between items-start mb-20 md:mb-12 pl-4 md:pl-16">
+        <div className="absolute top-32 left-6 md:left-24 right-6 md:right-12 flex justify-between items-start pointer-events-none z-20">
            <Reveal width="100%">
-             <div className="flex flex-col gap-1">
+             <div className="flex flex-col gap-1 pl-4 md:pl-8">
                 <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base/40">Victor Cardoso</span>
-                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base">Engenheiro de Software</span>
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base">Engenharia de Software</span>
              </div>
            </Reveal>
            
            <Reveal width="100%" delay={100}>
              <div className="flex flex-col gap-1 text-right">
                 <div className="flex items-center justify-end gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base/40">
-                   <Globe size={10} className="text-petrol-electric" /> Online
+                   <Globe size={10} className="text-petrol-electric" /> SP, BR
                 </div>
              </div>
            </Reveal>
         </div>
 
         {/* --- ASYMMETRIC COMPOSITION --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 relative mt-20 md:mt-0">
             
-            {/* 1. TEXT MASS (Top Left - Dominant) */}
-            <div className="lg:col-span-7 flex flex-col justify-center relative z-20 pl-2 md:pl-16">
+            {/* 1. TEXT MASS (Dominant Left - Span 8) */}
+            <div className="lg:col-span-8 flex flex-col justify-center relative z-20 pl-2 md:pl-24">
                 <MotionDiv style={{ y: textY }} className="relative">
                    
-                   {/* Main Title Block */}
-                   <div className="relative mb-12">
+                   {/* Main Title Block - Staircase Layout */}
+                   <div className="relative mb-16 md:mb-24">
                        <MotionH1 
+                         initial={{ opacity: 0, x: -40 }}
+                         animate={{ opacity: 1, x: 0 }}
+                         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
                          style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                         className="text-[15vw] md:text-[8rem] lg:text-[9.5rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken"
+                         className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken"
                        >
                          Lógica
                        </MotionH1>
                        
-                       <div className="flex items-start ml-8 md:ml-32 lg:ml-40 mt-2 md:mt-4">
-                          <span className="text-xs font-mono text-petrol-base/30 mt-4 mr-4 hidden md:block">(01)</span>
+                       <div className="flex flex-col items-start ml-[15%] md:ml-[25%] mt-2 md:mt-4">
                           <MotionH1 
+                            initial={{ opacity: 0, x: 40 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
                             style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                            className="text-[15vw] md:text-[8rem] lg:text-[9.5rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter italic opacity-80"
+                            className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter italic opacity-80"
                           >
                             Estética
                           </MotionH1>
+                          
+                          <span className="text-xs font-mono text-petrol-base/30 mt-4 self-end mr-4 hidden md:block max-w-[150px] text-right">
+                             (01) Interseção entre Código e Design
+                          </span>
                        </div>
                    </div>
 
-                   {/* Editorial Description (Slender Column) */}
-                   <div className="ml-1 md:ml-2 lg:ml-40 max-w-sm flex flex-col gap-8">
+                   {/* Editorial Description & CTA */}
+                   <div className="max-w-md flex flex-col gap-8 ml-2 md:ml-0">
                       <Reveal delay={200} variant="translate">
-                        <p className="text-sm md:text-base font-light text-petrol-ink leading-[1.8] border-l border-petrol-base/20 pl-6">
+                        <p className="text-sm md:text-base font-light text-petrol-ink leading-[1.6] border-l border-petrol-base/20 pl-6">
                            Arquitetura de software de alta precisão fundida com design editorial. 
-                           Transformando complexidade em interfaces silenciosas e eficientes.
+                           Transformando complexidade em interfaces silenciosas.
                         </p>
                       </Reveal>
 
                       <Reveal delay={300} variant="scale">
                          <div className="flex items-center gap-6">
                             <Magnetic strength={0.3}>
-                                <a href="#contact" onClick={(e) => handleNav(e, '#contact')}>
+                                <a href="#projects" onClick={(e) => handleNav(e, '#projects')}>
                                   <Button 
                                     variant="outline" 
                                     className="rounded-full px-8 py-3 border-petrol-base text-petrol-base hover:bg-petrol-base hover:text-white transition-all duration-500 group text-[10px]"
                                   >
                                     <span className="tracking-[0.25em] group-hover:tracking-[0.35em] transition-all font-bold">
-                                      INICIAR
+                                      VER OBRAS
                                     </span>
                                   </Button>
                                 </a>
                              </Magnetic>
-                             <div className="w-12 h-px bg-petrol-base/20"></div>
-                             <span className="text-[10px] font-mono text-petrol-base/40">Scroll para explorar</span>
                          </div>
                       </Reveal>
                    </div>
@@ -125,39 +130,60 @@ const Hero: React.FC = () => {
                 </MotionDiv>
             </div>
 
-            {/* 2. IMAGE ANCHOR (Bottom Right - Slender & Offset) 
-                Pushed down with margin-top to break symmetry.
+            {/* 2. IMAGE ANCHOR (Bottom Right - Span 4) 
+                Smaller, detached, anchored to bottom right to create whitespace.
             */}
-            <div className="lg:col-span-5 relative flex flex-col justify-end items-end lg:items-start lg:pl-12 mt-12 lg:mt-32 pointer-events-none z-10">
+            <div className="lg:col-span-4 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0">
                <MotionDiv 
                   style={{ y: imageY }}
-                  className="relative w-[75%] md:w-[60%] lg:w-[85%] max-w-sm mr-4 lg:mr-0"
+                  className="relative w-full max-w-[280px] md:max-w-[320px] mr-0 md:mr-12"
                >
                   <Reveal width="100%" duration={1.6} className="w-full">
-                      {/* Slender Aspect Ratio (3:5) for elegance */}
-                      <div className="relative w-full aspect-[3/5] overflow-hidden rounded-t-[100px] rounded-b-[4px] border border-petrol-base/5 shadow-2xl bg-slate-200">
+                      {/* 
+                          UPDATED SHAPE:
+                          - Changed from rounded-t-full (arch/triangle) to rounded-[2rem] (rectangle).
+                          - Kept aspect-[3/4] for portrait rectangle.
+                      */}
+                      <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[2rem] border border-petrol-base/5 shadow-2xl bg-slate-200 group">
                           <MotionImg 
                             initial={{ scale: 1.4, filter: "grayscale(100%) blur(5px)" }}
                             animate={{ scale: 1, filter: "grayscale(0%) blur(0px)" }}
                             transition={{ duration: 2, ease: "circOut" }}
-                            src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800&h=1400" 
+                            src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=600&h=800" 
                             alt="Victor Cardoso Portrait" 
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                           />
                           
-                          {/* Inner Border/Frame for Detail */}
-                          <div className="absolute inset-2 border border-white/20 rounded-t-[96px] rounded-b-[2px] pointer-events-none mix-blend-overlay"></div>
+                          {/* Inner Border updated to match rectangle */}
+                          <div className="absolute inset-3 border border-white/20 rounded-[1.5rem] pointer-events-none mix-blend-overlay"></div>
                       </div>
                       
-                      {/* Floating Caption - Outside the image for asymmetry */}
-                      <div className="absolute -left-12 bottom-12 flex flex-col items-end">
-                         <span className="text-[4rem] font-serif leading-none text-petrol-base mix-blend-multiply opacity-10">01</span>
-                         <div className="bg-paper border border-petrol-base/10 px-3 py-1.5 shadow-lg mt-[-1rem] relative z-10">
-                            <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base flex items-center gap-2">
-                               <ArrowRight size={10} /> Perfil
+                      {/* Floating Caption - Offset Left */}
+                      <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-end pointer-events-none mix-blend-difference">
+                         <div className="rotate-[-90deg] origin-center translate-y-8">
+                            <span className="text-[9px] font-mono uppercase tracking-widest text-white/60">
+                               Perfil Doc.
                             </span>
                          </div>
                       </div>
+
+                      {/* Small "Perfis" Badge */}
+                      <div className="absolute -bottom-6 -right-6 z-20">
+                         <div className="bg-petrol-base text-white w-20 h-20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                            <svg viewBox="0 0 100 100" width="80" height="80">
+                              <path id="curve" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent"/>
+                              <text>
+                                <textPath href="#curve" className="text-[10px] font-mono uppercase tracking-widest fill-current">
+                                  Engenharia • Design • Produto •
+                                </textPath>
+                              </text>
+                            </svg>
+                         </div>
+                         <div className="absolute inset-0 flex items-center justify-center text-white">
+                             <ArrowRight size={14} className="-rotate-45" />
+                         </div>
+                      </div>
+
                   </Reveal>
                </MotionDiv>
             </div>

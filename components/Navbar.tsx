@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
-  // States for Scroll Logic
+  // Scroll States
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
 
@@ -21,19 +21,23 @@ const Navbar: React.FC = () => {
   // Scroll Aware Logic
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
-
-    // 1. Detect Glass State (Top vs Scrolled)
+    
+    // 1. Detect if we are scrolled past the top (Glass Effect Trigger)
     if (latest > 50) {
       setIsScrolled(true);
     } else {
       setIsScrolled(false);
     }
 
-    // 2. Detect Direction (Hide on Down, Show on Up)
-    // Only hide if we are past the initial hero section (> 150px) to avoid flickering at top
+    // 2. Detect Scroll Direction (Hide/Show Logic)
+    // If menu is open, do not mess with visibility logic
+    if (isMenuOpen) return;
+
     if (latest > previous && latest > 150) {
+      // Scrolling Down & Past Header -> Hide
       setIsHidden(true);
     } else {
+      // Scrolling Up or At Top -> Show
       setIsHidden(false);
     }
   });
@@ -46,46 +50,46 @@ const Navbar: React.FC = () => {
   const menuItems = NAV_LINKS.map(link => ({ label: link.name, link: link.href }));
   const socialItems = CONTACT_INFO.socials.map(social => ({ label: social.name, link: social.url }));
 
-  // Animation Variants
+  // --- Visual States (Variants) ---
   const navVariants = {
     top: {
         y: 0,
-        backgroundColor: 'rgba(242, 244, 246, 0)',
+        backgroundColor: 'rgba(242, 244, 246, 0)', // Transparent
         backdropFilter: 'blur(0px)',
         borderBottom: '1px solid transparent',
+        boxShadow: '0 0 0 rgba(0,0,0,0)'
     },
     scrolled: {
         y: 0,
-        backgroundColor: 'rgba(242, 244, 246, 0.85)', // High opacity for readability
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(11, 35, 46, 0.08)',
+        backgroundColor: 'rgba(242, 244, 246, 0.8)', // Glassy Paper
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(11, 35, 46, 0.05)',
+        boxShadow: '0 4px 20px -5px rgba(0,0,0,0.05)'
     },
     hidden: {
-        y: "-100%",
-        backgroundColor: 'rgba(242, 244, 246, 0.85)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(11, 35, 46, 0.08)',
+        y: "-100%", // Move out of view
+        backgroundColor: 'rgba(242, 244, 246, 0.8)',
+        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid rgba(11, 35, 46, 0.05)',
+        boxShadow: '0 0 0 rgba(0,0,0,0)'
     }
   };
 
-  // Determine current state
-  // If Menu is OPEN, force it to be visible ('scrolled' or 'top' doesn't matter much for visibility, but 'scrolled' ensures contrast if needed)
-  // Otherwise, check if Hidden -> check if Scrolled -> else Top
-  const currentVariant = isMenuOpen 
-    ? (isScrolled ? "scrolled" : "top") 
-    : isHidden 
-        ? "hidden" 
-        : isScrolled 
-            ? "scrolled" 
-            : "top";
+  // Determine current variant based on state priority
+  const getCurrentVariant = () => {
+    if (isMenuOpen) return "top"; // When menu is open, keep navbar visible but transparent (menu has its own bg)
+    if (isHidden) return "hidden";
+    if (isScrolled) return "scrolled";
+    return "top";
+  };
 
   return (
     <>
       <MotionHeader
         initial="top"
-        animate={currentVariant}
+        animate={getCurrentVariant()}
         variants={navVariants}
-        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
         className="fixed top-0 left-0 w-full z-[9995] px-6 py-4 md:px-12 md:py-6 flex justify-between items-center"
       >
         {/* Logo - Elegant & Minimal */}

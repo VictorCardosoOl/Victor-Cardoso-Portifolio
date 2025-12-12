@@ -126,6 +126,16 @@ const Projects: React.FC = () => {
                                   </div>
                                   <div className="max-w-xs">
                                      <p className="text-sm font-light text-petrol-ink leading-relaxed opacity-80">{project.description}</p>
+                                     {/* Tech list specifically for Lumina Architecture */}
+                                     {project.title === 'Lumina Architecture' && (
+                                         <ul className="mt-4 space-y-1">
+                                             {['AWS S3', 'Stripe Connect', 'Next.js 14'].map(tech => (
+                                                 <li key={tech} className="text-xs font-mono text-petrol-base/60 flex items-center gap-2">
+                                                     <span className="w-1 h-1 bg-petrol-electric rounded-full"></span> {tech}
+                                                 </li>
+                                             ))}
+                                         </ul>
+                                     )}
                                   </div>
                                   <div className="pt-4">
                                     <button onClick={() => setSelectedProject(project)} className="text-[10px] font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-petrol-electric flex items-center gap-2 transition-colors border-b border-petrol-base/10 hover:border-petrol-electric pb-1">
