@@ -21,7 +21,7 @@ const MotionDiv = motion.div as any;
 // Narrative Preloader - Deep Archive Theme
 const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const [textIndex, setTextIndex] = useState(0);
-  const words = ["INITIALIZING", "STRATEGY", "DESIGN", "SYSTEM READY"];
+  const words = ["INICIALIZANDO", "ESTRATÉGIA", "DESIGN", "SISTEMA PRONTO"];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -45,7 +45,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
       className="fixed inset-0 z-[99999] bg-[#0B232E] flex items-center justify-center text-[#F2F4F6]"
     >
       <div className="flex flex-col items-center">
-         <span className="font-mono text-[10px] uppercase tracking-widest text-petrol-accent mb-6 animate-pulse">
+         <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-6 animate-pulse">
             sys.boot_sequence
          </span>
          
@@ -66,7 +66,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 
          <div className="mt-8 w-48 h-[1px] bg-white/10 relative overflow-hidden">
             <motion.div 
-               className="absolute top-0 left-0 h-full bg-petrol-accent"
+               className="absolute top-0 left-0 h-full bg-white"
                initial={{ width: "0%" }}
                animate={{ width: "100%" }}
                transition={{ duration: 2.4, ease: "easeInOut" }}
@@ -84,7 +84,7 @@ const App: React.FC = () => {
     <GamificationProvider>
       <ScrollProvider>
         <PageTransitionProvider>
-          <div className="flex flex-col min-h-screen relative overflow-x-hidden bg-paper selection:bg-petrol-base selection:text-petrol-accent">
+          <div className="flex flex-col min-h-screen relative overflow-x-hidden bg-paper selection:bg-petrol-base selection:text-white">
             <AnimatePresence mode="wait">
               {loading && <Preloader onComplete={() => setLoading(false)} />}
             </AnimatePresence>
@@ -95,7 +95,7 @@ const App: React.FC = () => {
             <Navbar />
             
             {/* Main Content with Sticky Footer Logic */}
-            <main className="relative z-10 bg-paper mb-[100vh] shadow-[0_20px_50px_-12px_rgba(11,35,46,0.3)] rounded-b-[3rem] border-b border-doc">
+            <main className="relative z-10 bg-paper mb-[90vh] shadow-[0_20px_50px_-12px_rgba(11,35,46,0.3)] rounded-b-[3rem] border-b border-doc">
               <Hero />
               <Projects />
               <Services /> 
@@ -105,7 +105,7 @@ const App: React.FC = () => {
             </main>
             
             {/* Sticky Footer - Fullscreen */}
-            <div className="fixed bottom-0 left-0 w-full z-0 h-screen">
+            <div className="fixed bottom-0 left-0 w-full z-0 min-h-[90vh]">
                <Footer />
             </div>
             

@@ -27,10 +27,10 @@
             colors: {
               paper: '#F2F4F6', // Ice Grey / Paper White
               petrol: {
-                base: '#0B232E', // Deep Petrol (Primary Dark) - Almost Black
-                mid: '#153A48',  // Mid tone for hovers
+                base: '#0B232E', // Deep Petrol (Primary Dark)
+                mid: '#153A48',  // Mid tone
                 ink: '#1E3A45',  // Text Ink
-                accent: '#2DD4BF', // Electric Teal/Cyan for sparks
+                accent: '#94A3B8', // CHANGED: Silver/Blue-Grey (No more Turquoise)
               },
               ink: {
                 100: '#94a3b8',
@@ -97,16 +97,16 @@
         background: #153A48;
       }
 
-      /* Enhanced Accessibility Focus Ring */
+      /* Enhanced Accessibility Focus Ring - Updated Color */
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #F2F4F6, 0 0 0 4px #2DD4BF;
+        box-shadow: 0 0 0 2px #F2F4F6, 0 0 0 4px #94A3B8;
         border-radius: 2px;
       }
       
       ::selection {
         background: #0B232E;
-        color: #2DD4BF;
+        color: #FFFFFF;
       }
 
       /* Lenis */
@@ -116,10 +116,10 @@
       .lenis.lenis-stopped { overflow: hidden; }
       .lenis.lenis-scrolling iframe { pointer-events: none; }
 
-      /* --- STAGGERED MENU CSS --- */
+      /* --- STAGGERED MENU CSS (Simplified/Fallback) --- */
       .staggered-menu-wrapper {
         position: relative;
-        z-index: 9990; /* High z-index */
+        z-index: 9990;
       }
       
       .staggered-menu-wrapper.fixed-wrapper {
@@ -128,128 +128,14 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        pointer-events: none; /* Let clicks pass through when closed */
+        pointer-events: none;
       }
 
       .staggered-menu-wrapper.fixed-wrapper.open {
         pointer-events: auto;
       }
 
-      .staggered-menu-panel {
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 100%;
-        height: 100vh;
-        background: #0B232E; /* Deep Petrol */
-        display: flex;
-        flex-direction: column;
-        padding: 8em 2em 2em 2em;
-        overflow-y: auto;
-        z-index: 40;
-        /* Animation handled by Framer Motion */
-      }
-
-      @media (min-width: 768px) {
-        .staggered-menu-panel {
-            width: clamp(400px, 40vw, 600px);
-        }
-      }
-
-      .sm-prelayers {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 35;
-        overflow: hidden;
-      }
-      
-       @media (min-width: 768px) {
-        .sm-prelayers {
-            width: clamp(400px, 40vw, 600px);
-        }
-      }
-
-      .sm-prelayer {
-        position: absolute;
-        top: 0;
-        right: 0;
-        height: 100%;
-        width: 100%;
-        background: #153A48; /* Mid Petrol */
-        /* Animation handled by Framer Motion */
-      }
-
-      .sm-panel-item {
-        position: relative;
-        color: rgba(255,255,255,0.4);
-        font-family: 'Zodiak', serif;
-        font-weight: 500;
-        font-size: 3.5rem; /* Massive Links */
-        cursor: pointer;
-        line-height: 1.1;
-        letter-spacing: -0.03em;
-        transition: color 0.3s;
-        text-decoration: none;
-        display: inline-block;
-      }
-
-      @media (min-width: 768px) {
-        .sm-panel-item {
-            font-size: 5rem;
-        }
-      }
-
-      .sm-panel-item:hover, .sm-panel-item.active {
-        color: #FFFFFF;
-      }
-
-      /* Numbering */
-      .sm-panel-list {
-        counter-reset: smItem;
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .sm-panel-item::before {
-        content: counter(smItem, decimal-leading-zero);
-        counter-increment: smItem;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 1rem;
-        position: absolute;
-        left: -3rem;
-        top: 50%;
-        transform: translateY(-50%);
-        opacity: 0;
-        transition: opacity 0.3s;
-        color: #2DD4BF;
-      }
-      
-      .sm-panel-item:hover::before {
-        opacity: 1;
-      }
-
-      .sm-socials-link {
-        color: rgba(255,255,255,0.6);
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        transition: color 0.3s;
-      }
-
-      .sm-socials-link:hover {
-        color: #2DD4BF;
-      }
-
+      /* Removed fixed sizing classes to rely on Tailwind classes in component */
     </style>
   <script type="importmap">
 {

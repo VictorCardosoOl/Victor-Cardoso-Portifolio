@@ -52,16 +52,16 @@ const Hero: React.FC = () => {
 
              <div className="relative z-20">
                <h1 className="font-serif font-medium tracking-tighter text-petrol-base font-heading-tight">
-                 <div className="text-[14vw] md:text-[10vw] leading-[0.85] -ml-[0.05em]">
+                 <div className="text-[clamp(3.5rem,10vw,8.5rem)] leading-[0.9] -ml-[0.05em]">
                     <TextReveal delay={100}>Não apenas</TextReveal>
                  </div>
-                 <div className="text-[14vw] md:text-[10vw] leading-[0.85] italic text-petrol-base/40 pl-12 md:pl-24">
+                 <div className="text-[clamp(3.5rem,10vw,8.5rem)] leading-[0.9] italic text-petrol-base/40 pl-12 md:pl-24">
                     <TextReveal delay={200}>código.</TextReveal>
                  </div>
-                 <div className="text-[14vw] md:text-[10vw] leading-[0.85] -ml-[0.05em] mt-4">
+                 <div className="text-[clamp(3.5rem,10vw,8.5rem)] leading-[0.9] -ml-[0.05em] mt-4">
                     <TextReveal delay={300}>Legados</TextReveal>
                  </div>
-                 <div className="text-[14vw] md:text-[10vw] leading-[0.85] text-petrol-accent pl-8 md:pl-16">
+                 <div className="text-[clamp(3.5rem,10vw,8.5rem)] leading-[0.9] text-petrol-accent pl-8 md:pl-16">
                     <TextReveal delay={400}>Digitais.</TextReveal>
                  </div>
                </h1>
