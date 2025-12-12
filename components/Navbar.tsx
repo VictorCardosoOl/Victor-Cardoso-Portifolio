@@ -10,16 +10,31 @@ const MotionHeader = motion.header as any;
 const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  // States for Scroll Logic
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isHidden, setIsHidden] = useState(false);
+
   const { scrollY } = useScroll();
   const { transitionTo } = usePageTransition();
 
-  // Scroll Logic for "Glass" state
+  // Scroll Aware Logic
   useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+
+    // 1. Detect Glass State (Top vs Scrolled)
     if (latest > 50) {
       setIsScrolled(true);
     } else {
       setIsScrolled(false);
+    }
+
+    // 2. Detect Direction (Hide on Down, Show on Up)
+    // Only hide if we are past the initial hero section (> 150px) to avoid flickering at top
+    if (latest > previous && latest > 150) {
+      setIsHidden(true);
+    } else {
+      setIsHidden(false);
     }
   });
 
@@ -31,17 +46,46 @@ const Navbar: React.FC = () => {
   const menuItems = NAV_LINKS.map(link => ({ label: link.name, link: link.href }));
   const socialItems = CONTACT_INFO.socials.map(social => ({ label: social.name, link: social.url }));
 
+  // Animation Variants
+  const navVariants = {
+    top: {
+        y: 0,
+        backgroundColor: 'rgba(242, 244, 246, 0)',
+        backdropFilter: 'blur(0px)',
+        borderBottom: '1px solid transparent',
+    },
+    scrolled: {
+        y: 0,
+        backgroundColor: 'rgba(242, 244, 246, 0.85)', // High opacity for readability
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(11, 35, 46, 0.08)',
+    },
+    hidden: {
+        y: "-100%",
+        backgroundColor: 'rgba(242, 244, 246, 0.85)',
+        backdropFilter: 'blur(12px)',
+        borderBottom: '1px solid rgba(11, 35, 46, 0.08)',
+    }
+  };
+
+  // Determine current state
+  // If Menu is OPEN, force it to be visible ('scrolled' or 'top' doesn't matter much for visibility, but 'scrolled' ensures contrast if needed)
+  // Otherwise, check if Hidden -> check if Scrolled -> else Top
+  const currentVariant = isMenuOpen 
+    ? (isScrolled ? "scrolled" : "top") 
+    : isHidden 
+        ? "hidden" 
+        : isScrolled 
+            ? "scrolled" 
+            : "top";
+
   return (
     <>
       <MotionHeader
-        initial={{ y: 0 }}
-        animate={{ 
-            y: 0,
-            backgroundColor: isScrolled ? 'rgba(242, 244, 246, 0.7)' : 'rgba(242, 244, 246, 0)',
-            backdropFilter: isScrolled ? 'blur(12px)' : 'blur(0px)',
-            borderBottom: isScrolled ? '1px solid rgba(11, 35, 46, 0.05)' : '1px solid transparent',
-        }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        initial="top"
+        animate={currentVariant}
+        variants={navVariants}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         className="fixed top-0 left-0 w-full z-[9995] px-6 py-4 md:px-12 md:py-6 flex justify-between items-center"
       >
         {/* Logo - Elegant & Minimal */}

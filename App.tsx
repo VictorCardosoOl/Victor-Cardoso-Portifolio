@@ -95,6 +95,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 
 const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
+  const [isWhatsappHovered, setIsWhatsappHovered] = useState(false);
 
   return (
     <GamificationProvider>
@@ -141,19 +142,43 @@ const App: React.FC = () => {
             </div>
             
             {/* WhatsApp Floating Action Button */}
-            <div className="fixed bottom-8 right-8 z-40">
-              <Magnetic strength={0.3}>
-                <a 
-                  href="https://wa.me/5511999999999" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center w-14 h-14 bg-petrol-base text-white rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-110 border border-white/10"
-                  aria-label="Contato via WhatsApp"
-                >
-                  <MessageCircle size={24} />
-                </a>
-              </Magnetic>
+            <div className="fixed bottom-8 right-8 z-40 flex items-center gap-4 pointer-events-none">
+              
+              {/* Tooltip */}
+              <AnimatePresence>
+                {isWhatsappHovered && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 10, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: "easeOut" }}
+                    className="pointer-events-auto bg-white text-petrol-base px-4 py-2 rounded-lg shadow-xl border border-petrol-base/5 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden md:block"
+                  >
+                    Fale pelo WhatsApp
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Button Wrapper */}
+              <div 
+                className="pointer-events-auto"
+                onMouseEnter={() => setIsWhatsappHovered(true)}
+                onMouseLeave={() => setIsWhatsappHovered(false)}
+              >
+                <Magnetic strength={0.3}>
+                  <a 
+                    href="https://wa.me/5511999999999" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center w-14 h-14 bg-petrol-base text-white rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-110 border border-white/10"
+                    aria-label="Contato via WhatsApp"
+                  >
+                    <MessageCircle size={24} />
+                  </a>
+                </Magnetic>
+              </div>
             </div>
+
           </div>
         </PageTransitionProvider>
       </ScrollProvider>
