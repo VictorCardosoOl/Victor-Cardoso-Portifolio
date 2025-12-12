@@ -31,7 +31,7 @@
                 mid: '#153A48',  // Mid tone
                 ink: '#1E3A45',  // Text Ink
                 accent: '#CBD5E1', // Cool Silver
-                electric: '#2DD4BF', // Electric Teal (High Voltage Accent)
+                electric: '#78909C', // Muted Blue Grey (Was Vibrant Teal)
               },
             },
             backgroundImage: {
@@ -82,30 +82,31 @@
         border-color: rgba(11, 35, 46, 0.08);
       }
       
-      /* Custom scrollbar */
+      /* Custom scrollbar - Refined */
       ::-webkit-scrollbar {
-        width: 6px;
+        width: 4px; /* Thinner for elegance */
       }
       ::-webkit-scrollbar-track {
-        background: #F2F4F6;
+        background: transparent;
       }
       ::-webkit-scrollbar-thumb {
-        background: #0B232E;
+        background: rgba(11, 35, 46, 0.2);
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
-        background: #153A48;
+        background: rgba(11, 35, 46, 0.6);
       }
 
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #F2F4F6, 0 0 0 4px #0B232E;
+        box-shadow: 0 0 0 1px #F2F4F6, 0 0 0 3px #0B232E;
         border-radius: 2px;
       }
       
+      /* High Voltage Selection - Now Muted */
       ::selection {
-        background: #0B232E;
-        color: #FFFFFF;
+        background: #CBD5E1; /* Muted Silver/Blue */
+        color: #0B232E;
       }
 
       /* Lenis */

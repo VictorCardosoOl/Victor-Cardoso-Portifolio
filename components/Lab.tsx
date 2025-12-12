@@ -163,7 +163,7 @@ const Lab: React.FC = () => {
                                         <span className="text-[10px] font-mono border border-white/20 px-1.5 py-0.5 rounded text-white bg-black/40 backdrop-blur-md">
                                             EXP_0{exp.id}
                                         </span>
-                                        <div className="w-8 h-8 rounded-full bg-petrol-electric text-petrol-base flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300 shadow-[0_0_15px_rgba(45,212,191,0.5)]">
+                                        <div className="w-8 h-8 rounded-full bg-petrol-electric text-white flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300 shadow-[0_0_15px_rgba(120,144,156,0.3)]">
                                             <Play size={12} fill="currentColor" />
                                         </div>
                                     </div>

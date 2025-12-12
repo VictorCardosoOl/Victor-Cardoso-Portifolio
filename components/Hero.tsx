@@ -4,49 +4,31 @@ import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 import Magnetic from './ui/Magnetic';
 import { usePageTransition } from './ui/PageTransition';
-import { MapPin, Globe, ArrowDownRight } from 'lucide-react';
+import { MapPin, Globe, ArrowDown, ArrowRight } from 'lucide-react';
 
 const MotionDiv = motion.div as any;
 const MotionImg = motion.img as any;
-const MotionH1 = motion.h1 as any; // Para aplicar o skew no texto
-
-/**
- * COMPONENTE: Hero
- * ----------------
- * A entrada principal do site. Combina layout assimétrico, paralaxe e tipografia física.
- * 
- * EFEITOS VISUAIS:
- * 1. Layout Assimétrico: Texto à esquerda (pesado), Imagem à direita inferior (âncora).
- * 2. Paralaxe Inverso: Conforme o scroll desce, a imagem sobe mais rápido que o texto, criando profundidade 3D.
- * 3. VELOCITY TYPOGRAPHY (Novo):
- *    - Usa `useVelocity` do Framer Motion para detectar a velocidade do scroll.
- *    - Aplica uma transformação `skewX` (distorção horizontal) baseada nessa velocidade.
- *    - O texto parece "esticar" ou "correr" quando o usuário faz scroll rápido, dando peso físico aos pixels.
- */
+const MotionH1 = motion.h1 as any;
 
 const Hero: React.FC = () => {
   const containerRef = useRef(null);
   const { scrollY } = useScroll();
   const { transitionTo } = usePageTransition();
 
-  // --- PHYSICS ENGINE ---
-  
-  // 1. Scroll Physics (Spring)
+  // --- PHYSICS & PARALLAX ---
   const smoothY = useSpring(scrollY, { damping: 20, stiffness: 100 });
   
-  // 2. Parallax Transforms
-  // Text moves up slowly
-  const textY = useTransform(smoothY, [0, 1000], [0, -150]); 
-  // Image moves up faster (creating depth between fg/bg)
-  const imageY = useTransform(smoothY, [0, 1000], [0, -250]);
+  // Parallax diferenciado para criar profundidade
+  // Texto sobe devagar
+  const textY = useTransform(smoothY, [0, 1000], [0, -100]); 
+  // Imagem sobe mais rápido (plano de fundo/médio)
+  const imageY = useTransform(smoothY, [0, 1000], [0, -200]);
   const opacity = useTransform(smoothY, [0, 500], [1, 0]);
 
-  // 3. Velocity Typography Logic
+  // Velocity Typography (Distorção sutil baseada na velocidade do scroll)
   const scrollVelocity = useVelocity(scrollY);
-  // Mapeia velocidade (-1000 a 1000) para graus de skew (-10deg a 10deg)
-  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-10, 10]);
-  // Aplica física de mola para suavizar a distorção (evita "jitters")
-  const skewVelocity = useSpring(rawSkew, { damping: 40, stiffness: 200 });
+  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-5, 5]); // Reduzi o skew para ser mais elegante
+  const skewVelocity = useSpring(rawSkew, { damping: 50, stiffness: 200 });
 
   const handleNav = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
@@ -57,117 +39,124 @@ const Hero: React.FC = () => {
     <section 
       id="hero" 
       ref={containerRef}
-      className="min-h-screen relative overflow-hidden bg-paper text-petrol-base pt-32 pb-20 flex flex-col"
+      className="min-h-screen relative bg-paper text-petrol-base pt-32 pb-20 flex flex-col justify-center overflow-hidden"
     >
       
-      {/* --- ARCHITECTURAL LINES (ASYMMETRIC) --- */}
-      {/* Off-center Axis (The Golden Section Line) */}
-      <div className="absolute top-0 left-8 md:left-[38%] w-px h-full bg-petrol-base/5 z-0" />
-      
-      {/* Horizontal Guideline */}
-      <div className="absolute top-[65%] left-0 w-full h-px bg-petrol-base/5 z-0" />
+      {/* --- GRID LINES (Editorial Guides) --- */}
+      <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0" />
+      <div className="absolute top-0 right-6 md:right-1/3 w-px h-full bg-petrol-base/[0.03] z-0 hidden md:block" />
 
-      {/* --- CONTENT LAYER --- */}
-      <div className="container mx-auto px-6 md:px-12 relative z-10 flex-grow flex flex-col">
+      <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10">
         
-        {/* Top Meta Data (Spread out) */}
-        <Reveal width="100%" className="flex justify-between items-start mb-12 md:mb-0">
-           <div className="flex flex-col gap-1">
-              <span className="text-[10px] font-mono uppercase tracking-widest text-petrol-base/40">Victor Cardoso</span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-petrol-base">Engenheiro de Software</span>
-           </div>
-           <div className="flex flex-col gap-1 text-right">
-              <div className="flex items-center justify-end gap-2 text-[10px] font-mono uppercase tracking-widest text-petrol-base/40">
-                 <MapPin size={10} /> São Paulo, BR
-              </div>
-              <div className="flex items-center justify-end gap-2 text-[10px] font-mono uppercase tracking-widest text-petrol-base">
-                 <Globe size={10} className="text-petrol-electric" /> Online
-              </div>
-           </div>
-        </Reveal>
+        {/* --- META HEADER --- */}
+        <div className="flex justify-between items-start mb-20 md:mb-12 pl-4 md:pl-16">
+           <Reveal width="100%">
+             <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base/40">Victor Cardoso</span>
+                <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base">Engenheiro de Software</span>
+             </div>
+           </Reveal>
+           
+           <Reveal width="100%" delay={100}>
+             <div className="flex flex-col gap-1 text-right">
+                <div className="flex items-center justify-end gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base/40">
+                   <Globe size={10} className="text-petrol-electric" /> Online
+                </div>
+             </div>
+           </Reveal>
+        </div>
 
-        {/* --- MAIN ASYMMETRIC COMPOSITION --- */}
-        <div className="flex-grow grid grid-cols-1 lg:grid-cols-12 h-full items-center relative">
+        {/* --- ASYMMETRIC COMPOSITION --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 relative">
             
-            {/* LEFT: Typography Mass */}
-            <div className="lg:col-span-8 flex flex-col justify-center relative z-20 pt-10 md:pt-0">
+            {/* 1. TEXT MASS (Top Left - Dominant) */}
+            <div className="lg:col-span-7 flex flex-col justify-center relative z-20 pl-2 md:pl-16">
                 <MotionDiv style={{ y: textY }} className="relative">
                    
-                   {/* Title 1: Velocity Applied via style={{ skewX: skewVelocity }} */}
-                   <MotionH1 
-                     style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                     className="text-[16vw] md:text-[9rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter will-change-transform"
-                   >
-                     Lógica
-                   </MotionH1>
-                   
-                   {/* Title 2 (Indented) */}
-                   <div className="flex items-center gap-6 ml-2 md:ml-24 lg:ml-40">
-                      <div className="w-12 h-12 md:w-20 md:h-20 rounded-full border border-petrol-base/20 flex items-center justify-center shrink-0">
-                         <ArrowDownRight className="text-petrol-base w-6 h-6 md:w-8 md:h-8" />
-                      </div>
-                      <MotionH1 
-                        style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                        className="text-[16vw] md:text-[9rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter italic opacity-80 will-change-transform"
-                      >
-                        Estética
-                      </MotionH1>
+                   {/* Main Title Block */}
+                   <div className="relative mb-12">
+                       <MotionH1 
+                         style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
+                         className="text-[15vw] md:text-[8rem] lg:text-[9.5rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken"
+                       >
+                         Lógica
+                       </MotionH1>
+                       
+                       <div className="flex items-start ml-8 md:ml-32 lg:ml-40 mt-2 md:mt-4">
+                          <span className="text-xs font-mono text-petrol-base/30 mt-4 mr-4 hidden md:block">(01)</span>
+                          <MotionH1 
+                            style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
+                            className="text-[15vw] md:text-[8rem] lg:text-[9.5rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter italic opacity-80"
+                          >
+                            Estética
+                          </MotionH1>
+                       </div>
                    </div>
 
-                   {/* Description & CTA Block */}
-                   <div className="mt-12 md:mt-16 ml-2 md:ml-4 max-w-md">
+                   {/* Editorial Description (Slender Column) */}
+                   <div className="ml-1 md:ml-2 lg:ml-40 max-w-sm flex flex-col gap-8">
                       <Reveal delay={200} variant="translate">
-                        <p className="text-sm md:text-base font-light text-petrol-ink leading-relaxed mb-8 border-l border-petrol-base/20 pl-6">
-                           Arquitetura de software de alta performance fundida com design editorial. <br/>
-                           Construindo o futuro da web, pixel por pixel.
+                        <p className="text-sm md:text-base font-light text-petrol-ink leading-[1.8] border-l border-petrol-base/20 pl-6">
+                           Arquitetura de software de alta precisão fundida com design editorial. 
+                           Transformando complexidade em interfaces silenciosas e eficientes.
                         </p>
                       </Reveal>
 
                       <Reveal delay={300} variant="scale">
-                         <Magnetic strength={0.3}>
-                            <a href="#contact" onClick={(e) => handleNav(e, '#contact')}>
-                              <Button 
-                                variant="outline" 
-                                className="rounded-full px-8 py-4 border-petrol-base text-petrol-base hover:bg-petrol-base hover:text-white transition-all duration-500 group"
-                              >
-                                <span className="text-[10px] tracking-[0.25em] group-hover:tracking-[0.35em] transition-all font-bold">
-                                  INICIAR PROTOCOLO
-                                </span>
-                              </Button>
-                            </a>
-                         </Magnetic>
+                         <div className="flex items-center gap-6">
+                            <Magnetic strength={0.3}>
+                                <a href="#contact" onClick={(e) => handleNav(e, '#contact')}>
+                                  <Button 
+                                    variant="outline" 
+                                    className="rounded-full px-8 py-3 border-petrol-base text-petrol-base hover:bg-petrol-base hover:text-white transition-all duration-500 group text-[10px]"
+                                  >
+                                    <span className="tracking-[0.25em] group-hover:tracking-[0.35em] transition-all font-bold">
+                                      INICIAR
+                                    </span>
+                                  </Button>
+                                </a>
+                             </Magnetic>
+                             <div className="w-12 h-px bg-petrol-base/20"></div>
+                             <span className="text-[10px] font-mono text-petrol-base/40">Scroll para explorar</span>
+                         </div>
                       </Reveal>
                    </div>
 
                 </MotionDiv>
             </div>
 
-            {/* RIGHT: Slender Image Anchor (Bottom Right) */}
-            <div className="lg:col-span-4 relative h-[50vh] lg:h-full flex items-end justify-end lg:pb-12 pointer-events-none z-10 mt-12 lg:mt-0">
+            {/* 2. IMAGE ANCHOR (Bottom Right - Slender & Offset) 
+                Pushed down with margin-top to break symmetry.
+            */}
+            <div className="lg:col-span-5 relative flex flex-col justify-end items-end lg:items-start lg:pl-12 mt-12 lg:mt-32 pointer-events-none z-10">
                <MotionDiv 
                   style={{ y: imageY }}
-                  className="relative w-[70vw] md:w-[40vw] lg:w-[24vw] aspect-[9/14] lg:mr-[-2rem]"
+                  className="relative w-[75%] md:w-[60%] lg:w-[85%] max-w-sm mr-4 lg:mr-0"
                >
-                  <Reveal width="100%" duration={1.4} className="h-full w-full">
-                      <div className="relative w-full h-full overflow-hidden rounded-t-full rounded-bl-full border border-petrol-base/10 shadow-2xl bg-slate-200">
+                  <Reveal width="100%" duration={1.6} className="w-full">
+                      {/* Slender Aspect Ratio (3:5) for elegance */}
+                      <div className="relative w-full aspect-[3/5] overflow-hidden rounded-t-[100px] rounded-b-[4px] border border-petrol-base/5 shadow-2xl bg-slate-200">
                           <MotionImg 
-                            initial={{ scale: 1.3, filter: "grayscale(100%)" }}
-                            animate={{ scale: 1, filter: "grayscale(0%)" }}
-                            transition={{ duration: 1.8, ease: "circOut" }}
+                            initial={{ scale: 1.4, filter: "grayscale(100%) blur(5px)" }}
+                            animate={{ scale: 1, filter: "grayscale(0%) blur(0px)" }}
+                            transition={{ duration: 2, ease: "circOut" }}
                             src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800&h=1400" 
-                            alt="Portrait" 
+                            alt="Victor Cardoso Portrait" 
                             className="w-full h-full object-cover"
                           />
                           
-                          {/* Grain/Texture Overlay */}
-                          <div className="absolute inset-0 bg-petrol-base/10 mix-blend-overlay"></div>
+                          {/* Inner Border/Frame for Detail */}
+                          <div className="absolute inset-2 border border-white/20 rounded-t-[96px] rounded-b-[2px] pointer-events-none mix-blend-overlay"></div>
                       </div>
                       
-                      {/* Decorative Label */}
-                      <div className="absolute -bottom-6 -left-6 bg-paper border border-petrol-base/10 px-4 py-2 rounded-full shadow-lg z-20">
-                         <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base">
-                            Fig. 01 — Perfil
-                         </span>
+                      {/* Floating Caption - Outside the image for asymmetry */}
+                      <div className="absolute -left-12 bottom-12 flex flex-col items-end">
+                         <span className="text-[4rem] font-serif leading-none text-petrol-base mix-blend-multiply opacity-10">01</span>
+                         <div className="bg-paper border border-petrol-base/10 px-3 py-1.5 shadow-lg mt-[-1rem] relative z-10">
+                            <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base flex items-center gap-2">
+                               <ArrowRight size={10} /> Perfil
+                            </span>
+                         </div>
                       </div>
                   </Reveal>
                </MotionDiv>
@@ -177,19 +166,14 @@ const Hero: React.FC = () => {
 
       </div>
 
-      {/* Scroll Indicator (Moved to bottom left aligned with line) */}
+      {/* Elegant Scroll Indicator - Bottom Left */}
       <MotionDiv 
         style={{ opacity }}
-        className="absolute bottom-0 left-8 md:left-[38%] -translate-x-1/2 mb-8 hidden md:flex flex-col items-center gap-2 text-petrol-base/30 z-20"
+        className="absolute bottom-8 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20"
       >
-         <span className="text-[9px] uppercase tracking-widest font-mono rotate-90 origin-center translate-y-[-20px]">Scroll</span>
-         <div className="w-px h-16 bg-petrol-base/10 overflow-hidden relative">
-            <motion.div 
-               animate={{ y: ["-100%", "100%"] }}
-               transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-               className="absolute top-0 left-0 w-full h-1/2 bg-petrol-base"
-            />
-         </div>
+         <div className="h-px w-12 bg-petrol-base/20"></div>
+         <span className="text-[9px] uppercase tracking-widest font-mono">Role</span>
+         <ArrowDown size={12} className="animate-bounce" />
       </MotionDiv>
 
     </section>
