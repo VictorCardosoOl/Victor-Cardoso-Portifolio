@@ -17,14 +17,13 @@ const Button: React.FC<ButtonProps> = ({
   ...props 
 }) => {
   
-  const baseStyles = "inline-flex items-center justify-center font-bold uppercase tracking-widest rounded-full transition-all duration-500 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
+  const baseStyles = "inline-flex items-center justify-center font-bold uppercase tracking-widest rounded-full transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none cursor-pointer";
   
   const variants = {
-    // Gradient moving from Deep Petrol (#0B232E) to Lighter Petrol/Teal (#064E5E) and back
-    primary: "bg-gradient-to-r from-[#0B232E] via-[#064E5E] to-[#0B232E] bg-[length:200%_auto] text-white hover:bg-right shadow-[0_8px_30px_rgb(11,35,46,0.2)] hover:shadow-[0_8px_30px_rgb(11,35,46,0.3)] hover:-translate-y-0.5",
-    secondary: "bg-white text-petrol-base border border-petrol-base/10 hover:border-petrol-base/30 shadow-sm hover:shadow-md",
-    outline: "border border-petrol-base/20 text-petrol-base/80 hover:border-petrol-base hover:text-petrol-base bg-transparent hover:bg-petrol-base/5",
-    ghost: "bg-transparent text-petrol-base/60 hover:text-petrol-base hover:bg-petrol-base/5"
+    primary: "bg-slate-900 text-white hover:bg-slate-800 shadow-[0_8px_30px_rgb(15,23,42,0.12)] hover:shadow-[0_8px_30px_rgb(15,23,42,0.2)] hover:-translate-y-0.5",
+    secondary: "bg-white text-slate-900 border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-md",
+    outline: "border border-slate-200 text-slate-600 hover:border-slate-900 hover:text-slate-900 bg-transparent hover:bg-slate-50",
+    ghost: "bg-transparent text-slate-500 hover:text-slate-900 hover:bg-slate-100/50"
   };
 
   const sizes = {

@@ -21,16 +21,9 @@ interface StaggeredMenuProps {
   socialItems: SocialItem[];
   onNavClick: (href: string) => void;
   activeSection?: string;
-  visible?: boolean;
 }
 
-const StaggeredMenu: React.FC<StaggeredMenuProps> = ({ 
-  items, 
-  socialItems, 
-  onNavClick, 
-  activeSection,
-  visible = true 
-}) => {
+const StaggeredMenu: React.FC<StaggeredMenuProps> = ({ items, socialItems, onNavClick, activeSection }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Lock scroll
@@ -53,13 +46,8 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
   return (
     <div className={`staggered-menu-wrapper fixed-wrapper ${isOpen ? 'open' : ''}`}>
       
-      {/* Fixed Header (Logo + Toggle) - Scroll Aware */}
-      <motion.div 
-        initial={{ y: 0 }}
-        animate={{ y: visible || isOpen ? 0 : -100 }}
-        transition={{ duration: 0.4, ease: [0.76, 0, 0.24, 1] }}
-        className="fixed top-0 left-0 w-full flex items-center justify-between p-6 md:p-12 z-[9995] pointer-events-none"
-      >
+      {/* Fixed Header (Logo + Toggle) */}
+      <div className="fixed top-0 left-0 w-full flex items-center justify-between p-6 md:p-12 z-[9995] pointer-events-none">
           {/* Logo */}
           <a 
             href="#hero" 
@@ -83,7 +71,7 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
              </span>
              {isOpen ? <X size={16} /> : <Menu size={16} />}
           </button>
-      </motion.div>
+      </div>
 
       {/* Backdrop */}
       <AnimatePresence>

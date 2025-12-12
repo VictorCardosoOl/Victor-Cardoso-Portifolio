@@ -6,40 +6,20 @@ import StaggeredMenu from './ui/StaggeredMenu';
 const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [readingProgress, setReadingProgress] = useState(0);
-  const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
   
   const { transitionTo } = usePageTransition();
 
-  // Scroll Progress & Smart Visibility
+  // Scroll Progress
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const totalScroll = document.documentElement.scrollTop;
       const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrollProgress = windowHeight > 0 ? currentScrollY / windowHeight : 0;
-      
-      setReadingProgress(Number(scrollProgress));
-
-      // Smart Navigation Logic
-      if (currentScrollY > 100) {
-        if (currentScrollY > lastScrollY + 5) {
-          // Scrolling Down -> Hide
-          setIsVisible(false);
-        } else if (currentScrollY < lastScrollY - 5) {
-          // Scrolling Up -> Show
-          setIsVisible(true);
-        }
-      } else {
-        // Top of page -> Show
-        setIsVisible(true);
-      }
-
-      setLastScrollY(currentScrollY);
+      const scroll = windowHeight > 0 ? totalScroll / windowHeight : 0;
+      setReadingProgress(Number(scroll));
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   // Intersection Observer
   useEffect(() => {
@@ -78,7 +58,6 @@ const Navbar: React.FC = () => {
         socialItems={socialItems} 
         onNavClick={handleNavClick} 
         activeSection={activeSection}
-        visible={isVisible}
       />
     </>
   );
