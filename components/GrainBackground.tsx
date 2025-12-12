@@ -17,7 +17,8 @@ const GrainBackground = () => {
       
       {/* Subtle "Petrol" Atmospheric Glows (Fixed positions for performance) */}
       <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#064E5E] rounded-full blur-[180px] opacity-[0.08]" /> 
-      <div className="absolute bottom-[20%] right-[-10%] w-[40vw] h-[40vw] bg-[#38BDF8] rounded-full blur-[180px] opacity-[0.05]" />
+      {/* Replaced Turquoise with Cool Silver/Mid Petrol */}
+      <div className="absolute bottom-[20%] right-[-10%] w-[40vw] h-[40vw] bg-[#CBD5E1] rounded-full blur-[180px] opacity-[0.06]" />
     </div>
   );
 };

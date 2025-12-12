@@ -46,25 +46,29 @@ const Gamification: React.FC = () => {
   }, [completeQuest]);
 
   // --- Strict Footer Trigger for "Manifest" ---
+  // Fix: Increased threshold buffer and added Math.ceil for better detection
   useEffect(() => {
-    // Only query the footer, ensuring we don't accidentally trigger on Hero
-    const footer = document.querySelector('footer#site-footer');
-    if (!footer) return;
+    const handleScrollCheck = () => {
+        if (hasShownManifest) return;
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-          if (entry.isIntersecting && entry.target.id === 'site-footer' && !hasShownManifest) {
-            // Only show if user spent more than 5 seconds to avoid annoyance
-            if (totalTime > 5) {
-                setShowManifest(true);
-                setHasShownManifest(true);
-            }
-          }
-      });
-    }, { threshold: 0.5 }); // Require 50% of footer visibility
+        const windowHeight = window.innerHeight;
+        const scrollY = Math.ceil(window.scrollY); // Round up to avoid fractional pixel issues
+        const totalHeight = document.documentElement.scrollHeight;
+        
+        // Threshold buffer (100px) allows for mobile address bars or minor layout shifts
+        const isAtBottom = (windowHeight + scrollY) >= (totalHeight - 100);
 
-    observer.observe(footer);
-    return () => observer.disconnect();
+        if (isAtBottom) {
+             // Only show if session has been going on for a bit (e.g. 5 seconds) to avoid instant popups on refresh
+             if (totalTime > 5) {
+                 setShowManifest(true);
+                 setHasShownManifest(true);
+             }
+        }
+    };
+
+    window.addEventListener('scroll', handleScrollCheck);
+    return () => window.removeEventListener('scroll', handleScrollCheck);
   }, [hasShownManifest, totalTime]);
 
 
@@ -82,18 +86,18 @@ const Gamification: React.FC = () => {
           transition={{ type: "spring", damping: 20, stiffness: 100 }}
           className="fixed bottom-0 right-0 md:right-8 z-50 w-full md:w-[380px] pointer-events-none"
         >
-          {/* Manifest Card (Looks like a receipt) */}
-          <div className="pointer-events-auto bg-[#F2F0E9] text-[#1C1C1C] rounded-t-xl md:rounded-t-xl border-t border-x border-black/10 shadow-[-10px_-10px_30px_rgba(0,0,0,0.1)] p-6 md:p-8 font-mono text-xs relative before:content-[''] before:absolute before:top-[-6px] before:left-0 before:w-full before:h-[6px] before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgMTIgNiI+PHBhdGggZD0iTTAgNmw2LTYgNiA2SCB6IiBmaWxsPSIjRjJGMEU5Ii8+PC9zdmc+')] before:repeat-x">
+          {/* Manifest Card (Looks like a receipt) - Updated Colors to Paper/Petrol */}
+          <div className="pointer-events-auto bg-[#F2F4F6] text-[#0B232E] rounded-t-xl md:rounded-t-xl border-t border-x border-petrol-base/10 shadow-[-10px_-10px_30px_rgba(11,35,46,0.15)] p-6 md:p-8 font-mono text-xs relative before:content-[''] before:absolute before:top-[-6px] before:left-0 before:w-full before:h-[6px] before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgMTIgNiI+PHBhdGggZD0iTTAgNmw2LTYgNiA2SCB6IiBmaWxsPSIjRjJGNEY2Ii8+PC9zdmc+')] before:repeat-x">
             
             {/* Header */}
-            <div className="flex justify-between items-start mb-6 border-b border-black/10 pb-4 border-dashed">
+            <div className="flex justify-between items-start mb-6 border-b border-petrol-base/10 pb-4 border-dashed">
                 <div className="flex flex-col">
-                    <span className="uppercase font-bold tracking-widest text-[10px] text-black/40">Sessão Finalizada</span>
+                    <span className="uppercase font-bold tracking-widest text-[10px] text-petrol-base/40">Sessão Finalizada</span>
                     <span className="text-lg font-bold mt-1">Manifesto de Visita</span>
                 </div>
                 <button 
                     onClick={() => setShowManifest(false)}
-                    className="w-6 h-6 flex items-center justify-center hover:bg-black/5 rounded-full transition-colors"
+                    className="w-6 h-6 flex items-center justify-center hover:bg-petrol-base/5 rounded-full transition-colors"
                 >
                     <X size={14} />
                 </button>
@@ -102,14 +106,14 @@ const Gamification: React.FC = () => {
             {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                    <span className="block text-[9px] uppercase tracking-wider text-black/40 mb-1">Duração</span>
+                    <span className="block text-[9px] uppercase tracking-wider text-petrol-base/40 mb-1">Duração</span>
                     <div className="flex items-center gap-2">
                         <Clock size={12} />
                         <span className="font-bold">{Math.floor(totalTime / 60)}m {totalTime % 60}s</span>
                     </div>
                 </div>
                 <div>
-                    <span className="block text-[9px] uppercase tracking-wider text-black/40 mb-1">Maior Interesse</span>
+                    <span className="block text-[9px] uppercase tracking-wider text-petrol-base/40 mb-1">Maior Interesse</span>
                     <div className="flex items-center gap-2">
                         <Target size={12} />
                         <span className="font-bold capitalize">{topSection ? topSection[0] : 'Geral'}</span>
@@ -119,13 +123,13 @@ const Gamification: React.FC = () => {
 
             {/* "What you missed" section */}
             {missingQuests.length > 0 && (
-                <div className="bg-white p-4 rounded-lg border border-black/5 mb-6">
-                    <p className="text-[10px] uppercase tracking-wider text-black/40 mb-3">Você ainda não viu:</p>
+                <div className="bg-white p-4 rounded-lg border border-petrol-base/5 mb-6">
+                    <p className="text-[10px] uppercase tracking-wider text-petrol-base/40 mb-3">Você ainda não viu:</p>
                     <ul className="space-y-3">
                         {missingQuests.slice(0, 2).map(q => (
                             <li key={q.id}>
-                                <a href={q.link} className="flex justify-between items-center group hover:bg-black/5 p-1 rounded transition-colors -mx-1">
-                                    <span className="font-bold border-b border-black/20 group-hover:border-black transition-colors">{q.label}</span>
+                                <a href={q.link} className="flex justify-between items-center group hover:bg-petrol-base/5 p-1 rounded transition-colors -mx-1">
+                                    <span className="font-bold border-b border-petrol-base/20 group-hover:border-petrol-base transition-colors">{q.label}</span>
                                     <ArrowUpRight size={12} className="opacity-50 group-hover:opacity-100" />
                                 </a>
                             </li>
@@ -136,10 +140,10 @@ const Gamification: React.FC = () => {
 
             {/* CTA */}
             <div className="text-center pt-2">
-                <p className="italic text-black/50 mb-4">"O design é a inteligência tornada visível."</p>
+                <p className="italic text-petrol-base/50 mb-4">"O design é a inteligência tornada visível."</p>
                 <a 
                     href="#contact" 
-                    className="block w-full py-3 bg-[#1C1C1C] text-[#F2F0E9] text-center font-bold uppercase tracking-widest hover:bg-black transition-colors"
+                    className="block w-full py-3 bg-[#0B232E] text-[#F2F4F6] text-center font-bold uppercase tracking-widest hover:bg-[#153A48] transition-colors"
                 >
                     Iniciar Conversa
                 </a>
@@ -148,7 +152,7 @@ const Gamification: React.FC = () => {
                        {/* Fake Barcode */}
                        <svg className="w-full h-full" preserveAspectRatio="none">
                            <pattern id="barcode" width="4" height="100%" patternUnits="userSpaceOnUse">
-                               <rect width="2" height="100%" fill="#000" />
+                               <rect width="2" height="100%" fill="#0B232E" />
                            </pattern>
                            <rect width="100%" height="100%" fill="url(#barcode)" />
                        </svg>

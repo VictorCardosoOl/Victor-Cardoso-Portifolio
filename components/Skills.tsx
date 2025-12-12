@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { SKILLS } from '../constants';
 import { Reveal } from './ui/Reveal';
@@ -14,7 +13,7 @@ const Skills: React.FC = () => {
         {/* Header Section */}
         <div className="text-center mb-16 md:mb-28 max-w-2xl mx-auto">
           <Reveal width="100%" variant="blur">
-            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Expertise</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3 block">Especialidades</span>
           </Reveal>
           <Reveal width="100%" variant="translate">
             <h2 className="text-4xl md:text-6xl font-serif font-medium mb-6 text-slate-900 tracking-tight">

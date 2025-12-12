@@ -2,6 +2,9 @@ import React, { useRef } from 'react';
 import { ArrowRight, Play } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import { ArchiveLine } from './ui/ArchiveLine';
+import { motion, useScroll, useVelocity, useTransform, useSpring } from 'framer-motion';
+
+const MotionDiv = motion.div as any;
 
 interface Experiment {
   id: number;
@@ -43,19 +46,26 @@ const EXPERIMENTS: Experiment[] = [
 ];
 
 const Lab: React.FC = () => {
+  // --- Micro-interaction: Velocity Skew ---
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
+  // Transform scroll velocity to skew angle (e.g. max 5 degrees)
+  const skewVelocity = useTransform(scrollVelocity, [-1000, 1000], [-3, 3]);
+  const smoothSkew = useSpring(skewVelocity, { damping: 20, stiffness: 400 });
+
   return (
     <section id="lab" className="py-24 bg-petrol-base text-paper relative overflow-hidden">
       
       <div className="container mx-auto px-5 md:px-12 xl:px-20 relative z-10 mb-12">
         <div className="border-b border-white/10 pb-4 mb-8">
-            <span className="text-micro text-white/40">Archive.02 / Experiments</span>
+            <span className="text-micro text-white/40">Arquivo.02 / Experimentos</span>
         </div>
         
         <div className="flex justify-between items-end">
           <Reveal>
             <div>
                <h2 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
-                 The Lab
+                 O Laboratório
                </h2>
                <p className="text-white/60 font-light mt-2 max-w-sm">
                  Explorações em código criativo, shaders e interatividade avançada.
@@ -64,14 +74,17 @@ const Lab: React.FC = () => {
           </Reveal>
           <Reveal delay={100}>
              <div className="hidden md:flex items-center gap-2 text-micro text-white/40">
-                <span>Drag to explore</span> <ArrowRight size={12} />
+                <span>Arraste para explorar</span> <ArrowRight size={12} />
              </div>
           </Reveal>
         </div>
       </div>
 
       {/* Horizontal Scroll Gallery - Infinite Marquee Feel */}
-      <div className="relative w-full overflow-x-auto pb-12 hide-scrollbar cursor-grab active:cursor-grabbing pl-5 md:pl-12 xl:pl-20">
+      <MotionDiv 
+        style={{ skewX: smoothSkew }}
+        className="relative w-full overflow-x-auto pb-12 hide-scrollbar cursor-grab active:cursor-grabbing pl-5 md:pl-12 xl:pl-20"
+      >
          <div className="flex gap-1 md:gap-1 w-max pr-12">
              {EXPERIMENTS.map((exp, index) => (
                 <div key={exp.id} className="w-[320px] md:w-[450px] flex-shrink-0 group relative border-r border-white/10 pr-8">
@@ -104,7 +117,7 @@ const Lab: React.FC = () => {
                 </div>
              ))}
          </div>
-      </div>
+      </MotionDiv>
       
       {/* Inline styles for hiding scrollbar */}
       <style>{`

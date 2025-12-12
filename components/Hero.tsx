@@ -8,6 +8,7 @@ import { usePageTransition } from './ui/PageTransition';
 import { ArrowDown } from 'lucide-react';
 
 const MotionDiv = motion.div as any;
+const MotionImg = motion.img as any;
 
 const Hero: React.FC = () => {
   const { scrollY } = useScroll();
@@ -16,6 +17,9 @@ const Hero: React.FC = () => {
   const smoothY = useSpring(scrollY, { damping: 20, stiffness: 100, mass: 0.8 });
   const y = useTransform(smoothY, [0, 1000], [0, 200]); 
   const opacity = useTransform(smoothY, [0, 500], [1, 0]);
+  
+  // Micro-interaction: Zoom out image on scroll
+  const scale = useTransform(smoothY, [0, 500], [1.1, 1]);
 
   const { transitionTo } = usePageTransition();
 
@@ -112,7 +116,8 @@ const Hero: React.FC = () => {
                    </div>
 
                    <div className="aspect-[3/4] overflow-hidden bg-slate-200 relative grayscale hover:grayscale-0 transition-all duration-700 ease-out-expo">
-                      <img 
+                      <MotionImg 
+                        style={{ scale }}
                         src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800&h=1000" 
                         alt="Profile" 
                         className="w-full h-full object-cover" 

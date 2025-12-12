@@ -30,22 +30,26 @@
                 base: '#0B232E', // Deep Petrol (Primary Dark)
                 mid: '#153A48',  // Mid tone
                 ink: '#1E3A45',  // Text Ink
-                accent: '#94A3B8', // CHANGED: Silver/Blue-Grey (No more Turquoise)
+                accent: '#CBD5E1', // Cool Silver (No more Turquoise)
               },
-              ink: {
-                100: '#94a3b8',
-                200: '#64748b',
-                300: '#475569', 
-                400: '#334155',
-                900: '#0F172A',
-              }
             },
             backgroundImage: {
               'petrol-gradient': 'linear-gradient(135deg, #0B232E 0%, #0F2A36 100%)',
+              'title-gradient': 'linear-gradient(to right, #0B232E, #153A48)', // Refined: Deep Petrol to Mid Petrol
             },
-            transitionTimingFunction: {
-              'out-expo': 'cubic-bezier(0.19, 1, 0.22, 1)',
-              'heavy': 'cubic-bezier(0.2, 0, 0, 1)',
+            animation: {
+              'marquee': 'marquee 25s linear infinite',
+              'marquee-reverse': 'marquee-reverse 25s linear infinite',
+            },
+            keyframes: {
+              marquee: {
+                '0%': { transform: 'translateX(0%)' },
+                '100%': { transform: 'translateX(-100%)' },
+              },
+              'marquee-reverse': {
+                '0%': { transform: 'translateX(-100%)' },
+                '100%': { transform: 'translateX(0%)' },
+              },
             }
           }
         }
@@ -57,14 +61,9 @@
         -moz-osx-font-smoothing: grayscale;
         background-color: #F2F4F6;
         color: #0B232E;
-        overflow-x: hidden; /* Prevent horizontal scroll */
+        overflow-x: hidden;
       }
       
-      .font-elegant {
-        font-feature-settings: "dlig", "liga", "kern"; 
-        text-rendering: optimizeLegibility;
-      }
-
       .font-heading-tight {
         letter-spacing: -0.04em;
         line-height: 0.9;
@@ -87,20 +86,19 @@
         width: 6px;
       }
       ::-webkit-scrollbar-track {
-        background: transparent;
+        background: #F2F4F6;
       }
       ::-webkit-scrollbar-thumb {
-        background: rgba(11, 35, 46, 0.3);
+        background: #0B232E;
         border-radius: 10px;
       }
       ::-webkit-scrollbar-thumb:hover {
         background: #153A48;
       }
 
-      /* Enhanced Accessibility Focus Ring - Updated Color */
       :focus-visible {
         outline: none;
-        box-shadow: 0 0 0 2px #F2F4F6, 0 0 0 4px #94A3B8;
+        box-shadow: 0 0 0 2px #F2F4F6, 0 0 0 4px #0B232E;
         border-radius: 2px;
       }
       
@@ -116,26 +114,9 @@
       .lenis.lenis-stopped { overflow: hidden; }
       .lenis.lenis-scrolling iframe { pointer-events: none; }
 
-      /* --- STAGGERED MENU CSS (Simplified/Fallback) --- */
-      .staggered-menu-wrapper {
-        position: relative;
-        z-index: 9990;
-      }
-      
-      .staggered-menu-wrapper.fixed-wrapper {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        pointer-events: none;
-      }
-
-      .staggered-menu-wrapper.fixed-wrapper.open {
-        pointer-events: auto;
-      }
-
-      /* Removed fixed sizing classes to rely on Tailwind classes in component */
+      .staggered-menu-wrapper { position: relative; z-index: 9990; }
+      .staggered-menu-wrapper.fixed-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; }
+      .staggered-menu-wrapper.fixed-wrapper.open { pointer-events: auto; }
     </style>
   <script type="importmap">
 {
