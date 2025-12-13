@@ -1,12 +1,13 @@
+
 import React, { useState, useRef } from 'react';
 import { PROJECTS } from '../constants';
 import ContentModal from './ui/ContentModal';
 import { ProjectDetailContent } from './ProjectDetailContent';
 import { Reveal } from './ui/Reveal';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
 
-// --- Card de Projeto Estilo Arquitetural ---
+// --- Card de Projeto com Efeito "Cinematic Reveal" ---
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0], 
   index: number,
@@ -15,14 +16,37 @@ const ProjectCard: React.FC<{
   
   const containerRef = useRef(null);
   
-  // Parallax Interno da Imagem
+  // Rastreia o progresso do elemento na viewport
+  // Começa a animar quando o topo do elemento está a 90% da viewport
+  // Termina quando o topo do elemento está a 20% da viewport
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start end", "end start"]
+    offset: ["start 0.9", "start 0.2"]
+  });
+
+  // Smooth Spring para suavizar o scroll "cru"
+  const smoothProgress = useSpring(scrollYProgress, {
+    damping: 20,
+    stiffness: 100,
+    mass: 0.5
   });
   
-  // Movimento sutil da imagem dentro do container
-  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]); 
+  // 1. Efeito de Máscara (Clip Path): Abre como uma cortina ou diafragma
+  // Vai de "recortado" (inset 10%) para "completo" (inset 0%)
+  const clipPath = useTransform(
+    smoothProgress,
+    [0, 1],
+    ["inset(15% 10% 15% 10% round 4px)", "inset(0% 0% 0% 0% round 0px)"]
+  );
+
+  // 2. Efeito de Escala Interna (Zoom Out):
+  // A imagem começa grande (1.3) e diminui para o tamanho normal (1.0) conforme a máscara abre.
+  // Isso cria profundidade.
+  const scale = useTransform(smoothProgress, [0, 1], [1.3, 1.05]);
+  
+  // 3. Opacidade e Filtro para entrada suave
+  const filter = useTransform(smoothProgress, [0, 0.5], ["grayscale(100%) brightness(0.8)", "grayscale(0%) brightness(1)"]);
+  const opacity = useTransform(smoothProgress, [0, 0.2], [0.5, 1]);
 
   return (
     <div 
@@ -33,7 +57,7 @@ const ProjectCard: React.FC<{
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           
           {/* 1. Coluna Esquerda: Metadados e Índice */}
-          <div className="lg:col-span-3 flex flex-row lg:flex-col justify-between items-baseline lg:sticky lg:top-32 transition-all duration-500">
+          <div className="lg:col-span-3 flex flex-row lg:flex-col justify-between items-baseline lg:sticky lg:top-32 transition-all duration-500 z-20">
              <div className="flex items-baseline gap-4">
                  <span className="text-sm font-mono text-petrol-base/40 group-hover:text-petrol-electric transition-colors">
                      ( {project.year} )
@@ -53,15 +77,18 @@ const ProjectCard: React.FC<{
 
           {/* 2. Coluna Direita: Imagem e Conteúdo */}
           <div className="lg:col-span-9">
-              {/* Container da Imagem com Parallax e Máscara */}
-              <div className="relative overflow-hidden aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 rounded-sm">
+              {/* Container da Imagem com Animação de Máscara (ClipPath) */}
+              <motion.div 
+                 style={{ clipPath, opacity }}
+                 className="relative aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700"
+              >
                  <motion.div className="w-full h-full relative overflow-hidden">
                      <motion.img 
                         layoutId={`project-image-${project.title}`}
                         src={project.image} 
                         alt={project.title}
-                        style={{ y, scale: 1.15 }} // Escala maior para permitir o parallax sem cortar
-                        className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 ease-out"
+                        style={{ scale, filter }} 
+                        className="w-full h-full object-cover transition-all duration-700 ease-out will-change-transform"
                      />
                  </motion.div>
                  
@@ -72,27 +99,33 @@ const ProjectCard: React.FC<{
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 z-20">
                     <ArrowUpRight className="text-white" size={32} />
                  </div>
-              </div>
+              </motion.div>
 
               {/* Título e Descrição */}
               <div className="flex flex-col md:flex-row justify-between items-start gap-8">
                   <div className="max-w-2xl">
-                      <motion.h3 
-                        layoutId={`project-title-${project.title}`}
-                        className="text-4xl md:text-6xl font-serif font-medium text-petrol-base mb-4 leading-tight group-hover:text-petrol-mid transition-colors"
-                      >
-                          {project.title}
-                      </motion.h3>
-                      <p className="text-petrol-ink/70 font-light leading-relaxed text-lg max-w-lg">
-                          {project.description}
-                      </p>
+                      <Reveal>
+                        <motion.h3 
+                            layoutId={`project-title-${project.title}`}
+                            className="text-4xl md:text-6xl font-serif font-medium text-petrol-base mb-4 leading-tight group-hover:text-petrol-mid transition-colors"
+                        >
+                            {project.title}
+                        </motion.h3>
+                      </Reveal>
+                      <Reveal delay={100}>
+                        <p className="text-petrol-ink/70 font-light leading-relaxed text-lg max-w-lg">
+                            {project.description}
+                        </p>
+                      </Reveal>
                   </div>
                   
                   <div className="flex flex-wrap gap-2 md:justify-end">
                       {project.tags.slice(0, 3).map((tag, i) => (
-                          <span key={i} className="px-3 py-1 border border-petrol-base/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-petrol-base/60 bg-white">
-                              {tag}
-                          </span>
+                          <Reveal key={i} delay={200 + (i * 50)}>
+                            <span className="px-3 py-1 border border-petrol-base/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-petrol-base/60 bg-white">
+                                {tag}
+                            </span>
+                          </Reveal>
                       ))}
                   </div>
               </div>
@@ -130,13 +163,12 @@ const Projects: React.FC = () => {
         {/* Lista de Projetos */}
         <div className="flex flex-col">
           {PROJECTS.map((project, index) => (
-             <Reveal key={index} width="100%" delay={index * 50}>
-                <ProjectCard 
-                   project={project} 
-                   index={index} 
-                   onClick={() => setSelectedProject(project)}
-                />
-             </Reveal>
+             <ProjectCard 
+                key={index}
+                project={project} 
+                index={index} 
+                onClick={() => setSelectedProject(project)}
+             />
           ))}
         </div>
 

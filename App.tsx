@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -28,7 +29,7 @@ const Lab = lazy(() => import('./components/Lab'));
 const About = lazy(() => import('./components/About'));
 const Contact = lazy(() => import('./components/Contact'));
 const Footer = lazy(() => import('./components/Footer'));
-const Reviews = lazy(() => import('./components/Reviews')); // Novo Componente
+const Reviews = lazy(() => import('./components/Reviews')); 
 
 /**
  * COMPONENTE: Preloader
@@ -41,27 +42,37 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const words = ["INICIALIZANDO", "ESTRATÉGIA", "DESIGN", "SISTEMA PRONTO"];
 
   useEffect(() => {
+    // Garante que o scroll esteja travado no topo durante o loading
+    window.scrollTo(0, 0);
+    document.body.style.overflow = 'hidden';
+
     const interval = setInterval(() => {
       setTextIndex((prev) => {
         if (prev >= words.length - 1) {
           clearInterval(interval);
-          setTimeout(onComplete, 800); // Small delay after last word
+          setTimeout(() => {
+             document.body.style.overflow = ''; // Libera o scroll
+             onComplete();
+          }, 800); 
           return prev;
         }
         return prev + 1;
       });
-    }, 600); // Speed of word switching
+    }, 600); 
 
-    return () => clearInterval(interval);
+    return () => {
+        clearInterval(interval);
+        document.body.style.overflow = '';
+    };
   }, [onComplete]);
 
   return (
     <motion.div
       initial={{ opacity: 1 }}
-      exit={{ y: "-100%", transition: { duration: 0.9, ease: [0.76, 0, 0.24, 1] } }}
+      exit={{ y: "-100%", transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] } }}
       className="fixed inset-0 z-[99999] bg-[#0B232E] flex items-center justify-center text-[#F2F4F6]"
     >
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center relative z-10">
          <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-6 animate-pulse">
             sys.boot_sequence
          </span>
@@ -70,9 +81,9 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
              <AnimatePresence mode="wait">
                 <motion.div
                   key={textIndex}
-                  initial={{ y: 40, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -40, opacity: 0 }}
+                  initial={{ y: 40, opacity: 0, filter: "blur(5px)" }}
+                  animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+                  exit={{ y: -40, opacity: 0, filter: "blur(5px)" }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
                   className="text-4xl md:text-6xl font-serif font-medium tracking-tight text-center"
                 >
@@ -95,20 +106,15 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 };
 
 const App: React.FC = () => {
-  // Initialize loading state based on Session Storage
-  const [loading, setLoading] = useState(() => {
-    // If running in browser and key exists, skip loading
-    if (typeof window !== 'undefined') {
-      return !sessionStorage.getItem('hasSeenIntro');
-    }
-    return true;
-  });
-  
+  // Inicialização do Loading
+  // NOTA: Removido verificação de sessionStorage para garantir que o preloader
+  // apareça sempre para fins de demonstração/desenvolvimento.
+  const [loading, setLoading] = useState(true);
   const [isWhatsappHovered, setIsWhatsappHovered] = useState(false);
 
   const handlePreloaderComplete = () => {
     setLoading(false);
-    sessionStorage.setItem('hasSeenIntro', 'true');
+    // sessionStorage.setItem('hasSeenIntro', 'true'); // Descomentar em produção
   };
 
   return (
@@ -137,10 +143,7 @@ const App: React.FC = () => {
               {/* Eager Loaded Hero for LCP */}
               <Hero />
 
-              {/* Lazy Loaded Sections wrapped in Suspense
-                  O fallback é nulo aqui porque o Preloader cobre o tempo inicial,
-                  e o carregamento subsequente geralmente é rápido o suficiente.
-               */}
+              {/* Lazy Loaded Sections wrapped in Suspense */}
               <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-xs font-mono text-petrol-base/30">Carregando módulos...</div>}>
                 <Projects />
                 <Services />

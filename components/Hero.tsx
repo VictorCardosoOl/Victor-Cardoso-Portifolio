@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { motion, useScroll, useTransform, useSpring, useVelocity } from 'framer-motion';
 import { Reveal } from './ui/Reveal';
@@ -12,18 +13,19 @@ const Hero: React.FC = () => {
   const { transitionTo } = usePageTransition();
 
   // --- PHYSICS & PARALLAX ---
-  const smoothY = useSpring(scrollY, { damping: 20, stiffness: 100 });
+  // Aumentamos o damping para reduzir a "mola" e aumentar a sensação de peso
+  const smoothY = useSpring(scrollY, { damping: 25, stiffness: 80, mass: 0.5 });
   
-  // Parallax diferenciado: Texto sobe mais devagar que a imagem para criar separação
-  const textY = useTransform(smoothY, [0, 1000], [0, -50]); 
-  const imageY = useTransform(smoothY, [0, 1000], [0, -150]);
-  const opacity = useTransform(smoothY, [0, 500], [1, 0]);
+  // Parallax diferenciado
+  const textY = useTransform(smoothY, [0, 1000], [0, -80]); 
+  const imageY = useTransform(smoothY, [0, 1000], [0, -180]);
+  const opacity = useTransform(smoothY, [0, 300], [1, 0]);
 
-  // Velocity Typography (Distorção sutil baseada na velocidade do scroll)
+  // Velocity Typography (Distorção baseada na velocidade do scroll)
   const scrollVelocity = useVelocity(scrollY);
-  // Adjusted range and spring physics for a more natural, fluid response
-  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-3, 3]); 
-  const skewVelocity = useSpring(rawSkew, { stiffness: 100, damping: 30, mass: 1 });
+  // Reduzimos o range para uma distorção mais sutil e elegante
+  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-2, 2]); 
+  const skewVelocity = useSpring(rawSkew, { stiffness: 200, damping: 30, mass: 1 });
 
   const handleNav = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
@@ -70,43 +72,49 @@ const Hero: React.FC = () => {
                    
                    {/* Main Title Block - Staircase Layout */}
                    <div className="relative mb-16 md:mb-24">
-                       <motion.h1 
-                         initial={{ opacity: 0, x: -40 }}
-                         animate={{ opacity: 1, x: 0 }}
-                         transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
-                         style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                         className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken"
-                       >
-                         Lógica
-                       </motion.h1>
+                       {/* Linha 1 */}
+                       <div className="overflow-hidden">
+                           <motion.h1 
+                             initial={{ y: "100%", rotate: 5 }}
+                             animate={{ y: "0%", rotate: 0 }}
+                             transition={{ duration: 1.2, ease: [0.25, 1, 0.5, 1] }}
+                             style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
+                             className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken block"
+                           >
+                             Lógica
+                           </motion.h1>
+                       </div>
                        
-                       <div className="flex flex-col items-start ml-[15%] md:ml-[25%] mt-2 md:mt-4">
+                       {/* Linha 2 */}
+                       <div className="flex flex-col items-start ml-[15%] md:ml-[25%] mt-2 md:mt-4 overflow-hidden">
                           <motion.h1 
-                            initial={{ opacity: 0, x: 40 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                            initial={{ y: "100%", rotate: 5 }}
+                            animate={{ y: "0%", rotate: 0 }}
+                            transition={{ duration: 1.2, delay: 0.15, ease: [0.25, 1, 0.5, 1] }}
                             style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                            className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter italic opacity-80"
+                            className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter italic opacity-80 block"
                           >
                             Estética
                           </motion.h1>
                           
-                          <span className="text-xs font-mono text-petrol-base/30 mt-4 self-end mr-4 hidden md:block max-w-[150px] text-right">
-                             (01) Interseção entre Código e Design
-                          </span>
+                          <Reveal delay={400} variant="blur">
+                             <span className="text-xs font-mono text-petrol-base/30 mt-4 self-end mr-4 hidden md:block max-w-[150px] text-right">
+                                (01) Interseção entre Código e Design
+                             </span>
+                          </Reveal>
                        </div>
                    </div>
 
                    {/* Editorial Description & CTA */}
                    <div className="max-w-md flex flex-col gap-8 ml-2 md:ml-0">
-                      <Reveal delay={200} variant="translate">
+                      <Reveal delay={500} variant="translate">
                         <p className="text-sm md:text-base font-light text-petrol-ink leading-[1.6] border-l border-petrol-base/20 pl-6">
                            Arquitetura de software de alta precisão fundida com design editorial. 
                            Transformando complexidade em interfaces silenciosas.
                         </p>
                       </Reveal>
 
-                      <Reveal delay={300} variant="scale">
+                      <Reveal delay={600} variant="scale">
                          <div className="flex items-center gap-6">
                             <Magnetic strength={0.3}>
                                 <a href="#projects" onClick={(e) => handleNav(e, '#projects')}>
@@ -127,35 +135,29 @@ const Hero: React.FC = () => {
                 </motion.div>
             </div>
 
-            {/* 2. IMAGE ANCHOR (Bottom Right - Span 4) 
-                Smaller, detached, anchored to bottom right to create whitespace.
-            */}
+            {/* 2. IMAGE ANCHOR (Bottom Right - Span 4) */}
             <div className="lg:col-span-4 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0">
                <motion.div 
                   style={{ y: imageY }}
                   className="relative w-full max-w-[280px] md:max-w-[320px] mr-0 md:mr-12"
                >
-                  <Reveal width="100%" duration={1.6} className="w-full">
-                      {/* 
-                          UPDATED SHAPE:
-                          - Changed from rounded-t-full (arch/triangle) to rounded-[2rem] (rectangle).
-                          - Kept aspect-[3/4] for portrait rectangle.
-                      */}
+                  <Reveal width="100%" duration={1.6} className="w-full" delay={200} variant="scale">
+                      {/* UPDATED SHAPE */}
                       <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[2rem] border border-petrol-base/5 shadow-2xl bg-slate-200 group">
                           <motion.img 
                             initial={{ scale: 1.4, filter: "grayscale(100%) blur(5px)" }}
                             animate={{ scale: 1, filter: "grayscale(0%) blur(0px)" }}
-                            transition={{ duration: 2, ease: "circOut" }}
+                            transition={{ duration: 2, ease: "circOut", delay: 0.5 }}
                             src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=600&h=800" 
                             alt="Victor Cardoso Portrait" 
                             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                           />
                           
-                          {/* Inner Border updated to match rectangle */}
+                          {/* Inner Border */}
                           <div className="absolute inset-3 border border-white/20 rounded-[1.5rem] pointer-events-none mix-blend-overlay"></div>
                       </div>
                       
-                      {/* Floating Caption - Offset Left */}
+                      {/* Floating Caption */}
                       <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-end pointer-events-none mix-blend-difference">
                          <div className="rotate-[-90deg] origin-center translate-y-8">
                             <span className="text-[9px] font-mono uppercase tracking-widest text-white/60">

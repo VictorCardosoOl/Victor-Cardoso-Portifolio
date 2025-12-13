@@ -18,13 +18,13 @@ export const Reveal: React.FC<RevealProps> = ({
   children, 
   width = "fit-content", 
   delay = 0,
-  duration = 0.6,
-  y = 30,
+  duration = 0.8, // Aumentado levemente para dar tempo da física acontecer
+  y = 40, // Aumentado para um movimento mais dramático
   className = "",
   variant = 'translate'
 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-10%" });
+  const isInView = useInView(ref, { once: true, margin: "-15%" }); // Margin ajustada para disparar um pouco depois
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -42,19 +42,19 @@ export const Reveal: React.FC<RevealProps> = ({
     return <div className={className} style={{ width }}>{children}</div>;
   }
 
-  // Animation Variants Strategy
+  // Animation Variants Strategy - REFINED PHYSICS
   const animationVariants: Record<string, any> = {
     translate: {
       hidden: { opacity: 0, y: y },
       visible: { opacity: 1, y: 0 }
     },
     scale: {
-      hidden: { opacity: 0, scale: 0.95, filter: "blur(4px)" },
+      hidden: { opacity: 0, scale: 0.92, filter: "blur(4px)" },
       visible: { opacity: 1, scale: 1, filter: "blur(0px)" }
     },
     blur: {
-      hidden: { opacity: 0, filter: "blur(8px)" },
-      visible: { opacity: 1, filter: "blur(0px)" }
+      hidden: { opacity: 0, filter: "blur(12px)", scale: 1.05 },
+      visible: { opacity: 1, filter: "blur(0px)", scale: 1 }
     }
   };
 
@@ -69,7 +69,9 @@ export const Reveal: React.FC<RevealProps> = ({
         transition={{ 
           duration, 
           delay: delaySec, 
-          ease: [0.2, 0.65, 0.3, 0.9] // Custom elegant bezier
+          // CURVA "LUXURY" - Saída suave e pesada.
+          // Começa rápido e desacelera elegantemente.
+          ease: [0.25, 1, 0.5, 1] 
         }}
       >
         {children}
