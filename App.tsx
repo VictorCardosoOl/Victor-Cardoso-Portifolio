@@ -3,6 +3,8 @@ import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import GrainBackground from './components/GrainBackground';
 import Gamification from './components/Gamification';
+import ScrollProgress from './components/ui/ScrollProgress';
+import BackToTop from './components/ui/BackToTop';
 import { ScrollProvider } from './components/ScrollContext';
 import { GamificationProvider } from './components/GamificationContext'; 
 import { PageTransitionProvider } from './components/ui/PageTransition';
@@ -121,9 +123,11 @@ const App: React.FC = () => {
               {loading && <Preloader onComplete={handlePreloaderComplete} />}
             </AnimatePresence>
             
-            {/* Global Visual Effects */}
+            {/* Global Visual Effects & Scroll Aware Tools */}
             <GrainBackground />
+            <ScrollProgress />
             <Gamification />
+            <BackToTop />
 
             {/* Navigation (Always Visible) */}
             <Navbar />
