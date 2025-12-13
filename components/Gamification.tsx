@@ -9,12 +9,14 @@ const Gamification: React.FC = () => {
   const { 
     quests, 
     completeQuest, 
-    sectionTimes, 
-    totalTime,
+    getSessionData
   } = useGamification();
 
   const [showManifest, setShowManifest] = useState(false);
   const [hasShownManifest, setHasShownManifest] = useState(false);
+  
+  // Local state for UI display only (when manifest is open)
+  const [displayStats, setDisplayStats] = useState({ totalTime: 0, topSection: 'Geral' });
 
   // --- Silent Tracking Logic ---
   useEffect(() => {
@@ -46,20 +48,19 @@ const Gamification: React.FC = () => {
   }, [completeQuest]);
 
   // --- Strict Footer Trigger for "Manifest" ---
-  // Fix: Increased threshold buffer and added Math.ceil for better detection
   useEffect(() => {
     const handleScrollCheck = () => {
         if (hasShownManifest) return;
 
         const windowHeight = window.innerHeight;
-        const scrollY = Math.ceil(window.scrollY); // Round up to avoid fractional pixel issues
+        const scrollY = Math.ceil(window.scrollY);
         const totalHeight = document.documentElement.scrollHeight;
         
-        // Threshold buffer (100px) allows for mobile address bars or minor layout shifts
         const isAtBottom = (windowHeight + scrollY) >= (totalHeight - 100);
 
         if (isAtBottom) {
-             // Only show if session has been going on for a bit (e.g. 5 seconds) to avoid instant popups on refresh
+             const { totalTime } = getSessionData();
+             // Only show if session has been going on for a bit
              if (totalTime > 5) {
                  setShowManifest(true);
                  setHasShownManifest(true);
@@ -69,12 +70,35 @@ const Gamification: React.FC = () => {
 
     window.addEventListener('scroll', handleScrollCheck);
     return () => window.removeEventListener('scroll', handleScrollCheck);
-  }, [hasShownManifest, totalTime]);
+  }, [hasShownManifest, getSessionData]);
+
+  // --- Local Timer for Manifest UI ---
+  // This ensures the "Clock" ticks when the modal is open, without re-rendering the whole app globally.
+  useEffect(() => {
+    let interval: any;
+    
+    if (showManifest) {
+      // Initialize stats when opening
+      const updateStats = () => {
+        const { totalTime, sectionTimes } = getSessionData();
+        const topSectionEntry = Object.entries(sectionTimes).sort(([,a], [,b]) => (b as number) - (a as number))[0];
+        
+        setDisplayStats({
+          totalTime,
+          topSection: topSectionEntry ? topSectionEntry[0] : 'Geral'
+        });
+      };
+
+      updateStats(); // Initial set
+      interval = setInterval(updateStats, 1000); // Live update
+    }
+
+    return () => clearInterval(interval);
+  }, [showManifest, getSessionData]);
 
 
   // Data for Manifest
   const missingQuests = quests.filter(q => !q.completed && q.link);
-  const topSection = Object.entries(sectionTimes).sort(([,a], [,b]) => (b as number) - (a as number))[0];
 
   return (
     <AnimatePresence>
@@ -86,7 +110,7 @@ const Gamification: React.FC = () => {
           transition={{ type: "spring", damping: 20, stiffness: 100 }}
           className="fixed bottom-0 right-0 md:right-8 z-50 w-full md:w-[380px] pointer-events-none"
         >
-          {/* Manifest Card (Looks like a receipt) - Updated Colors to Paper/Petrol */}
+          {/* Manifest Card */}
           <div className="pointer-events-auto bg-[#F2F4F6] text-[#0B232E] rounded-t-xl md:rounded-t-xl border-t border-x border-petrol-base/10 shadow-[-10px_-10px_30px_rgba(11,35,46,0.15)] p-6 md:p-8 font-mono text-xs relative before:content-[''] before:absolute before:top-[-6px] before:left-0 before:w-full before:h-[6px] before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgMTIgNiI+PHBhdGggZD0iTTAgNmw2LTYgNiA2SCB6IiBmaWxsPSIjRjJGNEY2Ii8+PC9zdmc+')] before:repeat-x">
             
             {/* Header */}
@@ -109,14 +133,14 @@ const Gamification: React.FC = () => {
                     <span className="block text-[9px] uppercase tracking-wider text-petrol-base/40 mb-1">Duração</span>
                     <div className="flex items-center gap-2">
                         <Clock size={12} />
-                        <span className="font-bold">{Math.floor(totalTime / 60)}m {totalTime % 60}s</span>
+                        <span className="font-bold">{Math.floor(displayStats.totalTime / 60)}m {displayStats.totalTime % 60}s</span>
                     </div>
                 </div>
                 <div>
                     <span className="block text-[9px] uppercase tracking-wider text-petrol-base/40 mb-1">Maior Interesse</span>
                     <div className="flex items-center gap-2">
                         <Target size={12} />
-                        <span className="font-bold capitalize">{topSection ? topSection[0] : 'Geral'}</span>
+                        <span className="font-bold capitalize">{displayStats.topSection}</span>
                     </div>
                 </div>
             </div>

@@ -13,7 +13,7 @@ const Contact: React.FC = () => {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   
   // Access Gamification Data
-  const { rank, level, totalTime, sectionTimes, quests } = useGamification();
+  const { rank, level, quests, getSessionData } = useGamification();
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -53,7 +53,6 @@ const Contact: React.FC = () => {
     e.preventDefault();
     
     if (!validate()) {
-      // Shake effect or visual feedback could be added here
       return;
     }
     
@@ -61,7 +60,10 @@ const Contact: React.FC = () => {
     
     // Simulate complex backend processing delay
     try {
-      // Prepare rich payload (simulating what would be sent to EmailJS/Hubspot)
+      // Get fresh data from ref without re-rendering the component every second
+      const { totalTime, sectionTimes } = getSessionData();
+
+      // Prepare rich payload
       const sortedSections = Object.entries(sectionTimes).sort(([, a], [, b]) => (b as number) - (a as number));
       const mostViewed = sortedSections[0] ? sortedSections[0][0] : 'N/A';
 

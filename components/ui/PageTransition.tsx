@@ -38,6 +38,7 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
   useEffect(() => {
     if (isAnimating && targetHref) {
       
+      // Wait for curtain to cover screen (approx half duration)
       const scrollTimer = setTimeout(() => {
         const targetId = targetHref.replace('#', '');
         const element = document.getElementById(targetId);
@@ -49,12 +50,13 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
             element.scrollIntoView({ behavior: 'auto' });
           }
         }
-      }, 350); 
+      }, 500); // Sync with animation midpoint
 
+      // Finish animation
       const endTimer = setTimeout(() => {
         setIsAnimating(false);
         setTargetHref(null);
-      }, 750); 
+      }, 1000); 
 
       return () => {
         clearTimeout(scrollTimer);
@@ -70,18 +72,25 @@ export const PageTransitionProvider: React.FC<{ children: React.ReactNode }> = (
         {isAnimating && (
           <MotionDiv
             key="page-transition-curtain"
-            initial={{ scaleY: 0 }}
-            animate={{ scaleY: 1 }}
-            exit={{ scaleY: 0 }}
-            style={{ originY: isAnimating ? 0 : 1 }} 
+            initial={{ scaleY: 0, transformOrigin: "bottom" }}
+            animate={{ scaleY: 1, transformOrigin: "bottom" }}
+            exit={{ scaleY: 0, transformOrigin: "top" }}
             transition={{ 
-                duration: 0.7, 
+                duration: 0.8, 
                 ease: [0.22, 1, 0.36, 1] 
             }}
-            className="fixed inset-0 z-[99999] bg-[#0F2A36] flex items-center justify-center pointer-events-none origin-top"
+            className="fixed inset-0 z-[99999] bg-[#0F2A36] flex items-center justify-center pointer-events-none"
           >
              {/* Optional Logo during transition */}
-             <div className="text-white font-serif text-3xl font-bold opacity-20">V.</div>
+             <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               animate={{ opacity: 1, y: 0 }}
+               exit={{ opacity: 0, y: -20 }}
+               transition={{ delay: 0.2, duration: 0.4 }}
+               className="text-white font-serif text-3xl font-bold opacity-20"
+             >
+               V.
+             </motion.div>
           </MotionDiv>
         )}
       </AnimatePresence>

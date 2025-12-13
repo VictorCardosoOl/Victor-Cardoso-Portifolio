@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
 // --- Types ---
 
@@ -12,15 +12,17 @@ export interface Quest {
   link?: string;
 }
 
-// Explicitly define as Record<string, number> to avoid TS arithmetic errors
 export type SectionTime = Record<string, number>;
+
+interface SessionData {
+  totalTime: number;
+  sectionTimes: SectionTime;
+}
 
 interface GamificationContextType {
   xp: number;
   level: number;
   rank: Rank;
-  totalTime: number;
-  sectionTimes: SectionTime;
   quests: Quest[];
   completeQuest: (id: string) => void;
   unlockAchievement: (label: string) => void; 
@@ -33,6 +35,8 @@ interface GamificationContextType {
   closeModal: () => void;
   // Easter Egg
   isHackerMode: boolean;
+  // Data Accessor (Non-Reactive)
+  getSessionData: () => SessionData;
 }
 
 const GamificationContext = createContext<GamificationContextType | null>(null);
@@ -57,15 +61,19 @@ const INITIAL_QUESTS: Quest[] = [
 
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   // --- STATE ---
-  // Lazy initialization from LocalStorage where possible
   const [quests, setQuests] = useState<Quest[]>(() => {
     if (typeof window === 'undefined') return INITIAL_QUESTS;
     const saved = localStorage.getItem('v_quests');
     return saved ? JSON.parse(saved) : INITIAL_QUESTS;
   });
   
-  const [totalTime, setTotalTime] = useState(0); // Session time is usually ephemeral, but could be persisted
-  const [sectionTimes, setSectionTimes] = useState<SectionTime>({});
+  // Performance Optimization: Use Refs for high-frequency updates (Timer)
+  // This prevents the entire app from re-rendering every second.
+  const trackingRef = useRef({
+    totalTime: 0,
+    sectionTimes: {} as SectionTime
+  });
+
   const [currentSection, setCurrentSection] = useState('hero');
   const [notification, setNotification] = useState<{ message: string; visible: boolean; type?: Rank } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -149,30 +157,29 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const hideNotification = () => setNotification(null);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const getSessionData = () => trackingRef.current;
 
-  // --- Timers & Observers ---
+  // --- Optimized Timer (No Re-renders) ---
   useEffect(() => {
-    const globalTimer = setInterval(() => {
-      setTotalTime(prev => {
-        const newTime = prev + 1;
-        if (newTime === 60) completeQuest('time_spent');
-        return newTime;
-      });
+    // We use a ref for the interval ID to ensure cleanup
+    let intervalId: any;
+
+    intervalId = setInterval(() => {
+      // 1. Update Refs
+      trackingRef.current.totalTime += 1;
+      trackingRef.current.sectionTimes[currentSection] = (trackingRef.current.sectionTimes[currentSection] || 0) + 1;
+
+      // 2. Check Conditions (Silent Check)
+      // Only update state (completeQuest) if condition is met
+      if (trackingRef.current.totalTime === 60) {
+        completeQuest('time_spent');
+      }
     }, 1000);
 
-    const sectionTimer = setInterval(() => {
-      setSectionTimes(prev => ({
-        ...prev,
-        [currentSection]: (prev[currentSection] || 0) + 1
-      }));
-    }, 1000);
+    return () => clearInterval(intervalId);
+  }, [currentSection]); // Dependencies: Re-create interval if currentSection changes to ensure capture
 
-    return () => {
-      clearInterval(globalTimer);
-      clearInterval(sectionTimer);
-    };
-  }, [currentSection]);
-
+  // --- Intersection Observer for Sections ---
   useEffect(() => {
     const sections = ['hero', 'projects', 'services', 'skills', 'about', 'education', 'lab', 'writing', 'contact'];
     const observer = new IntersectionObserver(
@@ -199,8 +206,6 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       xp,
       level,
       rank,
-      totalTime,
-      sectionTimes,
       quests,
       completeQuest,
       unlockAchievement,
@@ -210,7 +215,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       isModalOpen,
       openModal,
       closeModal,
-      isHackerMode
+      isHackerMode,
+      getSessionData
     }}>
       {children}
     </GamificationContext.Provider>
