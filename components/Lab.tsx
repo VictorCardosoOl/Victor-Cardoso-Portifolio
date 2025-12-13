@@ -1,19 +1,18 @@
-import React, { useRef } from 'react';
+
+import React from 'react';
 import { Play, Terminal } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
-import { motion, useScroll, useVelocity, useTransform, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 /**
  * COMPONENTE: Lab
  * ---------------
  * Apresenta experimentos de WebGL/Creative Coding.
  * 
- * INTERAÇÃO "CURTAIN" (Tema Escuro):
- * - Diferente das outras seções (Fundo Claro), o Lab é Fundo Escuro.
- * - Para suavizar a entrada, usamos um efeito de "Cortina" ou "Expansão".
- * - O container começa com um `clip-path: inset(...)` que recorta o elemento.
- * - Conforme o scroll entra na seção, o clip-path se expande para 0 (full width),
- *   dando a impressão que a escuridão está consumindo a tela organicamente.
+ * PERFORMANCE UPDATE:
+ * - Imagens agora são coloridas por padrão (sem grayscale).
+ * - Removido overlay de scanlines (SVG pattern) que causava lag no scroll.
+ * - Otimização de will-change para evitar repaints.
  */
 
 interface Experiment {
@@ -22,7 +21,7 @@ interface Experiment {
   category: string;
   image: string;
   link: string;
-  colSpan?: string; // Tailwind class for column span
+  colSpan?: string; 
 }
 
 const EXPERIMENTS: Experiment[] = [
@@ -32,7 +31,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "WebGL Shader",
         image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800&h=600",
         link: "https://codepen.io",
-        colSpan: "md:col-span-1" // Layout Dinâmico: Pequeno (1/3)
+        colSpan: "md:col-span-1"
     },
     {
         id: 2,
@@ -40,7 +39,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Interactive",
         image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800&h=800",
         link: "https://codepen.io",
-        colSpan: "md:col-span-2" // Layout Dinâmico: Grande (2/3)
+        colSpan: "md:col-span-2"
     },
     {
         id: 3,
@@ -48,7 +47,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Creative Coding",
         image: "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?auto=format&fit=crop&q=80&w=800&h=800",
         link: "https://codepen.io",
-        colSpan: "md:col-span-2" // Layout Dinâmico: Grande Invertido (2/3)
+        colSpan: "md:col-span-2"
     },
     {
         id: 4,
@@ -56,7 +55,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Algorithms",
         image: "https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&q=80&w=800&h=600",
         link: "https://codepen.io",
-        colSpan: "md:col-span-1" // Layout Dinâmico: Pequeno Invertido (1/3)
+        colSpan: "md:col-span-1" 
     },
     {
         id: 5,
@@ -64,134 +63,105 @@ const EXPERIMENTS: Experiment[] = [
         category: "Data Viz",
         image: "https://images.unsplash.com/photo-1506765515384-028b60a970df?auto=format&fit=crop&q=80&w=800&h=600",
         link: "https://codepen.io",
-        colSpan: "md:col-span-3" // Cinematic (Full Width)
+        colSpan: "md:col-span-3"
     }
 ];
 
 const Lab: React.FC = () => {
-  const containerRef = useRef(null);
-
-  // --- SCROLL PHYSICS & TRANSITIONS ---
-
-  // 1. Skew Animation (Weight Feel)
-  const { scrollY } = useScroll();
-  const scrollVelocity = useVelocity(scrollY);
-  const skew = useTransform(scrollVelocity, [-1000, 1000], [-1, 1]); 
-  const smoothSkew = useSpring(skew, { damping: 20, stiffness: 400 });
-
-  // 2. Curtain Transition (Dark Mode Reveal)
-  // Rastreia o progresso do elemento na viewport
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "center center"] // Começa quando o topo toca o fim da tela
-  });
-
-  // Transforma o progresso em um clip-path
-  // Ajuste solicitado: inset inicial mais agressivo (15% 10%) para transição mais dramática e suave.
-  const clipPath = useTransform(
-    scrollYProgress,
-    [0, 1],
-    ["inset(15% 10% 15% 10% round 40px)", "inset(0% 0% 0% 0% round 0px)"]
-  );
-
   return (
     <section id="lab" className="py-12 bg-paper relative z-20">
       
-      {/* Wrapper Animado (The Curtain) */}
-      <motion.div 
-        ref={containerRef}
-        style={{ clipPath }}
-        className="w-full bg-petrol-base text-paper py-24 relative overflow-hidden"
-      >
-        <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
-            
-            {/* Header Control Panel Style */}
-            <div className="flex justify-between items-end border-b border-white/10 pb-6 mb-12">
-            <Reveal>
-                <div className="flex flex-col"> 
-                <div className="flex items-center gap-2 mb-2">
-                    <Terminal size={14} className="text-petrol-electric" />
-                    <span className="text-micro text-white/40">Arquivo.02 / R&D</span>
+      <Reveal width="100%" variant="translate">
+        <div 
+          className="w-full bg-petrol-base text-paper py-24 relative overflow-hidden rounded-t-[2rem] md:rounded-[3rem]"
+        >
+            <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
+                
+                {/* Header Control Panel Style */}
+                <div className="flex justify-between items-end border-b border-white/10 pb-6 mb-12">
+                <Reveal>
+                    <div className="flex flex-col"> 
+                    <div className="flex items-center gap-2 mb-2">
+                        <Terminal size={14} className="text-petrol-electric" />
+                        <span className="text-micro text-white/40">Arquivo.02 / R&D</span>
+                    </div>
+                    <h2 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
+                        Laboratório
+                    </h2>
+                    </div>
+                </Reveal>
+                <Reveal delay={100}>
+                    <div className="hidden md:block text-right">
+                        <span className="text-micro text-petrol-electric block">STATUS: ONLINE</span>
+                        <span className="text-[10px] font-mono text-white/40">Compilado: {new Date().toLocaleDateString()}</span>
+                    </div>
+                </Reveal>
                 </div>
-                <h2 className="text-4xl md:text-5xl font-serif font-medium tracking-tight">
-                    Laboratório
-                </h2>
-                </div>
-            </Reveal>
-            <Reveal delay={100}>
-                <div className="hidden md:block text-right">
-                    <span className="text-micro text-petrol-electric block">STATUS: ONLINE</span>
-                    <span className="text-[10px] font-mono text-white/40">Compilado: {new Date().toLocaleDateString()}</span>
-                </div>
-            </Reveal>
-            </div>
 
-            {/* MOSAIC GRID */}
-            <motion.div 
-            style={{ skewY: smoothSkew }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-white/5 border border-white/10 p-1"
-            >
-                {EXPERIMENTS.map((exp, index) => (
-                    <div 
-                    key={exp.id} 
-                    className={`relative group h-[300px] md:h-[350px] overflow-hidden bg-petrol-mid ${exp.colSpan || 'md:col-span-1'}`}
-                    >
-                        <Reveal delay={index * 50} width="100%" className="h-full">
-                            <a href={exp.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full relative">
-                                
-                                {/* Image: Grayscale to Color */}
-                                <div className="absolute inset-0 z-0">
-                                    <img 
-                                        src={exp.image} 
-                                        alt={exp.title} 
-                                        className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
-                                    />
-                                    {/* Scanline Effect Overlay (Base64 SVG pattern) - APPLIED TO ALL IMAGES */}
-                                    <div 
-                                      className="absolute inset-0 opacity-30 pointer-events-none mix-blend-overlay"
-                                      style={{ backgroundImage: `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')` }}
-                                    ></div>
-                                </div>
+                {/* MOSAIC GRID */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-white/5 border border-white/10 p-1">
+                    {EXPERIMENTS.map((exp, index) => (
+                        <div 
+                        key={exp.id} 
+                        className={`relative group h-[300px] md:h-[350px] overflow-hidden bg-petrol-mid ${exp.colSpan || 'md:col-span-1'}`}
+                        >
+                            <Reveal delay={index * 50} width="100%" className="h-full">
+                                <a href={exp.link} target="_blank" rel="noopener noreferrer" className="block w-full h-full relative overflow-hidden">
+                                    
+                                    {/* Image: FULL COLOR (Sem Grayscale) */}
+                                    <div className="absolute inset-0 z-0">
+                                        <motion.img 
+                                            src={exp.image} 
+                                            alt={exp.title} 
+                                            loading="lazy"
+                                            initial={{ scale: 1 }}
+                                            whileHover={{ scale: 1.05 }}
+                                            transition={{ duration: 0.7, ease: "easeOut" }}
+                                            className="w-full h-full object-cover transition-transform will-change-transform"
+                                        />
+                                        {/* Removido o overlay de scanlines para melhorar performance de scroll */}
+                                    </div>
 
-                                {/* Hover Overlay */}
-                                <div className="absolute inset-0 bg-petrol-base/80 opacity-0 group-hover:opacity-0 transition-opacity duration-300"></div>
-                                
-                                {/* Content UI */}
-                                <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
-                                    {/* Top: ID & Icon */}
-                                    <div className="flex justify-between items-start opacity-60 group-hover:opacity-100 transition-opacity">
-                                        <span className="text-[10px] font-mono border border-white/20 px-1.5 py-0.5 rounded text-white bg-black/40 backdrop-blur-md">
-                                            EXP_0{exp.id}
-                                        </span>
-                                        <div className="w-8 h-8 rounded-full bg-petrol-electric text-white flex items-center justify-center scale-0 group-hover:scale-100 transition-transform duration-300 shadow-[0_0_15px_rgba(120,144,156,0.3)]">
-                                            <Play size={12} fill="currentColor" />
+                                    {/* Hover Overlay - Escurece levemente para dar destaque ao texto */}
+                                    <div className="absolute inset-0 bg-petrol-base/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                    
+                                    {/* Content UI */}
+                                    <div className="absolute inset-0 p-6 flex flex-col justify-between z-10">
+                                        {/* Top: ID & Icon */}
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-[10px] font-mono border border-white/20 px-1.5 py-0.5 rounded text-white bg-black/20 backdrop-blur-sm">
+                                                EXP_0{exp.id}
+                                            </span>
+                                            <div className="w-8 h-8 rounded-full bg-white text-petrol-base flex items-center justify-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
+                                                <Play size={12} fill="currentColor" />
+                                            </div>
+                                        </div>
+
+                                        {/* Bottom: Info */}
+                                        <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                            <span className="text-[9px] font-bold uppercase tracking-widest text-petrol-electric mb-1 block opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-75">
+                                                {exp.category}
+                                            </span>
+                                            <h3 className="text-2xl font-serif text-white">
+                                                {exp.title}
+                                            </h3>
                                         </div>
                                     </div>
 
-                                    {/* Bottom: Info */}
-                                    <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                                        <span className="text-[9px] font-bold uppercase tracking-widest text-petrol-electric mb-1 block">
-                                            {exp.category}
-                                        </span>
-                                        <h3 className="text-2xl font-serif text-white group-hover:text-white transition-colors">
-                                            {exp.title}
-                                        </h3>
-                                    </div>
-                                </div>
+                                </a>
+                            </Reveal>
+                        </div>
+                    ))}
+                </div>
+                
+                <div className="mt-4 flex justify-between items-center text-[9px] font-mono text-white/30 uppercase tracking-widest">
+                <span>Total: {EXPERIMENTS.length} unidades</span>
+                <span>Code Sandbox / WebGL / Canvas</span>
+                </div>
 
-                            </a>
-                        </Reveal>
-                    </div>
-                ))}
-            </motion.div>
-            
-            <div className="mt-4 flex justify-between items-center text-[9px] font-mono text-white/30 uppercase tracking-widest">
-            <span>Total: {EXPERIMENTS.length} unidades</span>
-            <span>Code Sandbox / WebGL / Canvas</span>
             </div>
-
         </div>
-      </motion.div>
+      </Reveal>
     </section>
   );
 };

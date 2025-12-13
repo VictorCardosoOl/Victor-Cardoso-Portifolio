@@ -8,7 +8,7 @@ interface RevealProps {
   children: React.ReactNode;
   width?: "fit-content" | "100%";
   delay?: number; // in ms
-  duration?: number;
+  duration?: number; // Ignorado se usar Spring, mantido para retrocompatibilidade
   y?: number;
   className?: string;
   variant?: 'translate' | 'scale' | 'blur';
@@ -18,13 +18,12 @@ export const Reveal: React.FC<RevealProps> = ({
   children, 
   width = "fit-content", 
   delay = 0,
-  duration = 0.8, // Aumentado levemente para dar tempo da física acontecer
-  y = 40, // Aumentado para um movimento mais dramático
+  y = 50,
   className = "",
   variant = 'translate'
 }) => {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-15%" }); // Margin ajustada para disparar um pouco depois
+  const isInView = useInView(ref, { once: true, margin: "-10%" }); 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
@@ -35,25 +34,24 @@ export const Reveal: React.FC<RevealProps> = ({
     return () => mediaQuery.removeEventListener('change', handler);
   }, []);
 
-  // Convert ms to s for framer-motion
   const delaySec = delay / 1000;
 
   if (prefersReducedMotion) {
     return <div className={className} style={{ width }}>{children}</div>;
   }
 
-  // Animation Variants Strategy - REFINED PHYSICS
+  // Animation Variants Strategy - PHYSICS BASED
   const animationVariants: Record<string, any> = {
     translate: {
       hidden: { opacity: 0, y: y },
       visible: { opacity: 1, y: 0 }
     },
     scale: {
-      hidden: { opacity: 0, scale: 0.92, filter: "blur(4px)" },
+      hidden: { opacity: 0, scale: 0.94, filter: "blur(4px)" },
       visible: { opacity: 1, scale: 1, filter: "blur(0px)" }
     },
     blur: {
-      hidden: { opacity: 0, filter: "blur(12px)", scale: 1.05 },
+      hidden: { opacity: 0, filter: "blur(10px)", scale: 1.05 },
       visible: { opacity: 1, filter: "blur(0px)", scale: 1 }
     }
   };
@@ -67,11 +65,16 @@ export const Reveal: React.FC<RevealProps> = ({
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         transition={{ 
-          duration, 
-          delay: delaySec, 
-          // CURVA "LUXURY" - Saída suave e pesada.
-          // Começa rápido e desacelera elegantemente.
-          ease: [0.25, 1, 0.5, 1] 
+          // PHYSICS CONFIG
+          // type: "spring" simula física real.
+          // stiffness: quão rígida é a "mola" (menor = mais lento/pesado).
+          // damping: fricção (maior = para mais suavemente sem quicar).
+          // mass: peso do objeto (maior = mais inércia).
+          type: "spring",
+          stiffness: 90, 
+          damping: 40,   
+          mass: 1.2,
+          delay: delaySec 
         }}
       >
         {children}

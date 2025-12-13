@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import Lenis from 'lenis';
 
@@ -11,16 +12,16 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [lenis, setLenis] = useState<Lenis | null>(null);
 
   useEffect(() => {
-    // Configuração "Cinematic/Premium"
-    // Mudamos de Exponential para Quartic Out para uma desaceleração mais natural e física.
+    // Configuração "Heavy Luxury / Cinematic"
+    // O objetivo é criar uma sensação de massa e inércia.
     const lenisInstance = new Lenis({
-      duration: 1.2, // Um pouco mais rápido que 1.5s para não parecer "laggy", mas ainda suave.
-      easing: (t: number) => 1 - Math.pow(1 - t, 4), // Easing Quartic Out: Arrancada rápida, parada muito suave.
+      duration: 1.8, // Aumentado significativamente para criar inércia longa (drift)
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential Out: Arrancada suave, parada muito lenta.
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.9, // Reduzido levemente para dar "peso" ao scroll (sensação de luxo).
-      touchMultiplier: 1.5, // Ajustado para evitar scroll excessivo em mobile.
+      wheelMultiplier: 0.8, // Reduzido para dar sensação de "peso" (precisa girar mais para mover a massa)
+      touchMultiplier: 1.5,
     });
 
     setLenis(lenisInstance);

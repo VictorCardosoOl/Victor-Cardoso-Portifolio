@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
@@ -27,7 +28,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Refs para o Scroll Dedicado do Modal
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const scopedLenisRef = useRef<Lenis | null>(null);
@@ -43,21 +43,16 @@ const ContentModal: React.FC<ContentModalProps> = ({
     };
   }, []);
 
-  // --- CORREÇÃO DO SCROLL ---
   useEffect(() => {
     if (isOpen) {
-      // 1. Parar o scroll da página principal
       mainLenis?.stop();
       document.body.style.overflow = 'hidden';
 
-      // 2. Iniciar Lenis Dedicado para o Modal
-      // Pequeno timeout para garantir que o DOM foi renderizado pelo Framer Motion
       const timer = setTimeout(() => {
         if (modalContainerRef.current && modalContentRef.current) {
-            
             const scopedLenis = new Lenis({
-                wrapper: modalContainerRef.current, // Container com altura fixa e overflow
-                content: modalContentRef.current,   // Conteúdo que rola
+                wrapper: modalContainerRef.current,
+                content: modalContentRef.current,
                 duration: 1.2,
                 easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                 orientation: 'vertical',
@@ -75,7 +70,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
             }
             requestAnimationFrame(raf);
         }
-      }, 300); // Aguarda a animação de entrada
+      }, 300);
 
       return () => {
         clearTimeout(timer);
@@ -83,7 +78,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
       };
 
     } else {
-      // Retomar scroll principal
       mainLenis?.start();
       document.body.style.overflow = '';
     }
@@ -95,7 +89,6 @@ const ContentModal: React.FC<ContentModalProps> = ({
     };
   }, [isOpen, mainLenis]);
 
-  // Tecla ESC
   useEffect(() => {
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === 'Escape' && isOpen) onClose();
@@ -121,19 +114,29 @@ const ContentModal: React.FC<ContentModalProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
+            // Saída mais rápida que o modal para "limpar" a tela logo
+            transition={{ duration: 0.3 }}
             onClick={onClose}
-            className="fixed inset-0 z-[9998] bg-[#0B232E]/90 backdrop-blur-sm cursor-pointer"
+            className="fixed inset-0 z-[9998] bg-[#0B232E]/95 cursor-pointer"
             aria-hidden="true"
+            style={{ willChange: "opacity" }}
           />
 
-          {/* Modal Sheet */}
+          {/* Modal Container */}
           <motion.div
             layoutId={layoutId ? `modal-container-${layoutId}` : undefined}
             initial={{ y: "100%" }}
-            animate={{ y: isMobile ? "0%" : "2%" }} 
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200, mass: 0.8 }}
+            animate={{ 
+                y: isMobile ? "0%" : "2%",
+                transition: { type: "spring", damping: 30, stiffness: 300, mass: 1 } 
+            }} 
+            exit={{ 
+                y: "100%",
+                // PERFORMANCE FIX: 
+                // Usando 'tween' (linear) com easeInOut para garantir saída sedosa sem cálculos de mola.
+                // Isso evita o "travamento" no final da animação.
+                transition: { duration: 0.4, ease: "easeInOut" } 
+            }}
             drag={isMobile ? "y" : false}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={{ top: 0, bottom: 0.2 }}
@@ -143,6 +146,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
               w-full bg-[#F2F4F6] shadow-2xl overflow-hidden flex flex-col
               ${isMobile ? 'h-[100dvh] rounded-none' : 'h-[98vh] rounded-t-[2rem] max-w-[96vw] mx-auto'}
             `}
+            style={{ willChange: "transform", transform: "translate3d(0,0,0)" }} 
           >
             {/* Header Flutuante */}
             <div className="absolute top-0 left-0 w-full z-50 px-6 py-6 md:px-12 md:py-8 flex items-start justify-end pointer-events-none">
@@ -158,19 +162,12 @@ const ContentModal: React.FC<ContentModalProps> = ({
                </div>
             </div>
 
-            {/* 
-                WRAPPER DO SCROLL (Lenis) 
-                - overflow-y-auto necessário para fallback
-                - data-lenis-prevent impede conflito com scroll principal
-            */}
             <div 
               ref={modalContainerRef}
               className="flex-grow h-full w-full overflow-y-auto relative bg-[#F2F4F6]"
               data-lenis-prevent 
             >
-               {/* CONTEÚDO SCROLLÁVEL */}
                <div ref={modalContentRef} className="will-change-transform">
-                   {/* Repassar layoutId para transições suaves */}
                    {React.Children.map(children, child => {
                       if (React.isValidElement(child)) {
                           return React.cloneElement(child as any, { layoutId });

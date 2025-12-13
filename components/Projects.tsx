@@ -5,9 +5,8 @@ import ContentModal from './ui/ContentModal';
 import { ProjectDetailContent } from './ProjectDetailContent';
 import { Reveal } from './ui/Reveal';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
-import { motion, useScroll, useTransform, useSpring, MotionValue } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
-// --- Card de Projeto com Efeito "Cinematic Reveal" ---
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0], 
   index: number,
@@ -16,37 +15,34 @@ const ProjectCard: React.FC<{
   
   const containerRef = useRef(null);
   
-  // Rastreia o progresso do elemento na viewport
-  // Começa a animar quando o topo do elemento está a 90% da viewport
-  // Termina quando o topo do elemento está a 20% da viewport
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.9", "start 0.2"]
   });
 
-  // Smooth Spring para suavizar o scroll "cru"
   const smoothProgress = useSpring(scrollYProgress, {
     damping: 20,
     stiffness: 100,
     mass: 0.5
   });
   
-  // 1. Efeito de Máscara (Clip Path): Abre como uma cortina ou diafragma
-  // Vai de "recortado" (inset 10%) para "completo" (inset 0%)
+  // 1. Mask Reveal
   const clipPath = useTransform(
     smoothProgress,
     [0, 1],
     ["inset(15% 10% 15% 10% round 4px)", "inset(0% 0% 0% 0% round 0px)"]
   );
 
-  // 2. Efeito de Escala Interna (Zoom Out):
-  // A imagem começa grande (1.3) e diminui para o tamanho normal (1.0) conforme a máscara abre.
-  // Isso cria profundidade.
-  const scale = useTransform(smoothProgress, [0, 1], [1.3, 1.05]);
+  // 2. Scale Effect (Container)
+  const scale = useTransform(smoothProgress, [0, 1], [0.95, 1.05]);
   
-  // 3. Opacidade e Filtro para entrada suave
-  const filter = useTransform(smoothProgress, [0, 0.5], ["grayscale(100%) brightness(0.8)", "grayscale(0%) brightness(1)"]);
-  const opacity = useTransform(smoothProgress, [0, 0.2], [0.5, 1]);
+  // 3. Internal Parallax
+  const yParallax = useTransform(smoothProgress, [0, 1], ["-8%", "8%"]);
+  
+  // 4. PERFORMANCE FIX: 
+  // Em vez de usar `filter: grayscale(...)` que é pesado para a GPU,
+  // usamos `opacity` em um overlay preto. Isso é muito mais leve.
+  const overlayOpacity = useTransform(smoothProgress, [0, 0.5], [0.5, 0]);
 
   return (
     <div 
@@ -56,7 +52,7 @@ const ProjectCard: React.FC<{
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           
-          {/* 1. Coluna Esquerda: Metadados e Índice */}
+          {/* Coluna Metadados */}
           <div className="lg:col-span-3 flex flex-row lg:flex-col justify-between items-baseline lg:sticky lg:top-32 transition-all duration-500 z-20">
              <div className="flex items-baseline gap-4">
                  <span className="text-sm font-mono text-petrol-base/40 group-hover:text-petrol-electric transition-colors">
@@ -67,7 +63,6 @@ const ProjectCard: React.FC<{
                  </span>
              </div>
              
-             {/* Número Gigante */}
              <div className="hidden lg:block mt-8 overflow-hidden">
                 <span className="text-[8rem] leading-[0.8] font-serif text-petrol-base/5 group-hover:text-petrol-base/10 transition-colors duration-700">
                     {(index + 1).toString().padStart(2, '0')}
@@ -75,33 +70,40 @@ const ProjectCard: React.FC<{
              </div>
           </div>
 
-          {/* 2. Coluna Direita: Imagem e Conteúdo */}
+          {/* Coluna Imagem & Conteúdo */}
           <div className="lg:col-span-9">
-              {/* Container da Imagem com Animação de Máscara (ClipPath) */}
+              {/* IMAGE WRAPPER */}
               <motion.div 
-                 style={{ clipPath, opacity }}
-                 className="relative aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700"
+                 style={{ clipPath }}
+                 className="relative aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 overflow-hidden"
               >
                  <motion.div className="w-full h-full relative overflow-hidden">
+                     {/* IMAGE WITH PARALLAX */}
                      <motion.img 
                         layoutId={`project-image-${project.title}`}
                         src={project.image} 
                         alt={project.title}
-                        style={{ scale, filter }} 
-                        className="w-full h-full object-cover transition-all duration-700 ease-out will-change-transform"
+                        // Removido 'filter' da animação para evitar lag
+                        style={{ scale, y: yParallax }} 
+                        className="w-full h-full object-cover transition-transform duration-700 will-change-transform"
+                     />
+                     
+                     {/* PERFORMANCE FIX: Overlay Layer em vez de Filter */}
+                     {/* Simula o efeito de 'acender' a imagem removendo a opacidade preta */}
+                     <motion.div 
+                        style={{ opacity: overlayOpacity }}
+                        className="absolute inset-0 bg-[#0B232E] pointer-events-none"
                      />
                  </motion.div>
                  
-                 {/* Overlay de Hover */}
                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300 pointer-events-none mix-blend-overlay" />
                  
-                 {/* Botão Flutuante Central */}
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 z-20">
                     <ArrowUpRight className="text-white" size={32} />
                  </div>
               </motion.div>
 
-              {/* Título e Descrição */}
+              {/* Text Info */}
               <div className="flex flex-col md:flex-row justify-between items-start gap-8">
                   <div className="max-w-2xl">
                       <Reveal>
@@ -141,13 +143,11 @@ const Projects: React.FC = () => {
   return (
     <section id="projects" className="relative bg-paper py-32 md:py-48 z-10 overflow-hidden">
       
-      {/* Linhas Guia Decorativas */}
       <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none" />
       <div className="absolute top-0 right-6 md:right-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none hidden md:block" />
 
       <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10">
         
-        {/* Cabeçalho Editorial */}
         <div className="flex flex-col items-start mb-32 pl-0 md:pl-24">
            <Reveal>
               <span className="text-xs font-mono uppercase tracking-[0.2em] text-petrol-base/40 mb-4 block">
@@ -160,7 +160,6 @@ const Projects: React.FC = () => {
            </Reveal>
         </div>
 
-        {/* Lista de Projetos */}
         <div className="flex flex-col">
           {PROJECTS.map((project, index) => (
              <ProjectCard 
@@ -172,7 +171,6 @@ const Projects: React.FC = () => {
           ))}
         </div>
 
-        {/* Footer Link */}
         <div className="mt-32 text-center">
             <Reveal variant="scale">
                 <a href="#contact" className="inline-flex items-center gap-3 px-8 py-4 border border-petrol-base/10 hover:bg-petrol-base hover:text-white rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 group">

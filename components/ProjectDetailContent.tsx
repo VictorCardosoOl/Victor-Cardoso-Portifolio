@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { PROJECTS } from '../constants';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
@@ -19,6 +20,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
       {/* 1. CINEMATIC HERO */}
       <div className="w-full h-[60vh] md:h-[75vh] relative overflow-hidden bg-[#0B232E]">
         {/* Imagem com layoutId para transição perfeita do card para o modal */}
+        {/* Added willChange transform to optimize the heavy layout transition */}
         <MotionImg 
           layoutId={layoutId}
           src={project.image} 
@@ -27,6 +29,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 0.8, ease: [0.6, 0.01, -0.05, 0.95] }}
+          style={{ willChange: "transform" }}
         />
         
         {/* Gradiente para legibilidade */}
