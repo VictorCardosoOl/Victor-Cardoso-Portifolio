@@ -6,6 +6,12 @@ import Lenis from 'lenis';
  * Contexto para expor a instância do Lenis globalmente.
  * Permite que outros componentes controlem o scroll (ex: pausar em modais, scroll to anchor).
  */
+import 'lenis/dist/lenis.css';
+
+/**
+ * Contexto para expor a instância do Lenis globalmente.
+ * Permite que outros componentes controlem o scroll (ex: pausar em modais, scroll to anchor).
+ */
 const ScrollContext = createContext<Lenis | null>(null);
 
 /**
@@ -28,13 +34,14 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Configuração "Heavy Luxury / Cinematic"
     // O objetivo é criar uma sensação de massa e inércia ("peso"), similar a rolar uma página de revista premium.
     const lenisInstance = new Lenis({
-      duration: 1.5, // Duração da inércia (em segundos). Valores mais altos = parada mais lenta.
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential Out: Arrancada rápida, desaceleração suave.
+      duration: 2.0, // Aumentado para 2.0s para sensação mais "premium/pesada"
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
-      smoothWheel: true, // Habilita suavização para roda do mouse
-      wheelMultiplier: 0.9, // Reduz a sensibilidade para aumentar a sensação de peso
-      touchMultiplier: 1.5, // Aumenta sensibilidade no touch para não ficar "arrastado" demais
+      smoothWheel: true,
+      wheelMultiplier: 0.8, // Levemente reduzido para controle mais fino
+      touchMultiplier: 1.5,
+      autoResize: true,
     });
 
     setLenis(lenisInstance);
