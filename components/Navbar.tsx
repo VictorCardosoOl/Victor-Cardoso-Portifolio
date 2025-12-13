@@ -5,8 +5,6 @@ import StaggeredMenu from './ui/StaggeredMenu';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 
-const MotionHeader = motion.header as any;
-
 const Navbar: React.FC = () => {
   const [activeSection, setActiveSection] = useState('hero');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -85,7 +83,7 @@ const Navbar: React.FC = () => {
 
   return (
     <>
-      <MotionHeader
+      <motion.header
         initial="top"
         animate={getCurrentVariant()}
         variants={navVariants}
@@ -121,7 +119,7 @@ const Navbar: React.FC = () => {
              {isMenuOpen ? <X size={14} /> : <Menu size={14} />}
           </div>
         </button>
-      </MotionHeader>
+      </motion.header>
 
       <StaggeredMenu 
         isOpen={isMenuOpen}

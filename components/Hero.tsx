@@ -6,10 +6,6 @@ import Magnetic from './ui/Magnetic';
 import { usePageTransition } from './ui/PageTransition';
 import { Globe, ArrowDown, ArrowRight } from 'lucide-react';
 
-const MotionDiv = motion.div as any;
-const MotionImg = motion.img as any;
-const MotionH1 = motion.h1 as any;
-
 const Hero: React.FC = () => {
   const containerRef = useRef(null);
   const { scrollY } = useScroll();
@@ -69,11 +65,11 @@ const Hero: React.FC = () => {
             
             {/* 1. TEXT MASS (Dominant Left - Span 8) */}
             <div className="lg:col-span-8 flex flex-col justify-center relative z-20 pl-2 md:pl-24">
-                <MotionDiv style={{ y: textY }} className="relative">
+                <motion.div style={{ y: textY }} className="relative">
                    
                    {/* Main Title Block - Staircase Layout */}
                    <div className="relative mb-16 md:mb-24">
-                       <MotionH1 
+                       <motion.h1 
                          initial={{ opacity: 0, x: -40 }}
                          animate={{ opacity: 1, x: 0 }}
                          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
@@ -81,10 +77,10 @@ const Hero: React.FC = () => {
                          className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken"
                        >
                          Lógica
-                       </MotionH1>
+                       </motion.h1>
                        
                        <div className="flex flex-col items-start ml-[15%] md:ml-[25%] mt-2 md:mt-4">
-                          <MotionH1 
+                          <motion.h1 
                             initial={{ opacity: 0, x: 40 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
@@ -92,7 +88,7 @@ const Hero: React.FC = () => {
                             className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter italic opacity-80"
                           >
                             Estética
-                          </MotionH1>
+                          </motion.h1>
                           
                           <span className="text-xs font-mono text-petrol-base/30 mt-4 self-end mr-4 hidden md:block max-w-[150px] text-right">
                              (01) Interseção entre Código e Design
@@ -127,14 +123,14 @@ const Hero: React.FC = () => {
                       </Reveal>
                    </div>
 
-                </MotionDiv>
+                </motion.div>
             </div>
 
             {/* 2. IMAGE ANCHOR (Bottom Right - Span 4) 
                 Smaller, detached, anchored to bottom right to create whitespace.
             */}
             <div className="lg:col-span-4 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0">
-               <MotionDiv 
+               <motion.div 
                   style={{ y: imageY }}
                   className="relative w-full max-w-[280px] md:max-w-[320px] mr-0 md:mr-12"
                >
@@ -145,7 +141,7 @@ const Hero: React.FC = () => {
                           - Kept aspect-[3/4] for portrait rectangle.
                       */}
                       <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[2rem] border border-petrol-base/5 shadow-2xl bg-slate-200 group">
-                          <MotionImg 
+                          <motion.img 
                             initial={{ scale: 1.4, filter: "grayscale(100%) blur(5px)" }}
                             animate={{ scale: 1, filter: "grayscale(0%) blur(0px)" }}
                             transition={{ duration: 2, ease: "circOut" }}
@@ -185,7 +181,7 @@ const Hero: React.FC = () => {
                       </div>
 
                   </Reveal>
-               </MotionDiv>
+               </motion.div>
             </div>
 
         </div>
@@ -193,14 +189,14 @@ const Hero: React.FC = () => {
       </div>
 
       {/* Elegant Scroll Indicator - Bottom Left */}
-      <MotionDiv 
+      <motion.div 
         style={{ opacity }}
         className="absolute bottom-8 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20"
       >
          <div className="h-px w-12 bg-petrol-base/20"></div>
          <span className="text-[9px] uppercase tracking-widest font-mono">Role</span>
          <ArrowDown size={12} className="animate-bounce" />
-      </MotionDiv>
+      </motion.div>
 
     </section>
   );
