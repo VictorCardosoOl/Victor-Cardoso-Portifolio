@@ -1,159 +1,130 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Reveal } from './ui/Reveal';
-import { EDUCATION } from '../constants';
-import { ArrowDownRight, Globe, Mail, Circle } from 'lucide-react';
+import ContentModal from './ui/ContentModal';
+import { ResumeContent } from './ResumeContent';
+import { ArrowUpRight, User } from 'lucide-react';
+import { motion } from 'framer-motion';
+import Magnetic from './ui/Magnetic';
+
+const MotionImg = motion.img as any;
 
 const About: React.FC = () => {
+  const [isResumeOpen, setIsResumeOpen] = useState(false);
+
   return (
-    <section id="about" className="py-32 md:py-48 bg-paper relative z-10 overflow-hidden">
+    <section id="about" className="py-20 md:py-32 bg-paper relative z-10 overflow-hidden">
       <div className="container mx-auto px-6 md:px-12 xl:px-24">
         
-        {/* --- HEADER TITLE --- */}
-        <div className="mb-24 md:mb-32 border-b border-petrol-base/10 pb-12">
-           <Reveal width="100%">
-              <div className="flex flex-col md:flex-row justify-between items-end gap-8">
-                 <h2 className="text-6xl md:text-8xl font-serif font-light text-petrol-base tracking-tighter leading-[0.9]">
-                    Victor <br/> Cardoso
-                 </h2>
-                 <div className="flex flex-col items-end text-right">
-                    <span className="text-xs font-mono uppercase tracking-widest text-petrol-base/40 mb-2">Engenharia & Design</span>
-                    <p className="text-sm text-petrol-ink/60 font-light max-w-xs">
-                       Transformando complexidade técnica em narrativas digitais fluidas.
-                    </p>
-                 </div>
-              </div>
-           </Reveal>
+        {/* Compact Header */}
+        <div className="flex items-center gap-3 mb-16 border-b border-petrol-base/10 pb-4">
+            <span className="w-2 h-2 rounded-full bg-petrol-base"></span>
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-petrol-base/40">Perfil Profissional</span>
         </div>
 
-        {/* --- GRID LAYOUT (SLIM) --- */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
            
-           {/* COL 1: IMAGE / AVATAR (Subtle) */}
-           <div className="lg:col-span-4 hidden lg:block relative">
-               <Reveal variant="scale" delay={200}>
-                  <div className="w-full aspect-[3/4] bg-petrol-base/5 grayscale overflow-hidden relative">
-                      <img 
+           {/* COL 1: Interactive Profile Card (Trigger) */}
+           <div className="lg:col-span-5 relative group cursor-pointer" onClick={() => setIsResumeOpen(true)}>
+               <Reveal variant="scale" width="100%">
+                  <div className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden rounded-sm bg-petrol-base/5 border border-petrol-base/10 shadow-xl transition-all duration-500 group-hover:shadow-2xl group-hover:scale-[1.02]">
+                      {/* Image with layoutId for transition */}
+                      <MotionImg 
+                        layoutId="profile-photo-main"
                         src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800" 
                         alt="Profile" 
-                        className="w-full h-full object-cover opacity-80 hover:opacity-100 hover:scale-105 transition-all duration-700"
+                        className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
                       />
-                      {/* Decorative Lines */}
-                      <div className="absolute inset-4 border border-white/20 pointer-events-none mix-blend-overlay"></div>
-                  </div>
-                  <div className="mt-4 flex justify-between items-center text-[9px] font-mono uppercase tracking-widest text-petrol-base/40">
-                      <span>Ref. 01</span>
-                      <span>São Paulo, BR</span>
+                      
+                      {/* Hover Overlay Text */}
+                      <div className="absolute inset-0 bg-petrol-base/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                          <div className="text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                              <span className="block text-4xl font-serif text-white mb-2">Ver CV</span>
+                              <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">Abrir Detalhes</span>
+                          </div>
+                      </div>
+
+                      {/* Corner Icon */}
+                      <div className="absolute bottom-4 right-4 w-10 h-10 bg-white text-petrol-base flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500 delay-100 z-10">
+                          <ArrowUpRight size={16} />
+                      </div>
                   </div>
                </Reveal>
+               
+               {/* Decorative background outline */}
+               <div className="absolute top-4 -left-4 w-full h-full border border-petrol-base/5 -z-10 hidden md:block group-hover:translate-x-2 group-hover:translate-y-2 transition-transform duration-500"></div>
            </div>
 
-           {/* COL 2: CONTENT (Manifesto & Lists) */}
-           <div className="lg:col-span-8">
-              
-              {/* MANIFESTO */}
-              <div className="mb-24">
-                 <Reveal>
-                    <div className="flex items-start gap-4 mb-8">
-                        <ArrowDownRight className="text-petrol-electric mt-2" size={24} />
-                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-petrol-base/40 mt-3">Manifesto</h3>
-                    </div>
-                    <div className="space-y-8 text-2xl md:text-4xl font-serif font-light text-petrol-base leading-tight">
-                        <p>
-                           Não acredito em código sem propósito. Meu trabalho reside na interseção exata entre <span className="italic text-petrol-electric/80">engenharia robusta</span> e design emocional.
-                        </p>
-                        <p className="text-petrol-base/60">
-                           Elimino a barreira técnica entre sua visão e o mercado, criando produtos que não apenas funcionam, mas respiram.
-                        </p>
-                    </div>
-                 </Reveal>
+           {/* COL 2: Concise Bio & CTA */}
+           <div className="lg:col-span-7">
+              <Reveal>
+                 <h2 className="text-4xl md:text-6xl font-serif font-light text-petrol-base mb-8 leading-tight">
+                    Engenharia robusta, <br/>
+                    <span className="italic text-petrol-base/40">Design intencional.</span>
+                 </h2>
+              </Reveal>
+
+              <div className="space-y-6 text-lg font-light text-petrol-ink/80 leading-relaxed max-w-2xl mb-10">
+                  <Reveal delay={100}>
+                    <p>
+                        Sou um Engenheiro de Software Full Stack focado em resolver problemas de negócio através de interfaces limpas e arquiteturas escaláveis.
+                    </p>
+                  </Reveal>
+                  <Reveal delay={200}>
+                    <p>
+                        Com background em Ciência da Computação e uma obsessão por UX, elimino o atrito entre o código complexo e o usuário final. Meu objetivo não é apenas entregar software, mas construir ferramentas que as pessoas realmente gostem de usar.
+                    </p>
+                  </Reveal>
               </div>
 
-              {/* SLIM LISTS CONTAINER */}
-              <div className="space-y-24">
-                 
-                 {/* PRINCIPLES LIST */}
-                 <div>
-                    <Reveal>
-                        <div className="flex items-center gap-4 mb-8 border-b border-petrol-base/10 pb-4">
-                            <span className="w-2 h-2 rounded-full bg-petrol-electric"></span>
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-petrol-base">Princípios do Estúdio</h3>
-                        </div>
-                    </Reveal>
-                    
-                    <div className="flex flex-col">
-                       {[
-                           { title: "Visão de Negócio", desc: "Código é meio, não fim. Foco total no ROI." },
-                           { title: "Performance", desc: "Obsessão por Core Web Vitals e latência zero." },
-                           { title: "Autonomia", desc: "Entregas modulares, documentadas e escaláveis." }
-                       ].map((item, idx) => (
-                           <Reveal key={idx} delay={idx * 100} width="100%">
-                               <div className="group flex flex-col md:flex-row md:items-center justify-between py-6 border-b border-petrol-base/10 hover:border-petrol-base/30 transition-colors">
-                                   <div className="flex items-baseline gap-4">
-                                       <span className="text-xs font-mono text-petrol-base/30">0{idx + 1}</span>
-                                       <span className="text-xl font-serif text-petrol-base group-hover:pl-2 transition-all duration-300">{item.title}</span>
-                                   </div>
-                                   <span className="text-sm font-light text-petrol-ink/60 mt-2 md:mt-0 max-w-xs text-right">
-                                       {item.desc}
-                                   </span>
-                               </div>
-                           </Reveal>
-                       ))}
-                    </div>
-                 </div>
-
-                 {/* EDUCATION LIST */}
-                 <div>
-                    <Reveal>
-                        <div className="flex items-center gap-4 mb-8 border-b border-petrol-base/10 pb-4">
-                            <span className="w-2 h-2 rounded-full bg-petrol-base/20"></span>
-                            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-petrol-base">Formação Acadêmica</h3>
-                        </div>
-                    </Reveal>
-
-                    <div className="flex flex-col">
-                       {EDUCATION.map((edu, idx) => (
-                           <Reveal key={idx} delay={idx * 100} width="100%">
-                               <div className="group flex flex-col md:flex-row md:items-baseline justify-between py-6 border-b border-petrol-base/10 hover:border-petrol-base/30 transition-colors">
-                                   <div>
-                                       <h4 className="text-lg font-serif text-petrol-base mb-1">{edu.degree}</h4>
-                                       <span className="text-xs font-bold uppercase tracking-widest text-petrol-base/40">{edu.institution}</span>
-                                   </div>
-                                   <span className="text-xs font-mono text-petrol-base/40 mt-2 md:mt-0">
-                                       {edu.period}
-                                   </span>
-                               </div>
-                           </Reveal>
-                       ))}
-                    </div>
-                 </div>
-
-                 {/* METADATA STRIP (Status) */}
-                 <Reveal width="100%">
-                    <div className="p-8 bg-petrol-base/5 rounded-sm flex flex-col md:flex-row justify-between items-center gap-6 mt-12">
-                        <div className="flex items-center gap-3">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-                            </span>
-                            <span className="text-xs font-bold uppercase tracking-widest text-petrol-base">Disponível para novos projetos</span>
-                        </div>
-                        
-                        <div className="flex gap-8">
-                            <a href="mailto:contato@victor.dev" className="flex items-center gap-2 text-xs font-mono text-petrol-base hover:text-petrol-electric transition-colors">
-                                <Mail size={12} /> Email
-                            </a>
-                            <span className="flex items-center gap-2 text-xs font-mono text-petrol-base/40">
-                                <Globe size={12} /> Remoto / Híbrido
-                            </span>
-                        </div>
-                    </div>
-                 </Reveal>
-
+              {/* Quick Stats Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-8 border-t border-petrol-base/10 mb-10">
+                  <Reveal delay={300}>
+                      <div>
+                          <span className="block text-3xl font-serif text-petrol-base">5+</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-petrol-base/40">Anos de Exp.</span>
+                      </div>
+                  </Reveal>
+                  <Reveal delay={350}>
+                      <div>
+                          <span className="block text-3xl font-serif text-petrol-base">40+</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-petrol-base/40">Projetos</span>
+                      </div>
+                  </Reveal>
+                  <Reveal delay={400}>
+                      <div>
+                          <span className="block text-3xl font-serif text-petrol-base">100%</span>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-petrol-base/40">Comprometimento</span>
+                      </div>
+                  </Reveal>
               </div>
+
+              {/* Action Button */}
+              <Reveal delay={500}>
+                 <Magnetic strength={0.2}>
+                    <button 
+                        onClick={() => setIsResumeOpen(true)}
+                        className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-white hover:bg-petrol-base px-8 py-4 border border-petrol-base rounded-sm transition-all duration-300"
+                    >
+                        <User size={14} /> Acessar Currículo Completo
+                    </button>
+                 </Magnetic>
+              </Reveal>
            </div>
 
         </div>
       </div>
+
+      {/* MODAL CV */}
+      <ContentModal 
+        isOpen={isResumeOpen} 
+        onClose={() => setIsResumeOpen(false)}
+        layoutId="profile-photo-main"
+        title="Currículo Profissional"
+        category="Sobre"
+      >
+         <ResumeContent layoutId="profile-photo-main" />
+      </ContentModal>
+
     </section>
   );
 };

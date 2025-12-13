@@ -9,7 +9,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 const MotionImg = motion.img as any;
 const MotionDiv = motion.div as any;
 
-// --- Architectural Project Card ---
+// --- Card de Projeto Estilo Arquitetural ---
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0], 
   index: number,
@@ -18,12 +18,13 @@ const ProjectCard: React.FC<{
   
   const containerRef = useRef(null);
   
-  // Internal Parallax Logic
+  // Parallax Interno da Imagem
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
   
+  // Movimento sutil da imagem dentro do container
   const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]); 
 
   return (
@@ -34,7 +35,7 @@ const ProjectCard: React.FC<{
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           
-          {/* 1. Number & Meta (Left Column) */}
+          {/* 1. Coluna Esquerda: Metadados e Índice */}
           <div className="lg:col-span-3 flex flex-row lg:flex-col justify-between items-baseline lg:sticky lg:top-32 transition-all duration-500">
              <div className="flex items-baseline gap-4">
                  <span className="text-sm font-mono text-petrol-base/40 group-hover:text-petrol-electric transition-colors">
@@ -45,7 +46,7 @@ const ProjectCard: React.FC<{
                  </span>
              </div>
              
-             {/* Big Index Number */}
+             {/* Número Gigante */}
              <div className="hidden lg:block mt-8 overflow-hidden">
                 <span className="text-[8rem] leading-[0.8] font-serif text-petrol-base/5 group-hover:text-petrol-base/10 transition-colors duration-700">
                     {(index + 1).toString().padStart(2, '0')}
@@ -53,30 +54,30 @@ const ProjectCard: React.FC<{
              </div>
           </div>
 
-          {/* 2. Main Content (Center) */}
+          {/* 2. Coluna Direita: Imagem e Conteúdo */}
           <div className="lg:col-span-9">
-              {/* Image Container with Parallax */}
+              {/* Container da Imagem com Parallax e Máscara */}
               <div className="relative overflow-hidden aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 rounded-sm">
                  <MotionDiv className="w-full h-full relative overflow-hidden">
                      <MotionImg 
                         layoutId={`project-image-${project.title}`}
                         src={project.image} 
                         alt={project.title}
-                        style={{ y, scale: 1.15 }} // Increased scale for parallax room
+                        style={{ y, scale: 1.15 }} // Escala maior para permitir o parallax sem cortar
                         className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 ease-out"
                      />
                  </MotionDiv>
                  
-                 {/* Hover Overlay */}
+                 {/* Overlay de Hover */}
                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300 pointer-events-none mix-blend-overlay" />
                  
-                 {/* Floating 'View' Button */}
+                 {/* Botão Flutuante Central */}
                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 z-20">
                     <ArrowUpRight className="text-white" size={32} />
                  </div>
               </div>
 
-              {/* Text Content */}
+              {/* Título e Descrição */}
               <div className="flex flex-col md:flex-row justify-between items-start gap-8">
                   <div className="max-w-2xl">
                       <motion.h3 
@@ -110,13 +111,13 @@ const Projects: React.FC = () => {
   return (
     <section id="projects" className="relative bg-paper py-32 md:py-48 z-10 overflow-hidden">
       
-      {/* Decorative Guide Lines */}
+      {/* Linhas Guia Decorativas */}
       <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none" />
       <div className="absolute top-0 right-6 md:right-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none hidden md:block" />
 
       <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10">
         
-        {/* Editorial Header */}
+        {/* Cabeçalho Editorial */}
         <div className="flex flex-col items-start mb-32 pl-0 md:pl-24">
            <Reveal>
               <span className="text-xs font-mono uppercase tracking-[0.2em] text-petrol-base/40 mb-4 block">
@@ -129,7 +130,7 @@ const Projects: React.FC = () => {
            </Reveal>
         </div>
 
-        {/* Project List */}
+        {/* Lista de Projetos */}
         <div className="flex flex-col">
           {PROJECTS.map((project, index) => (
              <Reveal key={index} width="100%" delay={index * 50}>

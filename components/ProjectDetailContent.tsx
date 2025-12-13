@@ -1,6 +1,6 @@
 import React from 'react';
 import { PROJECTS } from '../constants';
-import { ArrowUpRight, ArrowRight, X } from 'lucide-react';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import { motion } from 'framer-motion';
 
@@ -18,7 +18,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
       
       {/* 1. CINEMATIC HERO */}
       <div className="w-full h-[60vh] md:h-[75vh] relative overflow-hidden bg-[#0B232E]">
-        {/* Parallax Image using layoutId for smooth transition from card */}
+        {/* Imagem com layoutId para transição perfeita do card para o modal */}
         <MotionImg 
           layoutId={layoutId}
           src={project.image} 
@@ -26,13 +26,13 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
           className="w-full h-full object-cover opacity-80"
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 0.8, ease: [0.6, 0.01, -0.05, 0.95] }} // Custom bezier for premium feel
+          transition={{ duration: 0.8, ease: [0.6, 0.01, -0.05, 0.95] }}
         />
         
-        {/* Overlay Gradient */}
+        {/* Gradiente para legibilidade */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B232E] via-[#0B232E]/20 to-transparent opacity-90"></div>
         
-        {/* Title Block */}
+        {/* Bloco de Título */}
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 lg:p-20 z-10">
             <Reveal>
                 <MotionH1 
@@ -62,7 +62,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 pt-24">
             
-            {/* 2. SIDEBAR METADATA (Sticky) */}
+            {/* 2. BARRA LATERAL (Sticky) */}
             <div className="lg:col-span-3 order-2 lg:order-1">
                <div className="sticky top-24 space-y-12">
                    <div>
@@ -90,10 +90,10 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
                </div>
             </div>
 
-            {/* 3. MAIN CONTENT */}
+            {/* 3. CONTEÚDO PRINCIPAL */}
             <div className="lg:col-span-9 order-1 lg:order-2">
                
-               {/* Lead Paragraph */}
+               {/* Parágrafo Líder */}
                <div className="mb-24">
                   <Reveal width="100%">
                     <p className="text-xl md:text-3xl lg:text-4xl font-serif font-light text-[#0B232E] leading-[1.4] indent-12 md:indent-24">
@@ -102,10 +102,10 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
                   </Reveal>
                </div>
 
-               {/* Case Study Details */}
+               {/* Detalhes do Estudo de Caso */}
                {project.caseStudy && (
                  <>
-                    {/* Challenge & Solution Grid */}
+                    {/* Grid Desafio & Solução */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 mb-32 border-t border-[#0B232E]/10 pt-16">
                        <Reveal>
                           <span className="text-xs font-mono text-[#78909C] mb-4 block uppercase tracking-widest">01 / O Problema</span>
@@ -124,10 +124,10 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
                        </Reveal>
                     </div>
 
-                    {/* Results Banner (Performance Optimized) */}
+                    {/* Banner de Resultados */}
                     <Reveal width="100%">
                         <div className="bg-[#0B232E] text-white p-8 md:p-16 rounded-sm relative overflow-hidden mb-32 group">
-                             {/* Static Gradient Background instead of heavy blurs */}
+                             {/* Fundo gradiente estático para performance */}
                             <div className="absolute inset-0 bg-gradient-to-br from-[#153A48] to-[#0B232E] opacity-50"></div>
                             
                             <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-12">
@@ -155,7 +155,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
                  </>
                )}
 
-               {/* Gallery */}
+               {/* Galeria */}
                {project.gallery && project.gallery.length > 0 && (
                   <div className="space-y-12">
                      <div className="flex items-center justify-between border-b border-[#0B232E]/10 pb-4">
@@ -182,7 +182,7 @@ export const ProjectDetailContent: React.FC<ProjectDetailContentProps> = ({ proj
             </div>
         </div>
 
-        {/* Footer Navigation */}
+        {/* Navegação Rodapé */}
         <div className="mt-32 pt-12 border-t border-[#0B232E]/10 flex justify-end">
             <button className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest text-[#0B232E] hover:text-[#78909C] transition-colors group">
                 Próximo Projeto <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />

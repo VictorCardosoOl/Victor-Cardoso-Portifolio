@@ -2,8 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
 import { X } from 'lucide-react';
-import { useLenis } from '../ScrollContext'; // Main Lenis Context
-import Lenis from 'lenis'; // Import Class for Scoped Instance
+import { useLenis } from '../ScrollContext';
+import Lenis from 'lenis';
 import Magnetic from './Magnetic';
 
 interface ContentModalProps {
@@ -23,11 +23,11 @@ const ContentModal: React.FC<ContentModalProps> = ({
   layoutId,
   children 
 }) => {
-  const mainLenis = useLenis(); // The global scroll
+  const mainLenis = useLenis();
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Refs for Scoped Scrolling
+  // Refs para o Scroll Dedicado do Modal
   const modalContainerRef = useRef<HTMLDivElement>(null);
   const modalContentRef = useRef<HTMLDivElement>(null);
   const scopedLenisRef = useRef<Lenis | null>(null);
@@ -43,24 +43,23 @@ const ContentModal: React.FC<ContentModalProps> = ({
     };
   }, []);
 
-  // --- SCROLL MANAGEMENT (The Fix) ---
+  // --- CORREÇÃO DO SCROLL ---
   useEffect(() => {
     if (isOpen) {
-      // 1. Pause Main Page Scroll immediately
+      // 1. Parar o scroll da página principal
       mainLenis?.stop();
       document.body.style.overflow = 'hidden';
 
-      // 2. Initialize Scoped Lenis for the Modal AFTER animation frame
-      // We use a small timeout to ensure the DOM element is rendered by Framer Motion
+      // 2. Iniciar Lenis Dedicado para o Modal
+      // Pequeno timeout para garantir que o DOM foi renderizado pelo Framer Motion
       const timer = setTimeout(() => {
         if (modalContainerRef.current && modalContentRef.current) {
             
-            // Create a new independent scroll instance for the modal
             const scopedLenis = new Lenis({
-                wrapper: modalContainerRef.current, // The fixed height container
-                content: modalContentRef.current,   // The tall content div
+                wrapper: modalContainerRef.current, // Container com altura fixa e overflow
+                content: modalContentRef.current,   // Conteúdo que rola
                 duration: 1.2,
-                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Same physics as main page
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
                 orientation: 'vertical',
                 gestureOrientation: 'vertical',
                 smoothWheel: true,
@@ -70,14 +69,13 @@ const ContentModal: React.FC<ContentModalProps> = ({
 
             scopedLenisRef.current = scopedLenis;
 
-            // Independent RAF loop for the modal
             function raf(time: number) {
                 scopedLenis.raf(time);
                 requestAnimationFrame(raf);
             }
             requestAnimationFrame(raf);
         }
-      }, 300); // Wait for entrance animation to mostly finish
+      }, 300); // Aguarda a animação de entrada
 
       return () => {
         clearTimeout(timer);
@@ -85,7 +83,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
       };
 
     } else {
-      // Resume Main Scroll
+      // Retomar scroll principal
       mainLenis?.start();
       document.body.style.overflow = '';
     }
@@ -97,7 +95,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
     };
   }, [isOpen, mainLenis]);
 
-  // Keyboard support
+  // Tecla ESC
   useEffect(() => {
       const handleEsc = (e: KeyboardEvent) => {
         if (e.key === 'Escape' && isOpen) onClose();
@@ -146,7 +144,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
               ${isMobile ? 'h-[100dvh] rounded-none' : 'h-[98vh] rounded-t-[2rem] max-w-[96vw] mx-auto'}
             `}
           >
-            {/* Header - Fixed floating over content */}
+            {/* Header Flutuante */}
             <div className="absolute top-0 left-0 w-full z-50 px-6 py-6 md:px-12 md:py-8 flex items-start justify-end pointer-events-none">
                <div className="pointer-events-auto">
                 <Magnetic strength={0.3}>
@@ -161,19 +159,18 @@ const ContentModal: React.FC<ContentModalProps> = ({
             </div>
 
             {/* 
-                SCROLL CONTAINER (Wrapper for Lenis) 
-                - Must have explicit height
-                - overflow-y-auto is needed for native scroll fallback, but Lenis overrides behavior
-                - data-lenis-prevent ensures parent lenis ignores this area
+                WRAPPER DO SCROLL (Lenis) 
+                - overflow-y-auto necessário para fallback
+                - data-lenis-prevent impede conflito com scroll principal
             */}
             <div 
               ref={modalContainerRef}
               className="flex-grow h-full w-full overflow-y-auto relative bg-[#F2F4F6]"
               data-lenis-prevent 
             >
-               {/* SCROLL CONTENT (The part that moves) */}
+               {/* CONTEÚDO SCROLLÁVEL */}
                <div ref={modalContentRef} className="will-change-transform">
-                   {/* Pass layoutId down if children support it */}
+                   {/* Repassar layoutId para transições suaves */}
                    {React.Children.map(children, child => {
                       if (React.isValidElement(child)) {
                           return React.cloneElement(child as any, { layoutId });
