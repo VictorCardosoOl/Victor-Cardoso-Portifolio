@@ -1,6 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 
-// --- Types ---
+// --- Tipos e Interfaces ---
 
 export type Rank = 'Bronze' | 'Prata' | 'Ouro' | 'Hacker';
 
@@ -29,13 +30,13 @@ interface GamificationContextType {
   notification: { message: string; visible: boolean; type?: Rank } | null;
   hideNotification: () => void;
   currentSection: string;
-  // Modal Control
+  // Controle do Modal "Manifesto"
   isModalOpen: boolean;
   openModal: () => void;
   closeModal: () => void;
   // Easter Egg
   isHackerMode: boolean;
-  // Data Accessor (Non-Reactive)
+  // Acesso a dados brutos de sessão (sem re-render)
   getSessionData: () => SessionData;
 }
 
@@ -47,7 +48,7 @@ export const useGamification = () => {
   return context;
 };
 
-// --- Initial Data ---
+// --- Dados Iniciais ---
 
 const INITIAL_QUESTS: Quest[] = [
   { id: 'scroll_hero', label: 'Primeiros Passos', xp: 10, completed: false },
@@ -59,16 +60,25 @@ const INITIAL_QUESTS: Quest[] = [
   { id: 'konami_code', label: 'GOD MODE (Konami Code)', xp: 999, completed: false },
 ];
 
+/**
+ * Provider de Gamificação.
+ * Gerencia o estado global de XP, Nível, Missões e Rastreamento de Sessão.
+ * 
+ * NOTA DE ARQUITETURA:
+ * Utilizamos uma abordagem híbrida de State (para UI reativa) e Refs (para rastreamento de alta frequência).
+ * Isso evita que o timer de sessão cause re-renderizações em toda a aplicação a cada segundo.
+ */
 export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // --- STATE ---
+  
+  // --- STATE (Reativo - Atualiza a UI) ---
   const [quests, setQuests] = useState<Quest[]>(() => {
     if (typeof window === 'undefined') return INITIAL_QUESTS;
     const saved = localStorage.getItem('v_quests');
     return saved ? JSON.parse(saved) : INITIAL_QUESTS;
   });
   
-  // Performance Optimization: Use Refs for high-frequency updates (Timer)
-  // This prevents the entire app from re-rendering every second.
+  // --- REFS (Não Reativo - Alta Performance) ---
+  // Armazena dados que mudam frequentemente (timer) mas não precisam atualizar a UI instantaneamente.
   const trackingRef = useRef({
     totalTime: 0,
     sectionTimes: {} as SectionTime
@@ -79,12 +89,15 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHackerMode, setIsHackerMode] = useState(false);
 
-  // --- PERSISTENCE ---
+  // Persistência local das missões
   useEffect(() => {
     localStorage.setItem('v_quests', JSON.stringify(quests));
   }, [quests]);
 
-  // --- KONAMI CODE LISTENER ---
+  /**
+   * Listener do Konami Code (↑ ↑ ↓ ↓ ← → ← → B A)
+   * Ativa o modo "Hacker" que muda o tema do site.
+   */
   useEffect(() => {
     const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
     let cursor = 0;
@@ -112,7 +125,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     triggerNotification('GOD MODE ATIVADO', 'Hacker');
   };
 
-  // Derived State
+  // Cálculo derivado de XP e Rank
   const xp = quests.reduce((acc, q) => acc + (q.completed ? q.xp : 0), 0);
   const level = Math.floor(xp / 25) + 1;
 
@@ -124,12 +137,16 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
   const rank = getRank(level);
 
-  // --- Logic ---
+  // --- Lógica de Negócio ---
 
+  /**
+   * Marca uma missão como completa e dispara notificação.
+   * @param id ID único da missão
+   */
   const completeQuest = (id: string) => {
     setQuests(prev => {
       const idx = prev.findIndex(q => q.id === id);
-      if (idx === -1 || prev[idx].completed) return prev;
+      if (idx === -1 || prev[idx].completed) return prev; // Já completada ou inexistente
 
       const newQuests = [...prev];
       newQuests[idx] = { ...newQuests[idx], completed: true };
@@ -159,27 +176,26 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const closeModal = () => setIsModalOpen(false);
   const getSessionData = () => trackingRef.current;
 
-  // --- Optimized Timer (No Re-renders) ---
+  // --- Timer Otimizado ---
   useEffect(() => {
-    // We use a ref for the interval ID to ensure cleanup
     let intervalId: any;
 
     intervalId = setInterval(() => {
-      // 1. Update Refs
+      // 1. Atualiza Refs (Sem re-render)
       trackingRef.current.totalTime += 1;
       trackingRef.current.sectionTimes[currentSection] = (trackingRef.current.sectionTimes[currentSection] || 0) + 1;
 
-      // 2. Check Conditions (Silent Check)
-      // Only update state (completeQuest) if condition is met
+      // 2. Verificação Silenciosa
+      // Só dispara atualização de estado (completeQuest) se a condição for atingida
       if (trackingRef.current.totalTime === 60) {
         completeQuest('time_spent');
       }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [currentSection]); // Dependencies: Re-create interval if currentSection changes to ensure capture
+  }, [currentSection]); // Reinicia intervalo se a seção mudar para garantir a captura correta
 
-  // --- Intersection Observer for Sections ---
+  // --- Intersection Observer (Rastreamento de Seção) ---
   useEffect(() => {
     const sections = ['hero', 'projects', 'services', 'skills', 'about', 'education', 'lab', 'writing', 'contact'];
     const observer = new IntersectionObserver(
@@ -190,7 +206,7 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
           }
         });
       },
-      { threshold: 0.3 } 
+      { threshold: 0.3 } // Dispara quando 30% da seção está visível
     );
 
     sections.forEach(id => {

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { NAV_LINKS, CONTACT_INFO } from '../constants';
 import { usePageTransition } from './ui/PageTransition';
@@ -13,29 +14,33 @@ const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
 
+  // Hook do Framer Motion para ler a posição Y do scroll
   const { scrollY } = useScroll();
   const { transitionTo } = usePageTransition();
 
   // Scroll Aware Logic
+  // useMotionValueEvent reage a mudanças no valor do scroll em tempo real
   useMotionValueEvent(scrollY, "change", (latest) => {
     const previous = scrollY.getPrevious() ?? 0;
     
-    // 1. Detect if we are scrolled past the top (Glass Effect Trigger)
+    // 1. Detecta se rolou além do topo (Gatilho para efeito Glass/Blur)
     if (latest > 50) {
       setIsScrolled(true);
     } else {
       setIsScrolled(false);
     }
 
-    // 2. Detect Scroll Direction (Hide/Show Logic)
-    // If menu is open, do not mess with visibility logic
+    // 2. Detecta a Direção do Scroll (Lógica de Esconder/Mostrar)
+    // Se o menu estiver aberto, não mexemos na visibilidade.
     if (isMenuOpen) return;
 
     if (latest > previous && latest > 150) {
-      // Scrolling Down & Past Header -> Hide
+      // Rolando para BAIXO & Passou do Header -> ESCONDER
+      // Isso foca a atenção do usuário no conteúdo sendo lido.
       setIsHidden(true);
     } else {
-      // Scrolling Up or At Top -> Show
+      // Rolando para CIMA ou no Topo -> MOSTRAR
+      // Isso sugere que o usuário quer navegar.
       setIsHidden(false);
     }
   });
@@ -49,23 +54,24 @@ const Navbar: React.FC = () => {
   const socialItems = CONTACT_INFO.socials.map(social => ({ label: social.name, link: social.url }));
 
   // --- Visual States (Variants) ---
+  // Define os estilos para cada estado da Navbar
   const navVariants = {
     top: {
         y: 0,
-        backgroundColor: 'rgba(242, 244, 246, 0)', // Transparent
+        backgroundColor: 'rgba(242, 244, 246, 0)', // Transparente no topo
         backdropFilter: 'blur(0px)',
         borderBottom: '1px solid transparent',
         boxShadow: '0 0 0 rgba(0,0,0,0)'
     },
     scrolled: {
         y: 0,
-        backgroundColor: 'rgba(242, 244, 246, 0.8)', // Glassy Paper
+        backgroundColor: 'rgba(242, 244, 246, 0.8)', // Efeito Glass ao rolar
         backdropFilter: 'blur(16px)',
         borderBottom: '1px solid rgba(11, 35, 46, 0.05)',
         boxShadow: '0 4px 20px -5px rgba(0,0,0,0.05)'
     },
     hidden: {
-        y: "-100%", // Move out of view
+        y: "-100%", // Move para fora da tela (acima)
         backgroundColor: 'rgba(242, 244, 246, 0.8)',
         backdropFilter: 'blur(16px)',
         borderBottom: '1px solid rgba(11, 35, 46, 0.05)',
@@ -73,9 +79,9 @@ const Navbar: React.FC = () => {
     }
   };
 
-  // Determine current variant based on state priority
+  // Determina a variante atual com base na prioridade dos estados
   const getCurrentVariant = () => {
-    if (isMenuOpen) return "top"; // When menu is open, keep navbar visible but transparent
+    if (isMenuOpen) return "top"; // Menu aberto tem prioridade visual
     if (isHidden) return "hidden";
     if (isScrolled) return "scrolled";
     return "top";

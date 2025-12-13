@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Reveal } from './ui/Reveal';
 import ContentModal from './ui/ContentModal';
 import { ResumeContent } from './ResumeContent';
-import { ArrowUpRight, Camera, FileText, Download } from 'lucide-react';
+import { ArrowUpRight, Camera, FileText, Code2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Magnetic from './ui/Magnetic';
 
@@ -23,7 +24,7 @@ const About: React.FC = () => {
                 <span className="w-1.5 h-1.5 rounded-full bg-petrol-base animate-pulse"></span>
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-petrol-base/40">Perfil Profissional</span>
             </div>
-            <span className="text-[10px] font-mono text-petrol-base/30">ENG & ADM</span>
+            <span className="text-[10px] font-mono text-petrol-base/30">DEV & ENGINEERING</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
@@ -58,29 +59,29 @@ const About: React.FC = () => {
            <div className="lg:col-span-7 flex flex-col justify-center h-full">
               <Reveal>
                  <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-light text-petrol-base mb-6 leading-[0.95] tracking-tight">
-                    Mente de <span className="font-normal italic text-petrol-mid">Engenheiro.</span> <br/>
-                    Visão de <span className="font-normal italic text-petrol-mid">Administrador.</span>
+                    De Problemas Complexos <br/>
+                    a <span className="font-normal italic text-petrol-mid">Soluções em Código.</span>
                  </h2>
               </Reveal>
 
               <div className="space-y-4 text-base md:text-lg font-light text-petrol-ink/80 leading-relaxed max-w-xl mb-8">
                   <Reveal delay={100}>
                     <p>
-                        Sou estudante de <strong>Engenharia da Computação</strong> com formação técnica em <strong>Administração</strong> pela ETEC Parque Belém. Essa dualidade me permite ver além do código.
+                        Não apenas escrevo código; construo sistemas. Minha base sólida em operações me ensinou a identificar ineficiências, mas foi na <strong>Engenharia de Software</strong> que encontrei as ferramentas para resolvê-las definitivamente.
                     </p>
                   </Reveal>
                   <Reveal delay={150}>
                     <p>
-                        Minhas <em>Hard Skills</em> cobrem desde contabilidade e minutas contratuais até UX Design e programação fullstack. Nas <em>Soft Skills</em>, sou conhecido pela resolutividade, pensamento analítico e comunicação clara.
+                        Atuo como <strong>Desenvolvedor Full Stack</strong>, focado em criar aplicações que são escaláveis no backend (Node.js/SQL) e intuitivas no frontend (React). Acredito que o bom código é aquele que é limpo, testável e, acima de tudo, gera valor real para o negócio.
                     </p>
                   </Reveal>
               </div>
 
-              {/* Grid de Tags Rápidas */}
+              {/* Grid de Tags Rápidas - Atualizadas para Dev */}
               <Reveal delay={200}>
                   <div className="flex flex-wrap gap-2 mb-8">
-                      {['PT-BR Nativo', 'Inglês Básico', 'Contabilidade', 'Regras de Negócio', 'UX/UI'].map((tag, i) => (
-                          <span key={i} className="px-3 py-1 border border-petrol-base/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-petrol-base/60">
+                      {['React / Next.js', 'Node.js', 'PostgreSQL', 'TypeScript', 'Clean Architecture', 'DevOps Basics'].map((tag, i) => (
+                          <span key={i} className="px-3 py-1 border border-petrol-base/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-petrol-base/60 hover:bg-petrol-base hover:text-white transition-colors cursor-default">
                               {tag}
                           </span>
                       ))}
@@ -96,7 +97,7 @@ const About: React.FC = () => {
                             className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] bg-petrol-base text-white px-6 py-3.5 border border-petrol-base rounded-sm hover:bg-petrol-mid transition-all duration-300 shadow-lg group"
                         >
                             <FileText size={14} /> 
-                            <span>Currículo & Skills</span>
+                            <span>Experiência & CV</span>
                             <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 -ml-2 group-hover:ml-0 transition-all" />
                         </button>
                     </Magnetic>
@@ -105,11 +106,11 @@ const About: React.FC = () => {
                  <Reveal delay={350}>
                     <Magnetic strength={0.2}>
                         <a 
-                            href="#photography" // Placeholder para link de fotos
+                            href="#lab"
                             className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-white hover:bg-petrol-base px-6 py-3.5 border border-petrol-base/20 rounded-sm transition-all duration-300 group"
                         >
-                            <Camera size={14} /> 
-                            <span>Ver Fotografias</span>
+                            <Code2 size={14} /> 
+                            <span>Ver Repositórios</span>
                         </a>
                     </Magnetic>
                  </Reveal>

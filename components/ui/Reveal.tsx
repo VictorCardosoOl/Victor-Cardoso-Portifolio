@@ -14,6 +14,10 @@ interface RevealProps {
   variant?: 'translate' | 'scale' | 'blur';
 }
 
+/**
+ * Componente Wrapper para animações de entrada (In-View).
+ * Utiliza Intersection Observer para disparar animações apenas quando o elemento entra na tela.
+ */
 export const Reveal: React.FC<RevealProps> = ({ 
   children, 
   width = "fit-content", 
@@ -23,9 +27,13 @@ export const Reveal: React.FC<RevealProps> = ({
   variant = 'translate'
 }) => {
   const ref = useRef(null);
+  // useInView: hook que retorna true quando o elemento entra na viewport
+  // once: true garante que a animação só rode uma vez (não repete ao rolar pra cima)
+  // margin: "-10%" cria um buffer para que a animação só comece quando o elemento já estiver um pouco dentro da tela
   const isInView = useInView(ref, { once: true, margin: "-10%" }); 
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
+  // Acessibilidade: Respeita a preferência do usuário por movimento reduzido
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
@@ -41,6 +49,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   // Animation Variants Strategy - PHYSICS BASED
+  // Configurações diferentes para tipos de revelação
   const animationVariants: Record<string, any> = {
     translate: {
       hidden: { opacity: 0, y: y },
@@ -65,8 +74,8 @@ export const Reveal: React.FC<RevealProps> = ({
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         transition={{ 
-          // PHYSICS CONFIG
-          // type: "spring" simula física real.
+          // PHYSICS CONFIGURATION
+          // type: "spring" simula física real, resultando em movimento mais natural que curvas Bezier.
           // stiffness: quão rígida é a "mola" (menor = mais lento/pesado).
           // damping: fricção (maior = para mais suavemente sem quicar).
           // mass: peso do objeto (maior = mais inércia).

@@ -1,45 +1,59 @@
-# Documentação de Efeitos Visuais
 
-## 1. Scroll-Linked Mask Reveal (Projetos)
+# Documentação de Efeitos Visuais (VFX)
 
-Este efeito foi implementado no componente `Projects.tsx` para criar uma revelação gradual e elegante das imagens conforme o usuário rola a página.
-
-### Como Funciona
-Utilizamos a biblioteca `framer-motion` para sincronizar a posição da barra de rolagem (`scrollYProgress`) diretamente com a propriedade CSS `clip-path` do container da imagem.
-
-### Lógica Técnica
-1. **Rastreamento:** O hook `useScroll` monitora quando o elemento `<ProjectImage />` entra na viewport.
-   - `offset: ["start 0.9", "center center"]`
-   - Início: Quando o topo do elemento atinge 90% da altura da tela (entra por baixo).
-   - Fim: Quando o centro do elemento atinge o centro da tela.
-
-2. **Interpolação (useTransform):**
-   - Mapeamos o progresso (0 a 1) para um valor de `inset`.
-   - `inset(100% 0 0% 0)` -> A imagem está 100% cortada do topo para baixo (invisível).
-   - `inset(0% 0 0% 0)` -> A imagem está totalmente visível.
-
-### Resultado Visual
-Conforme o usuário rola para baixo, a "máscara" sobe, revelando a imagem como se ela estivesse saindo de um envelope ou sendo impressa na tela. Se o usuário rolar para cima, a máscara desce novamente, ocultando a imagem.
-
-```typescript
-// Exemplo de Código
-const clipPath = useTransform(
-  scrollYProgress,
-  [0, 1], 
-  ["inset(100% 0 0% 0)", "inset(0% 0 0% 0)"]
-);
-```
+Este documento detalha os efeitos visuais "puramente estéticos" que compõem a identidade visual do portfólio.
 
 ---
 
-## 2. Gamificação / Manifesto Popup
+## 1. Grain Background (Ruído de Filme)
 
-O sistema de gamificação rastreia silenciosamente a interação do usuário.
+Adiciona textura e profundidade visual, simulando filme analógico ISO alto.
 
-### Gatilho (Trigger)
-O popup "Manifesto" só é exibido quando:
-1. O usuário atinge matematicamente o final da página (`window.innerHeight + window.scrollY >= document.body.scrollHeight`).
-2. O tempo de sessão é superior a 8 segundos.
-3. O popup ainda não foi exibido na sessão atual.
+### Implementação Técnica
+*   **Arquivo:** `components/GrainBackground.tsx`
+*   **Estratégia:** Em vez de usar filtros SVG complexos (`<feTurbulence>`) que consomem muita CPU, usamos um **GIF/PNG Base64** de ruído monocromático.
+*   **Animação:** Usamos CSS `steps()` para mover a textura em posições aleatórias a cada quadro, criando a ilusão de ruído estático em movimento.
+*   **Performance:** Custo de GPU próximo a zero.
 
-Isso evita que o aviso apareça prematuramente em telas grandes ou durante carregamentos rápidos.
+## 2. Tilt Effect (Cartões 3D)
+
+Faz com que cartões girem levemente em direção ao mouse.
+
+### Implementação Técnica
+*   **Arquivo:** `components/ui/Tilt.tsx`
+*   **Bibliotecas:** `framer-motion` (useMotionValue, useSpring, useTransform).
+*   **Lógica:**
+    1.  Calcula a posição do mouse relativa ao centro do elemento (-0.5 a 0.5).
+    2.  Mapeia X para rotação Y e Y para rotação X (invertido).
+    3.  Aplica física de mola (`useSpring`) para que o cartão tenha "peso" e não siga o mouse instantaneamente.
+    4.  Aplica `transform: perspective(1000px)` no pai para criar o ponto de fuga 3D.
+
+## 3. Page Transition (Cortina)
+
+Transição suave entre âncoras/páginas.
+
+### Implementação Técnica
+*   **Arquivo:** `components/ui/PageTransition.tsx`
+*   **Lógica:**
+    1.  Intercepta cliques em links internos.
+    2.  Sobe uma `div` (cortina) cobrindo a tela (`z-index: 99999`).
+    3.  Enquanto a tela está coberta, o Lenis faz um scroll instantâneo (`immediate: true`) para o destino.
+    4.  A cortina desce/desaparece, revelando a nova seção.
+
+## 4. Texto com Física (Reveal)
+
+### Implementação Técnica
+*   **Arquivo:** `components/ui/Reveal.tsx`
+*   **Conceito:** Animações baseadas em molas (Spring Physics) em vez de curvas de tempo (Duration/Easing).
+*   **Por quê?** Animações com duração fixa (ex: 0.5s) parecem artificiais se interrompidas. Física de mola permite interrupção fluida e sensação orgânica.
+
+---
+
+## Referências de Design System
+
+| Efeito | Propriedade CSS/Motion | Valor Típico |
+| :--- | :--- | :--- |
+| **Glassmorphism** | `backdrop-filter` | `blur(16px)` |
+| **Sombra Suave** | `box-shadow` | `0 20px 50px -12px rgba(11,35,46,0.3)` |
+| **Spring (Rápido)** | `transition` | `{ stiffness: 300, damping: 30 }` |
+| **Spring (Lento)** | `transition` | `{ stiffness: 90, damping: 40, mass: 1.2 }` |

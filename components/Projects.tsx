@@ -7,6 +7,10 @@ import { Reveal } from './ui/Reveal';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 
+/**
+ * Componente ProjectCard
+ * Responsável por renderizar um item da lista com efeitos visuais avançados.
+ */
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0], 
   index: number,
@@ -15,18 +19,25 @@ const ProjectCard: React.FC<{
   
   const containerRef = useRef(null);
   
+  // Rastreia o progresso de scroll deste card específico.
+  // offset ["start 0.9", "start 0.2"] significa:
+  // Começa a animar quando o topo do card atinge 90% da altura da viewport.
+  // Termina quando o topo atinge 20% da altura da viewport.
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start 0.9", "start 0.2"]
   });
 
+  // Suaviza o valor bruto do scroll para uma animação "física"
   const smoothProgress = useSpring(scrollYProgress, {
     damping: 20,
     stiffness: 100,
     mass: 0.5
   });
   
-  // 1. Mask Reveal
+  // 1. Mask Reveal (Efeito de Recorte)
+  // Cria uma máscara que "abre" a imagem conforme o scroll desce.
+  // inset(TOP RIGHT BOTTOM LEFT round RADIUS)
   const clipPath = useTransform(
     smoothProgress,
     [0, 1],
@@ -34,14 +45,17 @@ const ProjectCard: React.FC<{
   );
 
   // 2. Scale Effect (Container)
+  // O container da imagem cresce levemente
   const scale = useTransform(smoothProgress, [0, 1], [0.95, 1.05]);
   
-  // 3. Internal Parallax
-  const yParallax = useTransform(smoothProgress, [0, 1], ["-8%", "8%"]);
+  // 3. Parallax Profundo e Agressivo
+  // Move a imagem DENTRO do container em velocidade diferente do scroll.
+  // yParallax vai de -40% a 40%. Para isso funcionar sem criar espaços brancos,
+  // a imagem precisa ser maior que o container (scale 1.35 aplicada abaixo).
+  const yParallax = useTransform(smoothProgress, [0, 1], ["-40%", "40%"]);
   
-  // 4. PERFORMANCE FIX: 
-  // Em vez de usar `filter: grayscale(...)` que é pesado para a GPU,
-  // usamos `opacity` em um overlay preto. Isso é muito mais leve.
+  // 4. Overlay Opacity
+  // Escurece a imagem no início para foco dramático
   const overlayOpacity = useTransform(smoothProgress, [0, 0.5], [0.5, 0]);
 
   return (
@@ -52,7 +66,7 @@ const ProjectCard: React.FC<{
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
           
-          {/* Coluna Metadados */}
+          {/* Coluna Metadados - Sticky para acompanhar o scroll */}
           <div className="lg:col-span-3 flex flex-row lg:flex-col justify-between items-baseline lg:sticky lg:top-32 transition-all duration-500 z-20">
              <div className="flex items-baseline gap-4">
                  <span className="text-sm font-mono text-petrol-base/40 group-hover:text-petrol-electric transition-colors">
@@ -72,24 +86,26 @@ const ProjectCard: React.FC<{
 
           {/* Coluna Imagem & Conteúdo */}
           <div className="lg:col-span-9">
-              {/* IMAGE WRAPPER */}
+              {/* IMAGE WRAPPER com Clip Path dinâmico */}
               <motion.div 
                  style={{ clipPath }}
                  className="relative aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 overflow-hidden"
               >
                  <motion.div className="w-full h-full relative overflow-hidden">
-                     {/* IMAGE WITH PARALLAX */}
+                     {/* IMAGE WITH DEEP PARALLAX */}
                      <motion.img 
                         layoutId={`project-image-${project.title}`}
                         src={project.image} 
                         alt={project.title}
-                        // Removido 'filter' da animação para evitar lag
-                        style={{ scale, y: yParallax }} 
+                        style={{ 
+                            // Scale precisa ser 1.35 ou mais para cobrir o movimento de +/- 40% sem mostrar fundo
+                            scale: 1.35, 
+                            y: yParallax 
+                        }} 
                         className="w-full h-full object-cover transition-transform duration-700 will-change-transform"
                      />
                      
-                     {/* PERFORMANCE FIX: Overlay Layer em vez de Filter */}
-                     {/* Simula o efeito de 'acender' a imagem removendo a opacidade preta */}
+                     {/* Overlay Layer */}
                      <motion.div 
                         style={{ opacity: overlayOpacity }}
                         className="absolute inset-0 bg-[#0B232E] pointer-events-none"
@@ -143,6 +159,7 @@ const Projects: React.FC = () => {
   return (
     <section id="projects" className="relative bg-paper py-32 md:py-48 z-10 overflow-hidden">
       
+      {/* Linhas de grade decorativas */}
       <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none" />
       <div className="absolute top-0 right-6 md:right-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none hidden md:block" />
 
