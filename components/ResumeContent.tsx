@@ -1,6 +1,5 @@
 import React from 'react';
-import { EDUCATION, SKILLS } from '../constants';
-import { Download, Calendar, MapPin, Building2, ExternalLink } from 'lucide-react';
+import { Download, Calendar, MapPin, Building2, ExternalLink, Globe, BookOpen, Camera, Award } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import { motion } from 'framer-motion';
 
@@ -10,164 +9,247 @@ interface ResumeContentProps {
   layoutId?: string;
 }
 
-// Dados simulados de Experiência (Você pode mover para constants.tsx depois)
-const EXPERIENCE = [
-  {
-    role: "Senior Frontend Engineer",
-    company: "TechFlow Solutions",
-    period: "2023 - Presente",
-    location: "Remoto, US",
-    description: "Liderança técnica na migração de legado para Next.js 14. Implementação de Design System consumido por 4 produtos diferentes. Melhoria de 40% no LCP da aplicação principal."
-  },
-  {
-    role: "Full Stack Developer",
-    company: "Studio Agência",
-    period: "2021 - 2023",
-    location: "São Paulo, BR",
-    description: "Desenvolvimento de e-commerces headless utilizando Shopify e React. Integração de gateways de pagamento e sistemas de ERP. Mentoria de desenvolvedores júnior."
-  },
-  {
-    role: "Frontend Developer",
-    company: "Startup One",
-    period: "2019 - 2021",
-    location: "Híbrido, SP",
-    description: "Responsável pelo front-end da plataforma SaaS. Criação de dashboards interativos com D3.js e manutenção de componentes Vue.js."
-  }
+// --- DADOS DO CURRÍCULO (Refinados) ---
+
+const HARD_SKILLS = {
+    tech: [
+        "Programação Web (Fullstack)",
+        "Design de Experiência do Usuário (UX)",
+        "Desenvolvimento de Projetos",
+        "Lógica de Programação"
+    ],
+    business: [
+        "Regras de Negócio",
+        "Contabilidade & Financeiro",
+        "Conciliação Bancária",
+        "Criação de Minutas Contratuais",
+        "Abertura de Empresas"
+    ]
+};
+
+const SOFT_SKILLS = [
+    "Resolutividade (Problem Solving)",
+    "Pensamento Analítico",
+    "Comunicação Clara",
+    "Trabalho em Equipe",
+    "Criatividade",
+    "Pensamento Crítico",
+    "Atenção aos Detalhes",
+    "Lógica Estruturada",
+    "Empatia"
+];
+
+const EDUCATION = [
+    {
+        course: "Engenharia da Computação",
+        institution: "Universidade (Em curso)",
+        period: "Cursando",
+        type: "Bacharelado",
+        desc: "Foco em desenvolvimento de software, estruturas de dados e arquitetura de sistemas."
+    },
+    {
+        course: "Técnico em Administração",
+        institution: "ETEC Parque Belém",
+        period: "Concluído",
+        type: "Técnico",
+        desc: "Formação sólida em gestão empresarial, processos administrativos, contabilidade e direito empresarial."
+    }
 ];
 
 export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
   return (
     <div className="bg-[#F2F4F6] min-h-screen pb-24">
       
-      {/* 1. Header do Currículo (Visual) */}
+      {/* 1. Header Cinematic */}
       <div className="w-full bg-[#0B232E] text-[#F2F4F6] pt-32 pb-16 md:pt-40 md:pb-24 px-6 md:px-12 relative overflow-hidden">
-         <div className="max-w-5xl mx-auto flex flex-col md:flex-row gap-12 items-end">
+         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white/[0.03] rounded-full blur-[100px] pointer-events-none translate-x-1/2 -translate-y-1/2"></div>
+         
+         <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10 items-end">
             
             {/* Foto (Transition Target) */}
-            <div className="w-32 h-40 md:w-48 md:h-60 flex-shrink-0 relative rounded-sm overflow-hidden border border-white/20">
+            <div className="w-32 h-40 md:w-56 md:h-72 flex-shrink-0 relative rounded-sm overflow-hidden border border-white/20 shadow-2xl">
                <MotionImg 
                  layoutId={layoutId}
                  src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800" 
                  alt="Victor Cardoso Profile"
                  className="w-full h-full object-cover grayscale"
                />
+               <div className="absolute inset-0 border-4 border-[#0B232E]/20"></div>
             </div>
 
             <div className="flex-1 pb-2">
                <Reveal>
-                  <span className="text-xs font-mono uppercase tracking-[0.2em] text-white/40 mb-4 block">
-                     Curriculum Vitae
-                  </span>
-                  <h1 className="text-5xl md:text-7xl font-serif font-medium tracking-tight mb-6">
+                  <div className="flex items-center gap-3 mb-4">
+                     <span className="px-3 py-1 bg-white/10 border border-white/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-white/80">
+                        Disponível para Projetos
+                     </span>
+                  </div>
+                  <h1 className="text-5xl md:text-7xl font-serif font-medium tracking-tight mb-4 leading-none">
                      Victor Cardoso
                   </h1>
                </Reveal>
                
                <Reveal delay={100}>
-                  <div className="flex flex-wrap gap-6 text-sm font-light text-white/70">
-                     <span className="flex items-center gap-2"><MapPin size={14} /> São Paulo, Brasil</span>
-                     <span className="flex items-center gap-2"><Building2 size={14} /> Disponível para Projetos</span>
-                     <a href="#" className="flex items-center gap-2 text-white hover:underline decoration-1 underline-offset-4">
-                        <ExternalLink size={14} /> linkedin.com/in/victor
+                  <p className="text-lg md:text-xl font-light text-white/70 max-w-2xl mb-8 leading-relaxed">
+                     Estudante de Engenharia da Computação & Técnico em Administração. 
+                     Unindo a lógica da programação com a visão estratégica de negócios.
+                  </p>
+                  
+                  <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs font-mono text-white/50 uppercase tracking-widest border-t border-white/10 pt-6">
+                     <span className="flex items-center gap-2"><MapPin size={12} /> São Paulo, Brasil</span>
+                     <span className="flex items-center gap-2"><Globe size={12} /> Português (Nativo) / Inglês (Básico)</span>
+                     <a href="#" className="flex items-center gap-2 text-white hover:text-[#78909C] transition-colors decoration-1 underline-offset-4">
+                        <ExternalLink size={12} /> linkedin.com/in/victor
                      </a>
                   </div>
                </Reveal>
             </div>
-
-            <div className="hidden md:block pb-2">
-                <button className="flex items-center gap-3 px-6 py-3 border border-white/20 rounded-full hover:bg-white hover:text-[#0B232E] transition-all text-xs font-bold uppercase tracking-widest group">
-                    <Download size={14} /> Baixar PDF
-                </button>
-            </div>
          </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-6 md:px-12 mt-16 md:mt-24 space-y-20 md:space-y-32">
-          
-          {/* 2. Experiência Profissional */}
-          <section>
-             <Reveal width="100%">
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4">
-                   Experiência Profissional
-                </h3>
-             </Reveal>
-             
-             <div className="space-y-12">
-                {EXPERIENCE.map((job, idx) => (
-                   <Reveal key={idx} width="100%" delay={idx * 50}>
-                      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-12 group">
-                          <div className="md:col-span-3">
-                              <span className="text-xs font-mono text-[#0B232E]/50 flex items-center gap-2 mt-1.5">
-                                 <Calendar size={12} /> {job.period}
-                              </span>
-                          </div>
-                          <div className="md:col-span-9">
-                              <h4 className="text-2xl font-serif text-[#0B232E] mb-1 group-hover:text-[#78909C] transition-colors">
-                                 {job.role}
-                              </h4>
-                              <span className="text-xs font-bold uppercase tracking-widest text-[#0B232E]/60 mb-4 block">
-                                 {job.company} &mdash; {job.location}
-                              </span>
-                              <p className="text-[#1E3A45]/80 font-light leading-relaxed max-w-2xl">
-                                 {job.description}
-                              </p>
-                          </div>
+      <div className="max-w-6xl mx-auto px-6 md:px-12 mt-16 md:mt-24">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
+              
+              {/* COLUNA ESQUERDA: Educação & Pessoal (4 cols) */}
+              <div className="lg:col-span-4 space-y-16">
+                  
+                  {/* FORMAÇÃO */}
+                  <section>
+                      <Reveal width="100%">
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4 flex items-center gap-2">
+                            <Award size={14} /> Formação Acadêmica
+                        </h3>
+                      </Reveal>
+                      
+                      <div className="space-y-8">
+                          {EDUCATION.map((edu, idx) => (
+                             <Reveal key={idx} delay={idx * 100} width="100%">
+                                <div className="group">
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1 block">{edu.period} • {edu.type}</span>
+                                    <h4 className="text-xl font-serif text-[#0B232E] mb-1">{edu.course}</h4>
+                                    <p className="text-xs font-bold uppercase tracking-widest text-[#0B232E]/50 mb-3">{edu.institution}</p>
+                                    <p className="text-sm text-[#0B232E]/70 font-light leading-relaxed">
+                                        {edu.desc}
+                                    </p>
+                                </div>
+                             </Reveal>
+                          ))}
                       </div>
-                   </Reveal>
-                ))}
-             </div>
-          </section>
+                  </section>
 
-          {/* 3. Stack Técnica (Grid) */}
-          <section>
-             <Reveal width="100%">
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4">
-                   Competências Técnicas
-                </h3>
-             </Reveal>
-
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {SKILLS.map((skillGroup, idx) => (
-                    <Reveal key={idx} delay={idx * 50}>
-                        <div className="bg-white p-6 border border-[#0B232E]/5 rounded-sm h-full">
-                            <h4 className="font-serif text-lg text-[#0B232E] mb-4">{skillGroup.title}</h4>
-                            <ul className="space-y-2">
-                                {skillGroup.items.map((item, i) => (
-                                    <li key={i} className="text-sm text-[#0B232E]/70 flex items-center gap-2">
-                                        <span className="w-1 h-1 bg-[#78909C] rounded-full"></span>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    </Reveal>
-                ))}
-             </div>
-          </section>
-
-          {/* 4. Educação */}
-          <section>
-             <Reveal width="100%">
-                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4">
-                   Formação Acadêmica
-                </h3>
-             </Reveal>
-             
-             <div className="space-y-8">
-                 {EDUCATION.map((edu, idx) => (
-                     <Reveal key={idx} width="100%">
-                         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[#0B232E]/5 pb-6 last:border-0">
+                  {/* IDIOMAS & HOBBIES */}
+                  <section>
+                      <Reveal width="100%">
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4 flex items-center gap-2">
+                             Pessoal
+                        </h3>
+                      </Reveal>
+                      
+                      <div className="space-y-6">
+                          <Reveal delay={100} width="100%">
                              <div>
-                                 <h4 className="text-xl font-serif text-[#0B232E]">{edu.degree}</h4>
-                                 <span className="text-xs font-bold uppercase tracking-widest text-[#0B232E]/50">{edu.institution}</span>
+                                <h4 className="text-sm font-bold uppercase tracking-widest text-[#0B232E] mb-3">Idiomas</h4>
+                                <ul className="space-y-2 text-sm text-[#0B232E]/70">
+                                    <li className="flex justify-between"><span>Português</span> <span className="opacity-50">Nativo</span></li>
+                                    <li className="flex justify-between"><span>Inglês</span> <span className="opacity-50">Básico (Em evolução)</span></li>
+                                </ul>
                              </div>
-                             <span className="text-xs font-mono text-[#0B232E]/40 mt-2 md:mt-0">{edu.period}</span>
-                         </div>
-                     </Reveal>
-                 ))}
-             </div>
-          </section>
+                          </Reveal>
 
+                          <Reveal delay={200} width="100%">
+                             <div>
+                                <h4 className="text-sm font-bold uppercase tracking-widest text-[#0B232E] mb-3">Hobbies & Interesses</h4>
+                                <div className="flex flex-wrap gap-2">
+                                    <span className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-[#0B232E]/10 rounded-sm text-xs font-mono text-[#0B232E]/70">
+                                        <BookOpen size={12} /> Literatura
+                                    </span>
+                                    <span className="inline-flex items-center gap-2 px-3 py-2 bg-white border border-[#0B232E]/10 rounded-sm text-xs font-mono text-[#0B232E]/70 cursor-pointer hover:bg-[#0B232E] hover:text-white transition-colors">
+                                        <Camera size={12} /> Fotografia
+                                    </span>
+                                </div>
+                             </div>
+                          </Reveal>
+                      </div>
+                  </section>
+
+              </div>
+
+              {/* COLUNA DIREITA: Skills & Competências (8 cols) */}
+              <div className="lg:col-span-8 space-y-16">
+                  
+                  {/* HARD SKILLS (Dividido em Tech e Business) */}
+                  <section>
+                      <Reveal width="100%">
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4 flex items-center gap-2">
+                            Hard Skills & Competências
+                        </h3>
+                      </Reveal>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                          
+                          {/* TECH */}
+                          <Reveal delay={100} width="100%">
+                              <div className="bg-white p-8 rounded-sm border border-[#0B232E]/5 shadow-sm h-full">
+                                  <h4 className="font-serif text-xl text-[#0B232E] mb-6">Tecnologia & Design</h4>
+                                  <ul className="space-y-4">
+                                      {HARD_SKILLS.tech.map((skill, i) => (
+                                          <li key={i} className="flex items-start gap-3 text-sm text-[#0B232E]/80">
+                                              <span className="w-1.5 h-1.5 rounded-full bg-[#78909C] mt-1.5 shrink-0"></span>
+                                              {skill}
+                                          </li>
+                                      ))}
+                                  </ul>
+                              </div>
+                          </Reveal>
+
+                          {/* BUSINESS */}
+                          <Reveal delay={200} width="100%">
+                              <div className="bg-white p-8 rounded-sm border border-[#0B232E]/5 shadow-sm h-full">
+                                  <h4 className="font-serif text-xl text-[#0B232E] mb-6">Negócios & Administrativo</h4>
+                                  <ul className="space-y-4">
+                                      {HARD_SKILLS.business.map((skill, i) => (
+                                          <li key={i} className="flex items-start gap-3 text-sm text-[#0B232E]/80">
+                                              <span className="w-1.5 h-1.5 rounded-full bg-[#0B232E] mt-1.5 shrink-0"></span>
+                                              {skill}
+                                          </li>
+                                      ))}
+                                  </ul>
+                              </div>
+                          </Reveal>
+                      </div>
+                  </section>
+
+                  {/* SOFT SKILLS */}
+                  <section>
+                      <Reveal width="100%">
+                        <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4 flex items-center gap-2">
+                            Soft Skills (Comportamental)
+                        </h3>
+                      </Reveal>
+
+                      <Reveal width="100%">
+                          <div className="flex flex-wrap gap-3">
+                              {SOFT_SKILLS.map((skill, i) => (
+                                  <span 
+                                    key={i}
+                                    className="px-4 py-2 bg-transparent border border-[#0B232E]/20 text-[#0B232E] rounded-full text-sm font-light hover:bg-[#0B232E] hover:text-white transition-all duration-300 cursor-default"
+                                  >
+                                      {skill}
+                                  </span>
+                              ))}
+                          </div>
+                      </Reveal>
+                  </section>
+                  
+                  {/* DOWNLOAD BUTTON */}
+                  <div className="pt-8">
+                    <button className="flex items-center gap-3 px-8 py-4 bg-[#0B232E] text-white rounded-sm hover:bg-[#153A48] transition-all text-xs font-bold uppercase tracking-widest shadow-lg">
+                        <Download size={16} /> Baixar Versão PDF
+                    </button>
+                  </div>
+
+              </div>
+          </div>
       </div>
     </div>
   );

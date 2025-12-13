@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Reveal } from './ui/Reveal';
 import ContentModal from './ui/ContentModal';
 import { ResumeContent } from './ResumeContent';
-import { ArrowUpRight, User } from 'lucide-react';
+import { ArrowUpRight, User, Camera, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Magnetic from './ui/Magnetic';
 
@@ -12,7 +12,7 @@ const About: React.FC = () => {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
   return (
-    <section id="about" className="py-20 md:py-32 bg-paper relative z-10 overflow-hidden">
+    <section id="about" className="py-24 md:py-40 bg-paper relative z-10 overflow-hidden">
       <div className="container mx-auto px-6 md:px-12 xl:px-24">
         
         {/* Compact Header */}
@@ -21,7 +21,7 @@ const About: React.FC = () => {
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-petrol-base/40">Perfil Profissional</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-center">
            
            {/* COL 1: Interactive Profile Card (Trigger) */}
            <div className="lg:col-span-5 relative group cursor-pointer" onClick={() => setIsResumeOpen(true)}>
@@ -37,9 +37,11 @@ const About: React.FC = () => {
                       
                       {/* Hover Overlay Text */}
                       <div className="absolute inset-0 bg-petrol-base/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                          <div className="text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                              <span className="block text-4xl font-serif text-white mb-2">Ver CV</span>
-                              <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">Abrir Detalhes</span>
+                          <div className="text-center transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 px-6">
+                              <span className="block text-3xl font-serif text-white mb-2 italic">Curriculum Vitae</span>
+                              <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">
+                                 Engenharia • Administração • Design
+                              </span>
                           </div>
                       </div>
 
@@ -55,59 +57,59 @@ const About: React.FC = () => {
            </div>
 
            {/* COL 2: Concise Bio & CTA */}
-           <div className="lg:col-span-7">
+           <div className="lg:col-span-7 flex flex-col justify-center">
               <Reveal>
-                 <h2 className="text-4xl md:text-6xl font-serif font-light text-petrol-base mb-8 leading-tight">
-                    Engenharia robusta, <br/>
-                    <span className="italic text-petrol-base/40">Design intencional.</span>
+                 <h2 className="text-4xl md:text-6xl lg:text-7xl font-serif font-light text-petrol-base mb-8 leading-[0.95] tracking-tight">
+                    Visão de <span className="font-normal italic">Negócio.</span> <br/>
+                    Precisão de <span className="font-normal italic">Código.</span>
                  </h2>
               </Reveal>
 
-              <div className="space-y-6 text-lg font-light text-petrol-ink/80 leading-relaxed max-w-2xl mb-10">
+              <div className="space-y-6 text-lg font-light text-petrol-ink/80 leading-relaxed max-w-2xl mb-12">
                   <Reveal delay={100}>
                     <p>
-                        Sou um Engenheiro de Software Full Stack focado em resolver problemas de negócio através de interfaces limpas e arquiteturas escaláveis.
+                        Estudante de <strong>Engenharia da Computação</strong> com formação técnica em <strong>Administração</strong>. Minha atuação vive na interseção entre regras de negócio complexas e soluções digitais elegantes.
                     </p>
                   </Reveal>
                   <Reveal delay={200}>
                     <p>
-                        Com background em Ciência da Computação e uma obsessão por UX, elimino o atrito entre o código complexo e o usuário final. Meu objetivo não é apenas entregar software, mas construir ferramentas que as pessoas realmente gostem de usar.
+                        Não apenas escrevo código; entendo de minutas contratuais, conciliação bancária e experiência do usuário. Transformo burocracia em interfaces fluidas e processos lógicos.
                     </p>
                   </Reveal>
               </div>
 
-              {/* Quick Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6 pt-8 border-t border-petrol-base/10 mb-10">
-                  <Reveal delay={300}>
-                      <div>
-                          <span className="block text-3xl font-serif text-petrol-base">5+</span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-petrol-base/40">Anos de Exp.</span>
-                      </div>
-                  </Reveal>
-                  <Reveal delay={350}>
-                      <div>
-                          <span className="block text-3xl font-serif text-petrol-base">40+</span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-petrol-base/40">Projetos</span>
-                      </div>
-                  </Reveal>
-                  <Reveal delay={400}>
-                      <div>
-                          <span className="block text-3xl font-serif text-petrol-base">100%</span>
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-petrol-base/40">Comprometimento</span>
-                      </div>
-                  </Reveal>
+              {/* Action Buttons */}
+              <div className="flex flex-wrap gap-4 items-center">
+                 <Reveal delay={300}>
+                    <Magnetic strength={0.2}>
+                        <button 
+                            onClick={() => setIsResumeOpen(true)}
+                            className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] bg-petrol-base text-white px-8 py-4 border border-petrol-base rounded-sm hover:bg-petrol-mid transition-all duration-300 shadow-lg"
+                        >
+                            <FileText size={14} /> Ver Currículo Completo
+                        </button>
+                    </Magnetic>
+                 </Reveal>
+
+                 <Reveal delay={400}>
+                    <Magnetic strength={0.2}>
+                        <a 
+                            href="#photography" // Placeholder link
+                            className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-white hover:bg-petrol-base px-8 py-4 border border-petrol-base/20 rounded-sm transition-all duration-300"
+                        >
+                            <Camera size={14} /> Fotografia & Hobby
+                        </a>
+                    </Magnetic>
+                 </Reveal>
               </div>
 
-              {/* Action Button */}
+              {/* Tags / Footer */}
               <Reveal delay={500}>
-                 <Magnetic strength={0.2}>
-                    <button 
-                        onClick={() => setIsResumeOpen(true)}
-                        className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-white hover:bg-petrol-base px-8 py-4 border border-petrol-base rounded-sm transition-all duration-300"
-                    >
-                        <User size={14} /> Acessar Currículo Completo
-                    </button>
-                 </Magnetic>
+                 <div className="mt-12 pt-8 border-t border-petrol-base/10 flex flex-wrap gap-x-8 gap-y-2 text-[10px] font-mono uppercase tracking-widest text-petrol-base/40">
+                    <span>São Paulo, BR</span>
+                    <span>PT-BR (Nativo)</span>
+                    <span>EN (Básico)</span>
+                 </div>
               </Reveal>
            </div>
 
