@@ -34,7 +34,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "WebGL Shader",
         image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=800&h=600",
         link: "https://codepen.io",
-        colSpan: "md:col-span-2"
+        colSpan: "md:col-span-1" // Layout Dinâmico: Pequeno (1/3)
     },
     {
         id: 2,
@@ -42,7 +42,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Interactive",
         image: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&q=80&w=800&h=800",
         link: "https://codepen.io",
-        colSpan: "md:col-span-1"
+        colSpan: "md:col-span-2" // Layout Dinâmico: Grande (2/3)
     },
     {
         id: 3,
@@ -50,7 +50,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Creative Coding",
         image: "https://images.unsplash.com/photo-1614850523060-8da1d56ae167?auto=format&fit=crop&q=80&w=800&h=800",
         link: "https://codepen.io",
-        colSpan: "md:col-span-1"
+        colSpan: "md:col-span-2" // Layout Dinâmico: Grande Invertido (2/3)
     },
     {
         id: 4,
@@ -58,7 +58,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Algorithms",
         image: "https://images.unsplash.com/photo-1604871000636-074fa5117945?auto=format&fit=crop&q=80&w=800&h=600",
         link: "https://codepen.io",
-        colSpan: "md:col-span-2"
+        colSpan: "md:col-span-1" // Layout Dinâmico: Pequeno Invertido (1/3)
     },
     {
         id: 5,
@@ -66,7 +66,7 @@ const EXPERIMENTS: Experiment[] = [
         category: "Data Viz",
         image: "https://images.unsplash.com/photo-1506765515384-028b60a970df?auto=format&fit=crop&q=80&w=800&h=600",
         link: "https://codepen.io",
-        colSpan: "md:col-span-3"
+        colSpan: "md:col-span-3" // Cinematic (Full Width)
     }
 ];
 
@@ -148,8 +148,8 @@ const Lab: React.FC = () => {
                                         alt={exp.title} 
                                         className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
                                     />
-                                    {/* Scanline Effect Overlay (Base64 SVG pattern) */}
-                                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')] opacity-30 pointer-events-none"></div>
+                                    {/* Scanline Effect Overlay (Base64 SVG pattern) - APPLIED TO ALL IMAGES */}
+                                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')] opacity-30 pointer-events-none mix-blend-overlay"></div>
                                 </div>
 
                                 {/* Hover Overlay */}

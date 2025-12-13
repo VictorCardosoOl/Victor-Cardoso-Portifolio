@@ -3,224 +3,152 @@ import { PROJECTS } from '../constants';
 import ContentModal from './ui/ContentModal';
 import { ProjectDetailContent } from './ProjectDetailContent';
 import { Reveal } from './ui/Reveal';
-import { ArrowUpRight } from 'lucide-react';
-import { ArchiveLine } from './ui/ArchiveLine';
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
+import { ArrowUpRight, ArrowRight } from 'lucide-react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const MotionImg = motion.img as any;
 const MotionDiv = motion.div as any;
 
-// Helper Component for Scroll-Linked Image Animation (Slit Scan Effect)
-const ProjectImage: React.FC<{ 
+// --- Architectural Project Card ---
+const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0], 
-  onClick: () => void, 
-  aspectClass?: string,
-  style?: React.CSSProperties,
-  layoutId?: string
-}> = ({ project, onClick, aspectClass = "aspect-[16/10]", style, layoutId }) => {
+  index: number,
+  onClick: () => void
+}> = ({ project, index, onClick }) => {
+  
   const containerRef = useRef(null);
   
+  // Internal Parallax Logic
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ["start 0.9", "center center"] 
+    offset: ["start end", "end start"]
   });
+  
+  const y = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]); 
 
-  // Center-out reveal effect (Unmasking)
-  const clipPath = useTransform(
-    scrollYProgress,
-    [0, 1], 
-    ["inset(15% 5% 15% 5%)", "inset(0% 0% 0% 0%)"]
-  );
-  
-  // Smooth Physics Scale
-  const smoothProgress = useSpring(scrollYProgress, { damping: 20, stiffness: 100 });
-  const scale = useTransform(smoothProgress, [0, 1], [1.15, 1.0]);
-  
   return (
     <div 
       ref={containerRef}
-      className={`relative ${aspectClass} overflow-hidden cursor-pointer bg-petrol-base/5 group liquid-hover-parent`}
+      className="group w-full cursor-pointer relative py-12 md:py-24 border-t border-petrol-base/10 first:border-t-0"
       onClick={onClick}
-      style={style}
     >
-        <MotionDiv
-            style={{ clipPath }}
-            className="w-full h-full relative will-change-transform"
-        >
-          {/* LIQUID HOVER EFFECT: The class 'liquid-hover-target' applies the SVG filter from index.html */}
-          <MotionImg 
-            layoutId={layoutId} // Morphing Magic Key
-            src={project.image} 
-            alt={project.title} 
-            style={{ scale }} 
-            className="w-full h-full object-cover transition-all duration-700 ease-out opacity-90 group-hover:opacity-100 grayscale-[0.3] group-hover:grayscale-0 liquid-hover-target"
-          />
-        </MotionDiv>
-        
-        {/* Hover Overlay - Subtle Flash */}
-        <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none mix-blend-overlay" />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+          
+          {/* 1. Number & Meta (Left Column) */}
+          <div className="lg:col-span-3 flex flex-row lg:flex-col justify-between items-baseline lg:sticky lg:top-32 transition-all duration-500">
+             <div className="flex items-baseline gap-4">
+                 <span className="text-sm font-mono text-petrol-base/40 group-hover:text-petrol-electric transition-colors">
+                     ( {project.year} )
+                 </span>
+                 <span className="text-sm font-mono uppercase tracking-widest text-petrol-base/60">
+                     {project.category}
+                 </span>
+             </div>
+             
+             {/* Big Index Number */}
+             <div className="hidden lg:block mt-8 overflow-hidden">
+                <span className="text-[8rem] leading-[0.8] font-serif text-petrol-base/5 group-hover:text-petrol-base/10 transition-colors duration-700">
+                    {(index + 1).toString().padStart(2, '0')}
+                </span>
+             </div>
+          </div>
+
+          {/* 2. Main Content (Center) */}
+          <div className="lg:col-span-9">
+              {/* Image Container with Parallax */}
+              <div className="relative overflow-hidden aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 rounded-sm">
+                 <MotionDiv className="w-full h-full relative overflow-hidden">
+                     <MotionImg 
+                        layoutId={`project-image-${project.title}`}
+                        src={project.image} 
+                        alt={project.title}
+                        style={{ y, scale: 1.15 }} // Increased scale for parallax room
+                        className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 ease-out"
+                     />
+                 </MotionDiv>
+                 
+                 {/* Hover Overlay */}
+                 <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300 pointer-events-none mix-blend-overlay" />
+                 
+                 {/* Floating 'View' Button */}
+                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 z-20">
+                    <ArrowUpRight className="text-white" size={32} />
+                 </div>
+              </div>
+
+              {/* Text Content */}
+              <div className="flex flex-col md:flex-row justify-between items-start gap-8">
+                  <div className="max-w-2xl">
+                      <motion.h3 
+                        layoutId={`project-title-${project.title}`}
+                        className="text-4xl md:text-6xl font-serif font-medium text-petrol-base mb-4 leading-tight group-hover:text-petrol-mid transition-colors"
+                      >
+                          {project.title}
+                      </motion.h3>
+                      <p className="text-petrol-ink/70 font-light leading-relaxed text-lg max-w-lg">
+                          {project.description}
+                      </p>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2 md:justify-end">
+                      {project.tags.slice(0, 3).map((tag, i) => (
+                          <span key={i} className="px-3 py-1 border border-petrol-base/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-petrol-base/60 bg-white">
+                              {tag}
+                          </span>
+                      ))}
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
   );
 };
 
-
 const Projects: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<typeof PROJECTS[0] | null>(null);
-
-  // Layout logic
-  const getLayoutClass = (index: number) => index % 3;
 
   return (
     <section id="projects" className="relative bg-paper py-32 md:py-48 z-10 overflow-hidden">
       
-      {/* --- SPINE LINE (Subtler) --- */}
-      <div className="absolute top-0 bottom-0 left-6 md:left-1/2 w-px bg-petrol-base/[0.03] z-0" />
+      {/* Decorative Guide Lines */}
+      <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none" />
+      <div className="absolute top-0 right-6 md:right-24 w-px h-full bg-petrol-base/[0.03] z-0 pointer-events-none hidden md:block" />
 
-      <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
+      <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10">
         
-        {/* Archive Header */}
-        <div className="mb-32 md:mb-40 pl-8 md:pl-0">
-          <ArchiveLine index="01" label="OBRAS SELECIONADAS" className="mb-6 opacity-70" />
-          <Reveal>
-             <h2 className="text-6xl md:text-8xl lg:text-9xl font-serif font-medium text-petrol-base font-heading-tight mb-6 tracking-tighter">
-               Arquivo <br/> <span className="text-petrol-base/30 italic font-light">de Obras</span>
-             </h2>
-          </Reveal>
+        {/* Editorial Header */}
+        <div className="flex flex-col items-start mb-32 pl-0 md:pl-24">
+           <Reveal>
+              <span className="text-xs font-mono uppercase tracking-[0.2em] text-petrol-base/40 mb-4 block">
+                 Arquivo Selecionado
+              </span>
+              <h2 className="text-7xl md:text-[9rem] leading-[0.85] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken">
+                 Obras <br/>
+                 <span className="italic text-petrol-base/20 ml-16 md:ml-32">Recentes</span>
+              </h2>
+           </Reveal>
         </div>
 
-        {/* --- ASYMMETRIC EDITORIAL LAYOUT --- */}
-        <div className="flex flex-col gap-32 md:gap-56">
-          {PROJECTS.map((project, index) => {
-             const layout = getLayoutClass(index);
-             const uniqueLayoutId = `project-img-${index}`; // Unique ID for shared transition
-             
-             return (
-               <div key={index} className="w-full relative group">
-                  
-                  {/* Visual Connection Point on the Spine */}
-                  <div className="absolute left-0 md:left-1/2 -translate-x-1/2 top-0 w-2 h-2 bg-paper border border-petrol-base/20 rounded-full z-20 mt-2 hidden md:block group-hover:scale-150 transition-transform duration-500">
-                     <div className="w-0.5 h-0.5 bg-petrol-base rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
-                  </div>
+        {/* Project List */}
+        <div className="flex flex-col">
+          {PROJECTS.map((project, index) => (
+             <Reveal key={index} width="100%" delay={index * 50}>
+                <ProjectCard 
+                   project={project} 
+                   index={index} 
+                   onClick={() => setSelectedProject(project)}
+                />
+             </Reveal>
+          ))}
+        </div>
 
-                  {/* LAYOUT 0: Large Left Image, Text Right (Sticky) */}
-                  {layout === 0 && (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                        <div className="lg:col-span-7">
-                           <ProjectImage 
-                              project={project} 
-                              onClick={() => setSelectedProject(project)}
-                              layoutId={uniqueLayoutId}
-                           />
-                        </div>
-                        <div className="lg:col-span-5 flex flex-col items-start pt-4 lg:sticky lg:top-32 h-fit lg:pl-12">
-                           <Reveal delay={100} variant="translate">
-                              <div className="flex flex-col gap-8">
-                                  <div>
-                                     <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base/40 block mb-2">Index No.</span>
-                                     <span className="font-mono text-xs text-petrol-base border border-petrol-base/20 px-2 py-1 rounded-full">PRJ-0{index+1}</span>
-                                  </div>
-                                  <div>
-                                     <h3 className="text-4xl md:text-5xl font-serif font-medium text-petrol-base cursor-pointer hover:text-petrol-mid transition-colors tracking-tight leading-[1.1]" onClick={() => setSelectedProject(project)}>
-                                        {project.title}
-                                     </h3>
-                                  </div>
-                                  <div className="max-w-xs">
-                                     <p className="text-sm font-light text-petrol-ink leading-relaxed opacity-80">{project.description}</p>
-                                     {/* Tech list specifically for Lumina Architecture */}
-                                     {project.title === 'Lumina Architecture' && (
-                                         <ul className="mt-4 space-y-1">
-                                             {['AWS S3', 'Stripe Connect', 'Next.js 14'].map(tech => (
-                                                 <li key={tech} className="text-xs font-mono text-petrol-base/60 flex items-center gap-2">
-                                                     <span className="w-1 h-1 bg-petrol-electric rounded-full"></span> {tech}
-                                                 </li>
-                                             ))}
-                                         </ul>
-                                     )}
-                                  </div>
-                                  <div className="pt-4">
-                                    <button onClick={() => setSelectedProject(project)} className="text-[10px] font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-petrol-electric flex items-center gap-2 transition-colors border-b border-petrol-base/10 hover:border-petrol-electric pb-1">
-                                       Ver Detalhes
-                                    </button>
-                                  </div>
-                              </div>
-                           </Reveal>
-                        </div>
-                    </div>
-                  )}
-
-                  {/* LAYOUT 1: Text Left (Sticky), Small Image Right */}
-                  {layout === 1 && (
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
-                         <div className="lg:col-span-5 order-2 lg:order-1 pt-4 lg:sticky lg:top-32 h-fit lg:text-right lg:items-end lg:pr-12">
-                           <Reveal delay={100} variant="translate">
-                              <div className="flex flex-col gap-8 lg:items-end">
-                                  <div>
-                                     <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base/40 block mb-2">Index No.</span>
-                                     <span className="font-mono text-xs text-petrol-base border border-petrol-base/20 px-2 py-1 rounded-full">PRJ-0{index+1}</span>
-                                  </div>
-                                  <div>
-                                     <h3 className="text-4xl md:text-5xl font-serif font-medium text-petrol-base cursor-pointer hover:text-petrol-mid transition-colors tracking-tight leading-[1.1]" onClick={() => setSelectedProject(project)}>
-                                        {project.title}
-                                     </h3>
-                                  </div>
-                                  <div className="max-w-xs">
-                                     <p className="text-sm font-light text-petrol-ink leading-relaxed opacity-80">{project.description}</p>
-                                  </div>
-                                  <div className="pt-4">
-                                    <button onClick={() => setSelectedProject(project)} className="text-[10px] font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-petrol-electric flex items-center gap-2 lg:flex-row-reverse transition-colors border-b border-petrol-base/10 hover:border-petrol-electric pb-1">
-                                       Ver Detalhes
-                                    </button>
-                                  </div>
-                              </div>
-                           </Reveal>
-                        </div>
-                        <div className="lg:col-span-7 order-1 lg:order-2">
-                           <ProjectImage 
-                              project={project} 
-                              onClick={() => setSelectedProject(project)}
-                              aspectClass="aspect-[4/5] lg:w-[85%] ml-auto"
-                              layoutId={uniqueLayoutId}
-                           />
-                        </div>
-                    </div>
-                  )}
-
-                  {/* LAYOUT 2: Panoramic Center */}
-                  {layout === 2 && (
-                    <div className="flex flex-col items-center">
-                         <ProjectImage 
-                            project={project} 
-                            onClick={() => setSelectedProject(project)}
-                            aspectClass="w-full aspect-[21/9] mb-16 shadow-2xl"
-                            style={{ objectPosition: 'center 40%' }}
-                            layoutId={uniqueLayoutId}
-                         />
-
-                         <Reveal delay={100} variant="translate" width="100%">
-                            <div className="flex flex-col md:flex-row justify-between items-end w-full max-w-5xl mx-auto border-t border-petrol-base/10 pt-8">
-                                <div>
-                                   <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base/40 block mb-2">PRJ-0{index+1}</span>
-                                   <h3 
-                                     onClick={() => setSelectedProject(project)}
-                                     className="text-4xl md:text-6xl font-serif font-medium text-petrol-base cursor-pointer hover:text-petrol-mid transition-colors tracking-tight"
-                                   >
-                                     {project.title}
-                                   </h3>
-                                </div>
-                                <div className="mt-8 md:mt-0 flex flex-col items-end">
-                                   <span className="text-sm font-light text-petrol-ink mb-6 text-right block">{project.category}</span>
-                                   <button onClick={() => setSelectedProject(project)} className="px-8 py-3 border border-petrol-base/20 rounded-full flex items-center gap-3 hover:bg-petrol-base hover:text-white transition-all text-[10px] font-bold uppercase tracking-[0.2em] group">
-                                      Explorar <ArrowUpRight size={12} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                                   </button>
-                                </div>
-                            </div>
-                         </Reveal>
-                    </div>
-                  )}
-
-               </div>
-             );
-          })}
+        {/* Footer Link */}
+        <div className="mt-32 text-center">
+            <Reveal variant="scale">
+                <a href="#contact" className="inline-flex items-center gap-3 px-8 py-4 border border-petrol-base/10 hover:bg-petrol-base hover:text-white rounded-full text-xs font-bold uppercase tracking-[0.2em] transition-all duration-300 group">
+                    Iniciar um projeto <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </a>
+            </Reveal>
         </div>
 
       </div>
@@ -230,14 +158,12 @@ const Projects: React.FC = () => {
         onClose={() => setSelectedProject(null)}
         title={selectedProject?.title}
         category={selectedProject?.category}
-        // Pass the calculated layoutId to the modal so it knows which image to morph from
-        layoutId={selectedProject ? `project-img-${PROJECTS.findIndex(p => p.title === selectedProject.title)}` : undefined}
+        layoutId={selectedProject ? `project-image-${selectedProject.title}` : undefined}
       >
         {selectedProject && (
             <ProjectDetailContent 
                 project={selectedProject} 
-                // Pass layoutId down to the content image
-                layoutId={selectedProject ? `project-img-${PROJECTS.findIndex(p => p.title === selectedProject.title)}` : undefined}
+                layoutId={`project-image-${selectedProject.title}`}
             />
         )}
       </ContentModal>

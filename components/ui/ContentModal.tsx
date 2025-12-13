@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, PanInfo } from 'framer-motion';
-import { X, ChevronDown } from 'lucide-react';
-import { useLenis } from '../ScrollContext';
+import { X } from 'lucide-react';
+import { useLenis } from '../ScrollContext'; // Main Lenis Context
+import Lenis from 'lenis'; // Import Class for Scoped Instance
 import Magnetic from './Magnetic';
 
 interface ContentModalProps {
@@ -10,7 +11,7 @@ interface ContentModalProps {
   onClose: () => void;
   title?: string;
   category?: string;
-  layoutId?: string; // New prop for layout transition
+  layoutId?: string;
   children: React.ReactNode;
 }
 
@@ -22,9 +23,14 @@ const ContentModal: React.FC<ContentModalProps> = ({
   layoutId,
   children 
 }) => {
-  const lenis = useLenis();
+  const mainLenis = useLenis(); // The global scroll
   const [mounted, setMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  
+  // Refs for Scoped Scrolling
+  const modalContainerRef = useRef<HTMLDivElement>(null);
+  const modalContentRef = useRef<HTMLDivElement>(null);
+  const scopedLenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -37,25 +43,59 @@ const ContentModal: React.FC<ContentModalProps> = ({
     };
   }, []);
 
-  // Scroll Locking Logic
+  // --- SCROLL MANAGEMENT (The Fix) ---
   useEffect(() => {
     if (isOpen) {
-      lenis?.stop();
+      // 1. Pause Main Page Scroll immediately
+      mainLenis?.stop();
       document.body.style.overflow = 'hidden';
-      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
+
+      // 2. Initialize Scoped Lenis for the Modal AFTER animation frame
+      // We use a small timeout to ensure the DOM element is rendered by Framer Motion
+      const timer = setTimeout(() => {
+        if (modalContainerRef.current && modalContentRef.current) {
+            
+            // Create a new independent scroll instance for the modal
+            const scopedLenis = new Lenis({
+                wrapper: modalContainerRef.current, // The fixed height container
+                content: modalContentRef.current,   // The tall content div
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Same physics as main page
+                orientation: 'vertical',
+                gestureOrientation: 'vertical',
+                smoothWheel: true,
+                wheelMultiplier: 1,
+                touchMultiplier: 2,
+            });
+
+            scopedLenisRef.current = scopedLenis;
+
+            // Independent RAF loop for the modal
+            function raf(time: number) {
+                scopedLenis.raf(time);
+                requestAnimationFrame(raf);
+            }
+            requestAnimationFrame(raf);
+        }
+      }, 300); // Wait for entrance animation to mostly finish
+
+      return () => {
+        clearTimeout(timer);
+        scopedLenisRef.current?.destroy();
+      };
+
     } else {
-      lenis?.start();
+      // Resume Main Scroll
+      mainLenis?.start();
       document.body.style.overflow = '';
-      document.body.style.paddingRight = '0px';
     }
 
     return () => {
-      lenis?.start();
+      mainLenis?.start();
       document.body.style.overflow = '';
-      document.body.style.paddingRight = '0px';
+      scopedLenisRef.current?.destroy();
     };
-  }, [isOpen, lenis]);
+  }, [isOpen, mainLenis]);
 
   // Keyboard support
   useEffect(() => {
@@ -83,15 +123,15 @@ const ContentModal: React.FC<ContentModalProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
             onClick={onClose}
-            className="fixed inset-0 z-[9998] bg-slate-950/60 backdrop-blur-md cursor-pointer"
+            className="fixed inset-0 z-[9998] bg-[#0B232E]/90 backdrop-blur-sm cursor-pointer"
             aria-hidden="true"
           />
 
           {/* Modal Sheet */}
           <motion.div
-            layoutId={layoutId ? `modal-container` : undefined} // Optional container layout
+            layoutId={layoutId ? `modal-container-${layoutId}` : undefined}
             initial={{ y: "100%" }}
             animate={{ y: isMobile ? "0%" : "2%" }} 
             exit={{ y: "100%" }}
@@ -102,73 +142,45 @@ const ContentModal: React.FC<ContentModalProps> = ({
             onDragEnd={handleDragEnd}
             className={`
               fixed left-0 right-0 bottom-0 z-[9999] 
-              w-full bg-slate-50 shadow-2xl overflow-hidden flex flex-col
-              ${isMobile ? 'h-[100dvh] rounded-none' : 'h-[96vh] rounded-t-[2.5rem] max-w-[96vw] mx-auto border-t border-white/20'}
+              w-full bg-[#F2F4F6] shadow-2xl overflow-hidden flex flex-col
+              ${isMobile ? 'h-[100dvh] rounded-none' : 'h-[98vh] rounded-t-[2rem] max-w-[96vw] mx-auto'}
             `}
           >
-            {/* Header */}
-            <div className="flex-shrink-0 px-6 py-4 md:px-12 md:py-6 flex items-center justify-between border-b border-slate-200 bg-white/80 backdrop-blur-xl z-40 sticky top-0">
-              <div className="flex flex-col pr-8">
-                 {category && (
-                    <motion.span 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1"
+            {/* Header - Fixed floating over content */}
+            <div className="absolute top-0 left-0 w-full z-50 px-6 py-6 md:px-12 md:py-8 flex items-start justify-end pointer-events-none">
+               <div className="pointer-events-auto">
+                <Magnetic strength={0.3}>
+                    <button 
+                    onClick={onClose}
+                    className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-[#0B232E] flex items-center justify-center transition-all duration-300 shadow-lg group"
                     >
-                      {category}
-                    </motion.span>
-                 )}
-                 {title && (
-                    <motion.h2 
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="text-lg md:text-2xl font-serif font-medium text-slate-900 leading-none truncate max-w-[200px] md:max-w-2xl"
-                    >
-                      {title}
-                    </motion.h2>
-                 )}
-              </div>
-              
-              <Magnetic strength={0.3}>
-                <button 
-                  onClick={onClose}
-                  className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-900 flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 shrink-0"
-                >
-                  {isMobile ? <ChevronDown size={24} /> : <X size={20} />}
-                </button>
-              </Magnetic>
+                    <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
+                    </button>
+                </Magnetic>
+               </div>
             </div>
 
-            {/* Content with layoutId passed down to image via context or children if needed */}
+            {/* 
+                SCROLL CONTAINER (Wrapper for Lenis) 
+                - Must have explicit height
+                - overflow-y-auto is needed for native scroll fallback, but Lenis overrides behavior
+                - data-lenis-prevent ensures parent lenis ignores this area
+            */}
             <div 
-              className="flex-grow overflow-y-auto overflow-x-hidden custom-scrollbar bg-slate-50 pb-20 md:pb-32"
-              data-lenis-prevent
+              ref={modalContainerRef}
+              className="flex-grow h-full w-full overflow-y-auto relative bg-[#F2F4F6]"
+              data-lenis-prevent 
             >
-               {/* Note: The image inside children (ProjectDetailContent) should match layoutId if we want the image itself to morph perfectly. 
-                   For now, we rely on the modal slide-up, but if ProjectDetailContent accepts layoutId, pass it.
-                   Assuming we updated ProjectDetailContent to handle the layoutId if passed or we just animate the container.
-               */}
-               <motion.div
-                 initial={{ opacity: 0, y: 20 }}
-                 animate={{ opacity: 1, y: 0 }}
-                 transition={{ delay: 0.4, duration: 0.5 }}
-               >
-                 {/* 
-                    Inject layoutId into the first image of children if possible, 
-                    or wrap children in a way that respects it. 
-                    Since children is opaque here, we usually need to modify ProjectDetailContent.
-                    However, simply having the modal animate up is often enough "shared layout" feel for the container.
-                    To strictly satisfy "image expand", we would need to pass layoutId to ProjectDetailContent.
-                 */}
-                 {React.Children.map(children, child => {
-                    if (React.isValidElement(child)) {
-                        return React.cloneElement(child as any, { layoutId });
-                    }
-                    return child;
-                 })}
-               </motion.div>
+               {/* SCROLL CONTENT (The part that moves) */}
+               <div ref={modalContentRef} className="will-change-transform">
+                   {/* Pass layoutId down if children support it */}
+                   {React.Children.map(children, child => {
+                      if (React.isValidElement(child)) {
+                          return React.cloneElement(child as any, { layoutId });
+                      }
+                      return child;
+                   })}
+               </div>
             </div>
           </motion.div>
         </>
