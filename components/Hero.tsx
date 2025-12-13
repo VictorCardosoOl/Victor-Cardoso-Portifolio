@@ -21,8 +21,9 @@ const Hero: React.FC = () => {
 
   // Velocity Typography (Distorção sutil baseada na velocidade do scroll)
   const scrollVelocity = useVelocity(scrollY);
-  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-2, 2]); 
-  const skewVelocity = useSpring(rawSkew, { damping: 50, stiffness: 200 });
+  // Adjusted range and spring physics for a more natural, fluid response
+  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-3, 3]); 
+  const skewVelocity = useSpring(rawSkew, { stiffness: 100, damping: 30, mass: 1 });
 
   const handleNav = (e: React.MouseEvent, href: string) => {
     e.preventDefault();

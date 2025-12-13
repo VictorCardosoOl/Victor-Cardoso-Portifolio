@@ -3,8 +3,6 @@ import { Play, Terminal } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import { motion, useScroll, useVelocity, useTransform, useSpring } from 'framer-motion';
 
-const MotionDiv = motion.div as any;
-
 /**
  * COMPONENTE: Lab
  * ---------------
@@ -100,7 +98,7 @@ const Lab: React.FC = () => {
     <section id="lab" className="py-12 bg-paper relative z-20">
       
       {/* Wrapper Animado (The Curtain) */}
-      <MotionDiv 
+      <motion.div 
         ref={containerRef}
         style={{ clipPath }}
         className="w-full bg-petrol-base text-paper py-24 relative overflow-hidden"
@@ -129,7 +127,7 @@ const Lab: React.FC = () => {
             </div>
 
             {/* MOSAIC GRID */}
-            <MotionDiv 
+            <motion.div 
             style={{ skewY: smoothSkew }}
             className="grid grid-cols-1 md:grid-cols-3 gap-1 bg-white/5 border border-white/10 p-1"
             >
@@ -149,7 +147,10 @@ const Lab: React.FC = () => {
                                         className="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out"
                                     />
                                     {/* Scanline Effect Overlay (Base64 SVG pattern) - APPLIED TO ALL IMAGES */}
-                                    <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')] opacity-30 pointer-events-none mix-blend-overlay"></div>
+                                    <div 
+                                      className="absolute inset-0 opacity-30 pointer-events-none mix-blend-overlay"
+                                      style={{ backgroundImage: `url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMSIvPgo8cGF0aCBkPSJNMCAwaDR2MUgwVjB6bTAgMmg0djFIMFYyeiIgZmlsbD0iI2ZmZiIgZmlsbC1vcGFjaXR5PSIwLjAyIi8+Cjwvc3ZnPg==')` }}
+                                    ></div>
                                 </div>
 
                                 {/* Hover Overlay */}
@@ -182,7 +183,7 @@ const Lab: React.FC = () => {
                         </Reveal>
                     </div>
                 ))}
-            </MotionDiv>
+            </motion.div>
             
             <div className="mt-4 flex justify-between items-center text-[9px] font-mono text-white/30 uppercase tracking-widest">
             <span>Total: {EXPERIMENTS.length} unidades</span>
@@ -190,7 +191,7 @@ const Lab: React.FC = () => {
             </div>
 
         </div>
-      </MotionDiv>
+      </motion.div>
     </section>
   );
 };

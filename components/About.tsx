@@ -6,8 +6,6 @@ import { ArrowUpRight, Camera, FileText, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Magnetic from './ui/Magnetic';
 
-const MotionImg = motion.img as any;
-
 const About: React.FC = () => {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
 
@@ -35,7 +33,7 @@ const About: React.FC = () => {
                <Reveal variant="scale" width="100%" className="max-w-md w-full">
                   <div className="relative aspect-[3/4] overflow-hidden rounded-sm bg-petrol-base/5 border border-petrol-base/10 shadow-2xl transition-all duration-500 group-hover:scale-[1.01]">
                       {/* Image */}
-                      <MotionImg 
+                      <motion.img 
                         layoutId="profile-photo-main"
                         src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800" 
                         alt="Victor Cardoso" 

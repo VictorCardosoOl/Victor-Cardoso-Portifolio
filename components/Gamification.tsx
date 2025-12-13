@@ -3,8 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Target, ArrowUpRight } from 'lucide-react';
 import { useGamification } from './GamificationContext';
 
-const MotionDiv = motion.div as any;
-
 const Gamification: React.FC = () => {
   const { 
     quests, 
@@ -17,6 +15,9 @@ const Gamification: React.FC = () => {
   
   // Local state for UI display only (when manifest is open)
   const [displayStats, setDisplayStats] = useState({ totalTime: 0, topSection: 'Geral' });
+
+  // Corrected SVG for Sawtooth pattern (M0 6 L6 0 L12 6 Z)
+  const sawtoothUrl = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgMTIgNiI+PHBhdGggZD0iTTAgNiBMNiAwIEwxMiA2IFoiIGZpbGw9IiNGMkY0RjYiLz48L3N2Zz4=";
 
   // --- Silent Tracking Logic ---
   useEffect(() => {
@@ -103,7 +104,7 @@ const Gamification: React.FC = () => {
   return (
     <AnimatePresence>
       {showManifest && (
-        <MotionDiv
+        <motion.div
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           exit={{ y: "100%" }}
@@ -111,7 +112,10 @@ const Gamification: React.FC = () => {
           className="fixed bottom-0 right-0 md:right-8 z-50 w-full md:w-[380px] pointer-events-none"
         >
           {/* Manifest Card */}
-          <div className="pointer-events-auto bg-[#F2F4F6] text-[#0B232E] rounded-t-xl md:rounded-t-xl border-t border-x border-petrol-base/10 shadow-[-10px_-10px_30px_rgba(11,35,46,0.15)] p-6 md:p-8 font-mono text-xs relative before:content-[''] before:absolute before:top-[-6px] before:left-0 before:w-full before:h-[6px] before:bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgMTIgNiI+PHBhdGggZD0iTTAgNmw2LTYgNiA2SCB6IiBmaWxsPSIjRjJGNEY2Ii8+PC9zdmc+')] before:repeat-x">
+          <div 
+            className="pointer-events-auto bg-[#F2F4F6] text-[#0B232E] rounded-t-xl md:rounded-t-xl border-t border-x border-petrol-base/10 shadow-[-10px_-10px_30px_rgba(11,35,46,0.15)] p-6 md:p-8 font-mono text-xs relative before:content-[''] before:absolute before:top-[-6px] before:left-0 before:w-full before:h-[6px] before:bg-[image:var(--sawtooth-url)] before:repeat-x"
+            style={{ '--sawtooth-url': `url('${sawtoothUrl}')` } as React.CSSProperties}
+          >
             
             {/* Header */}
             <div className="flex justify-between items-start mb-6 border-b border-petrol-base/10 pb-4 border-dashed">
@@ -185,7 +189,7 @@ const Gamification: React.FC = () => {
             </div>
 
           </div>
-        </MotionDiv>
+        </motion.div>
       )}
     </AnimatePresence>
   );

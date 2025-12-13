@@ -6,9 +6,6 @@ import { Reveal } from './ui/Reveal';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 
-const MotionImg = motion.img as any;
-const MotionDiv = motion.div as any;
-
 // --- Card de Projeto Estilo Arquitetural ---
 const ProjectCard: React.FC<{ 
   project: typeof PROJECTS[0], 
@@ -58,15 +55,15 @@ const ProjectCard: React.FC<{
           <div className="lg:col-span-9">
               {/* Container da Imagem com Parallax e Máscara */}
               <div className="relative overflow-hidden aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 rounded-sm">
-                 <MotionDiv className="w-full h-full relative overflow-hidden">
-                     <MotionImg 
+                 <motion.div className="w-full h-full relative overflow-hidden">
+                     <motion.img 
                         layoutId={`project-image-${project.title}`}
                         src={project.image} 
                         alt={project.title}
                         style={{ y, scale: 1.15 }} // Escala maior para permitir o parallax sem cortar
                         className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700 ease-out"
                      />
-                 </MotionDiv>
+                 </motion.div>
                  
                  {/* Overlay de Hover */}
                  <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300 pointer-events-none mix-blend-overlay" />
