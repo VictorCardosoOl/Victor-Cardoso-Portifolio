@@ -34,12 +34,12 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Configuração "Heavy Luxury / Cinematic"
     // O objetivo é criar uma sensação de massa e inércia ("peso"), similar a rolar uma página de revista premium.
     const lenisInstance = new Lenis({
-      duration: 1.8, // "Gliding" sweet spot: nem muito pesado, nem muito seco.
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 2.2, // Mantido 2.2s (Silk)
+      easing: (t: number) => 1 - Math.pow(1 - t, 5), // Quintic Out: A "Rolls Royce" das curvas. Início rápido, final extremamente suave.
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1.0, // Mantém controle 1:1
+      wheelMultiplier: 0.9, // Leve toque de peso para combinar com a curva Quintic
       touchMultiplier: 2.0,
       autoResize: true,
       // Explicitly bind to window to prevent ambiguity
