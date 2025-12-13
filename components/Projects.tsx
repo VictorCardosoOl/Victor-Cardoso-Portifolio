@@ -45,18 +45,16 @@ const ProjectCard: React.FC<{
   );
 
   // 2. Scale Effect (Container)
-  // O container da imagem cresce levemente
-  const scale = useTransform(smoothProgress, [0, 1], [0.95, 1.05]);
+  // O container da imagem cresce levemente (Zoom Out Effect: 1.1 -> 1.0)
+  const scale = useTransform(smoothProgress, [0, 1], [1.1, 1.0]);
 
   // 3. Parallax Profundo e Agressivo
   // Move a imagem DENTRO do container em velocidade diferente do scroll.
-  // yParallax vai de -40% a 40%. Para isso funcionar sem criar espaços brancos,
-  // a imagem precisa ser maior que o container (scale 1.35 aplicada abaixo).
-  const yParallax = useTransform(smoothProgress, [0, 1], ["-40%", "40%"]);
+  // Ampliado para -50% a 50% para maior profundidade.
+  const yParallax = useTransform(smoothProgress, [0, 1], ["-50%", "50%"]);
 
   // 4. Overlay Opacity
-  // Escurece a imagem no início para foco dramático
-  const overlayOpacity = useTransform(smoothProgress, [0, 0.5], [0.5, 0]);
+  const overlayOpacity = useTransform(smoothProgress, [0, 0.5], [0.4, 0]);
 
   return (
     <div

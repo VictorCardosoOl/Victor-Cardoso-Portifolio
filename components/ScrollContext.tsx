@@ -34,14 +34,17 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Configuração "Heavy Luxury / Cinematic"
     // O objetivo é criar uma sensação de massa e inércia ("peso"), similar a rolar uma página de revista premium.
     const lenisInstance = new Lenis({
-      duration: 2.0, // Aumentado para 2.0s para sensação mais "premium/pesada"
+      duration: 1.8, // "Gliding" sweet spot: nem muito pesado, nem muito seco.
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.8, // Levemente reduzido para controle mais fino
-      touchMultiplier: 1.5,
+      wheelMultiplier: 1.0, // Mantém controle 1:1
+      touchMultiplier: 2.0,
       autoResize: true,
+      // Explicitly bind to window to prevent ambiguity
+      wrapper: window,
+      content: document.documentElement,
     });
 
     setLenis(lenisInstance);

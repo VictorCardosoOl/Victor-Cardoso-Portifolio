@@ -7,7 +7,7 @@ import Gamification from './components/Gamification';
 import ScrollProgress from './components/ui/ScrollProgress';
 import BackToTop from './components/ui/BackToTop';
 import { ScrollProvider } from './components/ScrollContext';
-import { GamificationProvider } from './components/GamificationContext'; 
+import { GamificationProvider } from './components/GamificationContext';
 import { PageTransitionProvider } from './components/ui/PageTransition';
 import { MessageCircle } from 'lucide-react';
 import Magnetic from './components/ui/Magnetic';
@@ -29,7 +29,7 @@ const Lab = lazy(() => import('./components/Lab'));
 const About = lazy(() => import('./components/About'));
 const Contact = lazy(() => import('./components/Contact'));
 const Footer = lazy(() => import('./components/Footer'));
-const Reviews = lazy(() => import('./components/Reviews')); 
+const Reviews = lazy(() => import('./components/Reviews'));
 
 /**
  * COMPONENTE: Preloader
@@ -51,18 +51,18 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
         if (prev >= words.length - 1) {
           clearInterval(interval);
           setTimeout(() => {
-             document.body.style.overflow = ''; // Libera o scroll
-             onComplete();
-          }, 800); 
+            document.body.style.overflow = ''; // Libera o scroll
+            onComplete();
+          }, 800);
           return prev;
         }
         return prev + 1;
       });
-    }, 600); 
+    }, 600);
 
     return () => {
-        clearInterval(interval);
-        document.body.style.overflow = '';
+      clearInterval(interval);
+      document.body.style.overflow = '';
     };
   }, [onComplete]);
 
@@ -73,33 +73,33 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
       className="fixed inset-0 z-[99999] bg-[#0B232E] flex items-center justify-center text-[#F2F4F6]"
     >
       <div className="flex flex-col items-center relative z-10">
-         <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-6 animate-pulse">
-            sys.boot_sequence
-         </span>
-         
-         <div className="h-20 flex items-center justify-center overflow-hidden">
-             <AnimatePresence mode="wait">
-                <motion.div
-                  key={textIndex}
-                  initial={{ y: 40, opacity: 0, filter: "blur(5px)" }}
-                  animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
-                  exit={{ y: -40, opacity: 0, filter: "blur(5px)" }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                  className="text-4xl md:text-6xl font-serif font-medium tracking-tight text-center"
-                >
-                  {words[textIndex]}
-                </motion.div>
-             </AnimatePresence>
-         </div>
+        <span className="font-mono text-[10px] uppercase tracking-widest text-white/40 mb-6 animate-pulse">
+          sys.boot_sequence
+        </span>
 
-         <div className="mt-8 w-48 h-[1px] bg-white/10 relative overflow-hidden">
-            <motion.div 
-               className="absolute top-0 left-0 h-full bg-white"
-               initial={{ width: "0%" }}
-               animate={{ width: "100%" }}
-               transition={{ duration: 2.4, ease: "easeInOut" }}
-            />
-         </div>
+        <div className="h-20 flex items-center justify-center overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={textIndex}
+              initial={{ y: 40, opacity: 0, filter: "blur(5px)" }}
+              animate={{ y: 0, opacity: 1, filter: "blur(0px)" }}
+              exit={{ y: -40, opacity: 0, filter: "blur(5px)" }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
+              className="text-4xl md:text-6xl font-serif font-medium tracking-tight text-center"
+            >
+              {words[textIndex]}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-8 w-48 h-[1px] bg-white/10 relative overflow-hidden">
+          <motion.div
+            className="absolute top-0 left-0 h-full bg-white"
+            initial={{ width: "0%" }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 2.4, ease: "easeInOut" }}
+          />
+        </div>
       </div>
     </motion.div>
   );
@@ -121,13 +121,13 @@ const App: React.FC = () => {
     <GamificationProvider>
       <ScrollProvider>
         <PageTransitionProvider>
-          <div className="flex flex-col min-h-screen relative overflow-x-hidden bg-paper selection:bg-petrol-base selection:text-white">
-            
+          <div className="flex flex-col min-h-screen relative bg-paper selection:bg-petrol-base selection:text-white">
+
             {/* Preloader Phase */}
             <AnimatePresence mode="wait">
               {loading && <Preloader onComplete={handlePreloaderComplete} />}
             </AnimatePresence>
-            
+
             {/* Global Visual Effects & Scroll Aware Tools */}
             <GrainBackground />
             <ScrollProgress />
@@ -136,10 +136,10 @@ const App: React.FC = () => {
 
             {/* Navigation (Always Visible) */}
             <Navbar />
-            
+
             {/* Main Content with Sticky Footer Logic */}
             <main className="relative z-10 bg-paper mb-[90vh] shadow-[0_20px_50px_-12px_rgba(11,35,46,0.3)] rounded-b-[3rem] border-b border-doc">
-              
+
               {/* Eager Loaded Hero for LCP */}
               <Hero />
 
@@ -149,21 +149,21 @@ const App: React.FC = () => {
                 <Services />
                 <Reviews />
                 <Lab />
-                <About />    
+                <About />
                 <Contact />
               </Suspense>
             </main>
-            
+
             {/* Sticky Footer - Fullscreen Reveal Effect */}
             <div className="fixed bottom-0 left-0 w-full z-0 min-h-[90vh]">
-               <Suspense fallback={null}>
-                  <Footer />
-               </Suspense>
+              <Suspense fallback={null}>
+                <Footer />
+              </Suspense>
             </div>
-            
+
             {/* WhatsApp Floating Action Button */}
             <div className="fixed bottom-8 right-8 z-40 flex items-center gap-4 pointer-events-none">
-              
+
               {/* Tooltip */}
               <AnimatePresence>
                 {isWhatsappHovered && (
@@ -180,15 +180,15 @@ const App: React.FC = () => {
               </AnimatePresence>
 
               {/* Button Wrapper */}
-              <div 
+              <div
                 className="pointer-events-auto"
                 onMouseEnter={() => setIsWhatsappHovered(true)}
                 onMouseLeave={() => setIsWhatsappHovered(false)}
               >
                 <Magnetic strength={0.3}>
-                  <a 
-                    href="https://wa.me/5511999999999" 
-                    target="_blank" 
+                  <a
+                    href="https://wa.me/5511999999999"
+                    target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center w-14 h-14 bg-petrol-base text-white rounded-full shadow-xl hover:shadow-2xl transition-all hover:scale-110 border border-white/10"
                     aria-label="Contato via WhatsApp"
