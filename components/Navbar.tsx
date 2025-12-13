@@ -77,7 +77,7 @@ const Navbar: React.FC = () => {
 
   // Determine current variant based on state priority
   const getCurrentVariant = () => {
-    if (isMenuOpen) return "top"; // When menu is open, keep navbar visible but transparent (menu has its own bg)
+    if (isMenuOpen) return "top"; // When menu is open, keep navbar visible but transparent
     if (isHidden) return "hidden";
     if (isScrolled) return "scrolled";
     return "top";
@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
         <a 
           href="#hero" 
           onClick={(e) => { e.preventDefault(); handleNavClick('#hero'); }}
-          className={`text-2xl font-serif font-bold tracking-tighter relative z-[9999] transition-colors duration-500 ${isMenuOpen ? 'text-white' : 'text-petrol-base'}`}
+          className={`text-2xl font-serif font-bold tracking-tighter relative z-[9999] transition-colors duration-500 ${isMenuOpen ? 'text-[#F2F4F6]' : 'text-petrol-base'}`}
         >
             V<span className="text-petrol-electric">.</span>
         </a>
@@ -106,14 +106,18 @@ const Navbar: React.FC = () => {
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className={`relative z-[9999] group flex items-center gap-3 pl-5 pr-2 py-2 rounded-full border transition-all duration-500 backdrop-blur-md ${
              isMenuOpen 
-             ? 'bg-white/10 border-white/20 text-white hover:bg-white/20' 
+             ? 'bg-white/10 border-white/20 text-[#F2F4F6] hover:bg-white/20' 
              : 'bg-petrol-base/5 border-petrol-base/5 text-petrol-base hover:bg-petrol-base hover:text-white hover:border-petrol-base'
           }`}
         >
           <span className="text-[9px] font-mono uppercase tracking-widest hidden md:inline-block opacity-70 group-hover:opacity-100 transition-opacity">
              {isMenuOpen ? 'Fechar' : 'Menu'}
           </span>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isMenuOpen ? 'bg-white text-petrol-base' : 'bg-white/50 text-petrol-base group-hover:bg-white/20 group-hover:text-white'}`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+             isMenuOpen 
+             ? 'bg-[#F2F4F6] text-petrol-base' 
+             : 'bg-white/50 text-petrol-base group-hover:bg-white/20 group-hover:text-white'
+          }`}>
              {isMenuOpen ? <X size={14} /> : <Menu size={14} />}
           </div>
         </button>

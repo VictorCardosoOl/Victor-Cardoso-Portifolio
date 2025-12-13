@@ -28,6 +28,7 @@ const Lab = lazy(() => import('./components/Lab'));
 const About = lazy(() => import('./components/About'));
 const Contact = lazy(() => import('./components/Contact'));
 const Footer = lazy(() => import('./components/Footer'));
+const Reviews = lazy(() => import('./components/Reviews')); // Novo Componente
 
 const MotionDiv = motion.div as any;
 
@@ -144,7 +145,8 @@ const App: React.FC = () => {
                */}
               <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center text-xs font-mono text-petrol-base/30">Carregando módulos...</div>}>
                 <Projects />
-                <Services /> 
+                <Services />
+                <Reviews />
                 <Lab />
                 <About />    
                 <Contact />

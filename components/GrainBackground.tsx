@@ -14,11 +14,6 @@ import React from 'react';
  * INTERAÇÃO VISUAL:
  * - A textura não é estática. Ela "dança" usando uma animação CSS 'steps()'.
  * - Isso simula o grão de filme real (noise floor) que muda a cada frame.
- * 
- * ESTRUTURA:
- * 1. Camada de Fundo (bg-paper)
- * 2. Camada de Ruído (bg-image com noise, mix-blend-multiply)
- * 3. Blobs Atmosféricos (Luzes volumétricas desfocadas para suavizar o brutalismo).
  */
 
 const GrainBackground = () => {
@@ -35,7 +30,7 @@ const GrainBackground = () => {
       <div 
         className="absolute inset-[-200%] top-[-200%] w-[400%] h-[400%] opacity-[0.05] mix-blend-multiply animate-noise"
         style={{
-          backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA5OTkAAABMTExERERmZmYzMzMyMjJ4VX6iAAAACHRSTlMAM8xr/gAAAAlwSFlzAAALEwAACxMBAJqcGAAAAWRJREFUOMuVlDtuhDYQhW9QJkJtlzgVqLxAFmClQXaVnjvglmtwnwOYm7WJc1T56f4zGu8L2/hH4wF+8z0e7zLg6/WfPv14/3f78fd+2x/7w7Xf9qfr4/35+Pz+6/P7r/X5/vD8ej8fD9Xg8HI/Hw/FwPByPh+PhfDwej8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcj/8BvV8j83d06X8AAAAASUVORK5CYII=")`,
+          backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA5OTkAAABMTExERERmZmYzMzMyMjJ4VX6iAAAACHRSTlMAM8xr/gAAAAlwSFlzAAALEwAACxMBAJqcGAAAAWRJREFUOMuVlDtuhDYQhW9QJkJtlzgVqLxAFmClQXaVnjvglmtwnwOYm7WJc1T56f4zGu8L2/hH4wF+8z0e7zLg6/WfPv14/3f78fd+2x/7w7Xf9qfr4/35+Pz+6/P7r/X5/vD8ej8fD9Xg8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HA/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcD8fD8XA8HI/Hw/FwPBwPx8PxcDwcj/8BvV8j83d06X8AAAAASUVORK5CYII=")`,
           backgroundRepeat: 'repeat',
           backgroundSize: '128px 128px'
         }}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, Calendar, MapPin, Building2, ExternalLink, Globe, BookOpen, Camera, Award } from 'lucide-react';
+import { Download, Calendar, MapPin, Building2, ExternalLink, Globe, BookOpen, Camera, Award, Code, Briefcase } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import { motion } from 'framer-motion';
 
@@ -9,34 +9,34 @@ interface ResumeContentProps {
   layoutId?: string;
 }
 
-// --- DADOS DO CURRÍCULO (Refinados) ---
+// --- DADOS DO CURRÍCULO (ATUALIZADOS) ---
 
 const HARD_SKILLS = {
     tech: [
-        "Programação Web (Fullstack)",
+        "Programação Web (React, Node, TS)",
         "Design de Experiência do Usuário (UX)",
         "Desenvolvimento de Projetos",
         "Lógica de Programação"
     ],
     business: [
-        "Regras de Negócio",
         "Contabilidade & Financeiro",
-        "Conciliação Bancária",
+        "Regras de Negócio",
         "Criação de Minutas Contratuais",
+        "Conciliação Bancária",
         "Abertura de Empresas"
     ]
 };
 
 const SOFT_SKILLS = [
-    "Resolutividade (Problem Solving)",
-    "Pensamento Analítico",
-    "Comunicação Clara",
+    "Resolutividade",
+    "Analítico",
+    "Comunicativo",
     "Trabalho em Equipe",
-    "Criatividade",
-    "Pensamento Crítico",
-    "Atenção aos Detalhes",
-    "Lógica Estruturada",
-    "Empatia"
+    "Criativo",
+    "Crítico",
+    "Detalhista",
+    "Lógico",
+    "Empático"
 ];
 
 const EDUCATION = [
@@ -45,14 +45,14 @@ const EDUCATION = [
         institution: "Universidade (Em curso)",
         period: "Cursando",
         type: "Bacharelado",
-        desc: "Foco em desenvolvimento de software, estruturas de dados e arquitetura de sistemas."
+        desc: "Foco em desenvolvimento de software, algoritmos complexos e arquitetura de sistemas."
     },
     {
         course: "Técnico em Administração",
         institution: "ETEC Parque Belém",
         period: "Concluído",
         type: "Técnico",
-        desc: "Formação sólida em gestão empresarial, processos administrativos, contabilidade e direito empresarial."
+        desc: "Formação sólida em gestão empresarial, processos administrativos, contabilidade básica, direito empresarial e gestão de pessoas."
     }
 ];
 
@@ -66,7 +66,7 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
          
          <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-10 items-end">
             
-            {/* Foto (Transition Target) */}
+            {/* Foto */}
             <div className="w-32 h-40 md:w-56 md:h-72 flex-shrink-0 relative rounded-sm overflow-hidden border border-white/20 shadow-2xl">
                <MotionImg 
                  layoutId={layoutId}
@@ -81,7 +81,7 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
                <Reveal>
                   <div className="flex items-center gap-3 mb-4">
                      <span className="px-3 py-1 bg-white/10 border border-white/10 rounded-full text-[10px] font-mono uppercase tracking-widest text-white/80">
-                        Disponível para Projetos
+                        Open for Work
                      </span>
                   </div>
                   <h1 className="text-5xl md:text-7xl font-serif font-medium tracking-tight mb-4 leading-none">
@@ -91,8 +91,8 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
                
                <Reveal delay={100}>
                   <p className="text-lg md:text-xl font-light text-white/70 max-w-2xl mb-8 leading-relaxed">
-                     Estudante de Engenharia da Computação & Técnico em Administração. 
-                     Unindo a lógica da programação com a visão estratégica de negócios.
+                     Desenvolvedor & Analista de Negócios. <br/>
+                     Unindo a lógica da <strong>Engenharia</strong> com a estratégia da <strong>Administração</strong>.
                   </p>
                   
                   <div className="flex flex-wrap gap-x-8 gap-y-3 text-xs font-mono text-white/50 uppercase tracking-widest border-t border-white/10 pt-6">
@@ -110,7 +110,7 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
       <div className="max-w-6xl mx-auto px-6 md:px-12 mt-16 md:mt-24">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24">
               
-              {/* COLUNA ESQUERDA: Educação & Pessoal (4 cols) */}
+              {/* COLUNA ESQUERDA: Educação & Pessoal */}
               <div className="lg:col-span-4 space-y-16">
                   
                   {/* FORMAÇÃO */}
@@ -150,8 +150,8 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
                              <div>
                                 <h4 className="text-sm font-bold uppercase tracking-widest text-[#0B232E] mb-3">Idiomas</h4>
                                 <ul className="space-y-2 text-sm text-[#0B232E]/70">
-                                    <li className="flex justify-between"><span>Português</span> <span className="opacity-50">Nativo</span></li>
-                                    <li className="flex justify-between"><span>Inglês</span> <span className="opacity-50">Básico (Em evolução)</span></li>
+                                    <li className="flex justify-between border-b border-[#0B232E]/5 pb-2"><span>Português</span> <span className="opacity-50">Nativo</span></li>
+                                    <li className="flex justify-between pt-2"><span>Inglês</span> <span className="opacity-50">Básico</span></li>
                                 </ul>
                              </div>
                           </Reveal>
@@ -174,10 +174,10 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
 
               </div>
 
-              {/* COLUNA DIREITA: Skills & Competências (8 cols) */}
+              {/* COLUNA DIREITA: Skills & Competências */}
               <div className="lg:col-span-8 space-y-16">
                   
-                  {/* HARD SKILLS (Dividido em Tech e Business) */}
+                  {/* HARD SKILLS */}
                   <section>
                       <Reveal width="100%">
                         <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-[#0B232E]/40 mb-8 border-b border-[#0B232E]/10 pb-4 flex items-center gap-2">
@@ -189,8 +189,11 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
                           
                           {/* TECH */}
                           <Reveal delay={100} width="100%">
-                              <div className="bg-white p-8 rounded-sm border border-[#0B232E]/5 shadow-sm h-full">
-                                  <h4 className="font-serif text-xl text-[#0B232E] mb-6">Tecnologia & Design</h4>
+                              <div className="bg-white p-8 rounded-sm border border-[#0B232E]/5 shadow-sm h-full hover:shadow-md transition-shadow">
+                                  <div className="flex items-center gap-3 mb-6">
+                                      <div className="p-2 bg-[#78909C]/10 rounded-md text-[#78909C]"><Code size={20}/></div>
+                                      <h4 className="font-serif text-xl text-[#0B232E]">Tecnologia & Dev</h4>
+                                  </div>
                                   <ul className="space-y-4">
                                       {HARD_SKILLS.tech.map((skill, i) => (
                                           <li key={i} className="flex items-start gap-3 text-sm text-[#0B232E]/80">
@@ -204,8 +207,11 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
 
                           {/* BUSINESS */}
                           <Reveal delay={200} width="100%">
-                              <div className="bg-white p-8 rounded-sm border border-[#0B232E]/5 shadow-sm h-full">
-                                  <h4 className="font-serif text-xl text-[#0B232E] mb-6">Negócios & Administrativo</h4>
+                              <div className="bg-white p-8 rounded-sm border border-[#0B232E]/5 shadow-sm h-full hover:shadow-md transition-shadow">
+                                  <div className="flex items-center gap-3 mb-6">
+                                      <div className="p-2 bg-[#0B232E]/10 rounded-md text-[#0B232E]"><Briefcase size={20}/></div>
+                                      <h4 className="font-serif text-xl text-[#0B232E]">Negócios & Adm</h4>
+                                  </div>
                                   <ul className="space-y-4">
                                       {HARD_SKILLS.business.map((skill, i) => (
                                           <li key={i} className="flex items-start gap-3 text-sm text-[#0B232E]/80">
@@ -232,7 +238,7 @@ export const ResumeContent: React.FC<ResumeContentProps> = ({ layoutId }) => {
                               {SOFT_SKILLS.map((skill, i) => (
                                   <span 
                                     key={i}
-                                    className="px-4 py-2 bg-transparent border border-[#0B232E]/20 text-[#0B232E] rounded-full text-sm font-light hover:bg-[#0B232E] hover:text-white transition-all duration-300 cursor-default"
+                                    className="px-4 py-2 bg-white border border-[#0B232E]/10 text-[#0B232E] rounded-full text-sm font-light hover:bg-[#0B232E] hover:text-white transition-all duration-300 cursor-default"
                                   >
                                       {skill}
                                   </span>
