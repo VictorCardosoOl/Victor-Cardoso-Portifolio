@@ -6,7 +6,7 @@ import GrainBackground from './components/GrainBackground';
 import Gamification from './components/Gamification';
 import ScrollProgress from './components/ui/ScrollProgress';
 import BackToTop from './components/ui/BackToTop';
-import { ScrollProvider } from './components/ScrollContext';
+import { ScrollProvider, useLenis } from './components/ScrollContext';
 import { GamificationProvider } from './components/GamificationContext';
 import { PageTransitionProvider } from './components/ui/PageTransition';
 import { MessageCircle } from 'lucide-react';
@@ -41,19 +41,9 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const [textIndex, setTextIndex] = useState(0);
   const words = ["INICIALIZANDO", "ESTRATÉGIA", "DESIGN", "SISTEMA PRONTO"];
 
-  // Use Lenis hook if available, or fallback to body overflow
-  // We need to access the lenis instance. Since Preloader is usually outside the context provider 
-  // in the tree (or needs it), we have to be careful. 
-  // WAIT: Preloader is rendered INSIDE ScrollProvider in App.tsx return structure? 
-  // Yes, see line 122 ScrollProvider, line 128 Preloader. So we can use useLenis.
-  const { useLenis } = require('./components/ScrollContext');
-  const lenis = useLenis();
-
   useEffect(() => {
     // Lock scroll
-    lenis?.stop();
     window.scrollTo(0, 0);
-    // Fallback for browsers/situations where lenis might not be active instantly
     document.body.style.overflow = 'hidden';
 
     const interval = setInterval(() => {
