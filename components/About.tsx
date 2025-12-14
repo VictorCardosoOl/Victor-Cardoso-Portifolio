@@ -36,7 +36,7 @@ const About: React.FC = () => {
                                 {/* Image */}
                                 <motion.img
                                     layoutId="profile-photo-main"
-                                    src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&q=80&w=800"
+                                    src="/images/profile_main.jpg"
                                     alt="Victor Cardoso"
                                     className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
                                 />
