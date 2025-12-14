@@ -81,7 +81,8 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   // Armazena dados que mudam frequentemente (timer) mas não precisam atualizar a UI instantaneamente.
   const trackingRef = useRef({
     totalTime: 0,
-    sectionTimes: {} as SectionTime
+    sectionTimes: {} as SectionTime,
+    currentSectionRef: 'hero'
   });
 
   const [currentSection, setCurrentSection] = useState('hero');
@@ -199,13 +200,19 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   ]);
 
   // --- Timer Otimizado ---
+  // Sync ref with currentSection state whenever it changes
+  useEffect(() => {
+    trackingRef.current.currentSectionRef = currentSection;
+  }, [currentSection]);
+
   useEffect(() => {
     let intervalId: any;
 
     intervalId = setInterval(() => {
       // 1. Atualiza Refs (Sem re-render)
       trackingRef.current.totalTime += 1;
-      trackingRef.current.sectionTimes[currentSection] = (trackingRef.current.sectionTimes[currentSection] || 0) + 1;
+      const section = trackingRef.current.currentSectionRef || 'hero';
+      trackingRef.current.sectionTimes[section] = (trackingRef.current.sectionTimes[section] || 0) + 1;
 
       // 2. Verificação Silenciosa
       // Só dispara atualização de estado (completeQuest) se a condição for atingida
@@ -215,7 +222,16 @@ export const GamificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [currentSection]); // Reinicia intervalo se a seção mudar para garantir a captura correta
+  }, []); // Agora roda apenas uma vez na montagem
+
+  // Update ref type definition at the top of the file
+  /*
+  const trackingRef = useRef({
+      totalTime: 0,
+      sectionTimes: {} as SectionTime,
+      currentSectionRef: 'hero'
+  });
+  */
 
   // --- Intersection Observer (Rastreamento de Seção) ---
   useEffect(() => {

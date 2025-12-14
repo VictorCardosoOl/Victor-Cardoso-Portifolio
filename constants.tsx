@@ -3,7 +3,7 @@ import { Monitor, Code, Layout, Database, Smartphone, Globe, Search, Rocket, Set
 
 export const NAV_LINKS = [
   { name: 'Obras', href: '#projects' },
-  { name: 'Expertise', href: '#services' },
+  { name: 'Serviços', href: '#services' },
   { name: 'Perfil', href: '#about' },
   { name: 'Lab', href: '#lab' },
   { name: 'Contato', href: '#contact' },
@@ -11,25 +11,25 @@ export const NAV_LINKS = [
 
 export const SERVICES = [
   {
-    title: 'Engenharia de Software',
-    description: 'Desenvolvimento de aplicações web robustas e escaláveis. Transformo processos manuais e planilhas em software de gestão eficiente, com foco total em estabilidade e segurança.',
-    icon: Database,
-    techStack: ['React / Next.js', 'Node.js', 'PostgreSQL', 'TypeScript', 'Docker', 'AWS'],
-    tags: ['SaaS', 'Automação', 'Gestão']
-  },
-  {
-    title: 'Análise de Sistemas',
-    description: 'Mapeamento de regras de negócio complexas e integração sistêmica. Atuo na tradução de necessidades corporativas em requisitos técnicos precisos.',
+    title: 'Landing Page',
+    description: 'Páginas de alta conversão, rápidas e otimizadas para SEO. Ideal para lançamentos, captura de leads e presença digital essencial.',
     icon: Layout,
-    techStack: ['UML', 'SQL', 'Business Intelligence', 'Process Mapping'],
-    tags: ['Análise', 'Arquitetura', 'Dados']
+    techStack: ['React', 'Tailwind CSS', 'SEO', 'Performance', 'Design Responsivo'],
+    tags: ['Rápido', 'Vendas', 'Marketing']
   },
   {
-    title: 'Treinamento & Suporte',
-    description: 'Capacitação de equipes e stakeholders. Criação de documentação técnica (KB) e gestão de conhecimento para garantir a sustentabilidade do software.',
-    icon: Users,
-    techStack: ['Onboarding', 'Documentação Técnica', 'Gestão de Crise', 'SLA Management'],
-    tags: ['Educação', 'Suporte N3', 'Liderança']
+    title: 'Sistema Completo',
+    description: 'Soluções robustas sob medida. Painéis administrativos, gestão de dados, integração com APIs, autenticação e arquitetura escalável.',
+    icon: Database,
+    techStack: ['Next.js', 'Node.js', 'PostgreSQL', 'Auth', 'Dashboards', 'API Rest'],
+    tags: ['SaaS', 'Gestão', 'Complexo']
+  },
+  {
+    title: 'E-commerce (Loja)',
+    description: 'Venda seus produtos online com uma experiência de compra fluida, segura e gerenciável. Integração com meios de pagamento.',
+    icon: Globe,
+    techStack: ['Shopify', 'Stripe/MercadoPago', 'Carrinho', 'Gestão de Estoque'],
+    tags: ['Vendas', 'Loja Online', 'Pagamentos']
   }
 ];
 

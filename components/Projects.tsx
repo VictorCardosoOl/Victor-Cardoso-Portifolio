@@ -90,17 +90,17 @@ const ProjectCard: React.FC<{
             className="relative aspect-[16/9] md:aspect-[21/9] bg-petrol-base/5 mb-10 group-hover:shadow-2xl transition-shadow duration-700 overflow-hidden"
           >
             <motion.div className="w-full h-full relative overflow-hidden">
-              {/* IMAGE WITH DEEP PARALLAX */}
+              {/* IMAGE WITH DEEP PARALLAX (Powered by Locomotive Native) */}
               <motion.img
                 layoutId={`project-image-${project.title}`}
                 src={project.image}
                 alt={project.title}
+                data-scroll
+                data-scroll-speed="-0.15" // Velocidade do Parallax nativo
                 style={{
-                  // Scale precisa ser 1.35 ou mais para cobrir o movimento de +/- 40% sem mostrar fundo
-                  scale: 1.35,
-                  y: yParallax
+                  scale: 1.35, // Scale continua necessário para cobrir o movimento
                 }}
-                className="w-full h-full object-cover transition-transform duration-700 will-change-transform"
+                className="w-full h-full object-cover will-change-transform"
               />
 
               {/* Overlay Layer */}

@@ -2,7 +2,7 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './StaggeredMenu.css';
 import { usePageTransition } from './PageTransition';
-import { useLenis } from '../ScrollContext';
+import { useLocomotiveScroll } from '../ScrollContext';
 
 export interface StaggeredMenuItem {
   label: string;
@@ -358,16 +358,16 @@ const StaggeredMenu: React.FC<StaggeredMenuProps> = ({
     });
   }, []);
 
-  const lenis = useLenis();
+  const scroll = useLocomotiveScroll();
 
-  // Lock scroll when menu is open using Lenis
+  // Lock scroll when menu is open using Locomotive Scroll
   React.useEffect(() => {
     if (open) {
-      lenis?.stop();
+      scroll?.stop();
     } else {
-      lenis?.start();
+      scroll?.start();
     }
-  }, [open, lenis]);
+  }, [open, scroll]);
 
   const toggleMenu = useCallback(() => {
     const target = !openRef.current;

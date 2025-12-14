@@ -94,7 +94,7 @@ const About: React.FC = () => {
                                 <Magnetic strength={0.2}>
                                     <button
                                         onClick={() => setIsResumeOpen(true)}
-                                        className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] bg-petrol-base text-white px-6 py-3.5 border border-petrol-base rounded-sm hover:bg-petrol-mid transition-all duration-300 shadow-lg group"
+                                        className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] bg-petrol-base text-white px-8 py-4 border border-petrol-base rounded-full hover:bg-petrol-mid transition-all duration-300 shadow-lg group"
                                     >
                                         <FileText size={14} />
                                         <span>Experiência & CV</span>
@@ -107,7 +107,7 @@ const About: React.FC = () => {
                                 <Magnetic strength={0.2}>
                                     <a
                                         href="#lab"
-                                        className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-white hover:bg-petrol-base px-6 py-3.5 border border-petrol-base/20 rounded-sm transition-all duration-300 group"
+                                        className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-petrol-base hover:text-white hover:bg-petrol-base px-8 py-4 border border-petrol-base/20 rounded-full transition-all duration-300 group"
                                     >
                                         <Code2 size={14} />
                                         <span>Ver Repositórios</span>

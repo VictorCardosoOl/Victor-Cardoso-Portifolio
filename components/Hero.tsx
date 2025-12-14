@@ -12,14 +12,7 @@ const Hero: React.FC = () => {
   const { scrollY } = useScroll();
   const { transitionTo } = usePageTransition();
 
-  // --- PHYSICS & PARALLAX ---
-  const physicsConfig = { damping: 20, stiffness: 60, mass: 1.0 };
-  const smoothY = useSpring(scrollY, physicsConfig);
-
-  const textY = useTransform(smoothY, [0, 1000], [0, -120]);
-  const imageY = useTransform(smoothY, [0, 1000], [0, -250]);
-  const opacity = useTransform(smoothY, [0, 400], [1, 0]);
-
+  // --- PHYSICS & SKEW (Kept for "Gelatin" effect) ---
   const scrollVelocity = useVelocity(scrollY);
   const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-3, 3]);
   const skewVelocity = useSpring(rawSkew, { stiffness: 100, damping: 30, mass: 1 });
@@ -37,6 +30,7 @@ const Hero: React.FC = () => {
       id="hero"
       ref={containerRef}
       className="min-h-screen relative bg-paper text-petrol-base pt-32 pb-12 flex flex-col justify-end md:justify-center overflow-hidden"
+      data-scroll-section
     >
 
       {/* Grid Lines */}
@@ -66,9 +60,13 @@ const Hero: React.FC = () => {
         {/* ASYMMETRIC COMPOSITION */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 relative mt-20 md:mt-0">
 
-          {/* TEXT MASS */}
-          <div className="lg:col-span-8 flex flex-col justify-center relative z-20 pl-2 md:pl-24">
-            <motion.div style={{ y: textY }} className="relative">
+          {/* TEXT MASS - LOCOMOTIVE PARALLAX SPEED -0.1 */}
+          <div
+            className="lg:col-span-8 flex flex-col justify-center relative z-20 pl-2 md:pl-24"
+            data-scroll
+            data-scroll-speed="-0.1"
+          >
+            <div className="relative">
 
               {/* Main Title Block - Masked Reveal */}
               <div className="relative mb-16 md:mb-24">
@@ -147,13 +145,16 @@ const Hero: React.FC = () => {
                 </Reveal>
               </div>
 
-            </motion.div>
+            </div>
           </div>
 
-          {/* IMAGE ANCHOR */}
-          <div className="lg:col-span-4 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0">
-            <motion.div
-              style={{ y: imageY }}
+          {/* IMAGE ANCHOR - LOCOMOTIVE PARALLAX SPEED 0.2 */}
+          <div
+            className="lg:col-span-4 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0"
+            data-scroll
+            data-scroll-speed="0.2"
+          >
+            <div
               className="relative w-full max-w-[280px] md:max-w-[320px] mr-0 md:mr-12"
             >
               <Reveal width="100%" className="w-full" delay={200} variant="scale">
@@ -196,7 +197,7 @@ const Hero: React.FC = () => {
                 </div>
 
               </Reveal>
-            </motion.div>
+            </div>
           </div>
 
         </div>
@@ -205,7 +206,6 @@ const Hero: React.FC = () => {
 
       {/* Scroll Indicator */}
       <motion.div
-        style={{ opacity }}
         className="absolute bottom-8 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20"
       >
         <div className="h-px w-12 bg-petrol-base/20"></div>

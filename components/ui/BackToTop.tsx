@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { motion, useMotionValueEvent, useScroll, AnimatePresence } from 'framer-motion';
 import { ArrowUp } from 'lucide-react';
-import { useLenis } from '../ScrollContext';
+import { useLocomotiveScroll } from '../ScrollContext';
 import Magnetic from './Magnetic';
 
 const BackToTop: React.FC = () => {
   const { scrollY } = useScroll();
   const [isVisible, setIsVisible] = useState(false);
-  const lenis = useLenis();
+  const scroll = useLocomotiveScroll();
 
   // Monitora o scroll para mostrar/esconder o botão
   useMotionValueEvent(scrollY, "change", (latest) => {
@@ -20,8 +20,8 @@ const BackToTop: React.FC = () => {
   });
 
   const scrollToTop = () => {
-    if (lenis) {
-      lenis.scrollTo(0, { duration: 1.5 });
+    if (scroll) {
+      scroll.scrollTo(0, { duration: 1.5 });
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -46,12 +46,12 @@ const BackToTop: React.FC = () => {
               <ArrowUp size={16} className="group-hover:-translate-y-1 transition-transform duration-300" />
             </button>
           </Magnetic>
-          
+
           {/* Label Vertical Opcional */}
           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-             <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base/40 whitespace-nowrap -rotate-90 origin-bottom translate-y-8">
-               Topo
-             </span>
+            <span className="text-[9px] font-mono uppercase tracking-widest text-petrol-base/40 whitespace-nowrap -rotate-90 origin-bottom translate-y-8">
+              Topo
+            </span>
           </div>
         </motion.div>
       )}

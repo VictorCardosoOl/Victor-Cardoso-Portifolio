@@ -68,10 +68,10 @@ const ProjectItem = ({ title, role, date, descriptions }: any) => (
 
 export const ResumeContent: React.FC = () => {
     return (
-        <div className="bg-white text-slate-800 min-h-screen pb-24 font-sans">
+        <div className="bg-white text-slate-800 min-h-screen pb-24">
 
             {/* --- HEADER (Visual Cinematic com Imagem de Fundo) --- */}
-            <div className="relative w-full h-[60vh] md:h-[70vh] bg-[#0B232E] overflow-hidden flex flex-col justify-end">
+            <div className="relative w-full h-[40vh] md:h-[50vh] bg-[#0B232E] overflow-hidden flex flex-col justify-end">
 
                 {/* Imagem de Fundo Parallax-like */}
                 <div className="absolute inset-0 z-0">

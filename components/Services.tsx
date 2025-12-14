@@ -15,7 +15,7 @@ const Services: React.FC = () => {
   // Isso evita re-renders do React enquanto o mouse se move, eliminando o lag de scroll.
 
   return (
-    <section id="services" className="py-32 md:py-48 min-h-screen bg-paper text-petrol-base relative z-10 overflow-hidden">
+    <section id="services" className="py-20 md:py-32 min-h-screen bg-paper text-petrol-base relative z-10 overflow-hidden">
 
       <div className="container mx-auto px-6 md:px-12 xl:px-20 relative z-10">
 
@@ -23,7 +23,7 @@ const Services: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-end mb-24 pb-6 border-b border-petrol-base/10">
           <Reveal>
             <h2 className="text-5xl md:text-7xl font-serif font-medium text-petrol-base tracking-tighter leading-[0.9]">
-              Expertise
+              Serviços
             </h2>
           </Reveal>
           <Reveal delay={100}>

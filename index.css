@@ -1,0 +1,87 @@
+@import "tailwindcss";
+
+@source "./index.html";
+@source "./src/**/*.{js,ts,jsx,tsx}";
+@source "./components/**/*.{js,ts,jsx,tsx}";
+
+@theme {
+    --color-paper: #F2F4F6;
+    --color-petrol-base: #0B232E;
+    --color-petrol-mid: #153A48;
+    --color-petrol-ink: #1E3A45;
+    --color-petrol-accent: #CBD5E1;
+    --color-petrol-electric: #78909C;
+
+    --font-serif: 'Zodiak', serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+
+    --animate-marquee: marquee 25s linear infinite;
+    --animate-marquee-reverse: marquee-reverse 25s linear infinite;
+
+    @keyframes marquee {
+        0% {
+            transform: translateX(0%);
+        }
+
+        100% {
+            transform: translateX(-100%);
+        }
+    }
+
+    @keyframes marquee-reverse {
+        0% {
+            transform: translateX(-100%);
+        }
+
+        100% {
+            transform: translateX(0%);
+        }
+    }
+}
+
+/* Global Styles */
+body {
+    background-color: var(--color-paper);
+    color: var(--color-petrol-base);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(11, 35, 46, 0.2);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(11, 35, 46, 0.6);
+}
+
+::selection {
+    background: #CBD5E1;
+    color: #0B232E;
+}
+
+/* Locomotive Scroll Helper */
+html.has-scroll-smooth {
+    overflow: hidden;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+html.has-scroll-smooth body {
+    overflow: hidden;
+}

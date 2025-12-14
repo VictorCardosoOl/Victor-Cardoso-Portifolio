@@ -1,77 +1,51 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import Lenis from 'lenis';
+import LocomotiveScroll from 'locomotive-scroll';
+
+// Contexto para expor a instância do LocomotiveScroll globalmente
+const ScrollContext = createContext<LocomotiveScroll | null>(null);
 
 /**
- * Contexto para expor a instância do Lenis globalmente.
- * Permite que outros componentes controlem o scroll (ex: pausar em modais, scroll to anchor).
+ * Hook para acessar a instância do LocomotiveScroll.
  */
-import 'lenis/dist/lenis.css';
+export const useLocomotiveScroll = () => useContext(ScrollContext);
 
-/**
- * Contexto para expor a instância do Lenis globalmente.
- * Permite que outros componentes controlem o scroll (ex: pausar em modais, scroll to anchor).
- */
-const ScrollContext = createContext<Lenis | null>(null);
-
-/**
- * Hook para acessar a instância do Lenis.
- * @returns {Lenis | null} A instância atual do Lenis ou null se não inicializado.
- */
+// ALIAS PARA RETROCOMPATIBILIDADE (Refatorar consumidores depois)
+// Mantendo o nome useLenis para não quebrar o build imediato, mas ele retorna LocomotiveScroll agora.
 export const useLenis = () => useContext(ScrollContext);
-
-// Exportado como useScroll para compatibilidade, mas prefira useLenis para clareza.
 export const useScroll = () => useContext(ScrollContext);
 
 /**
  * Provider que envolve a aplicação para gerenciar o "Smooth Scroll".
- * Utiliza a biblioteca Lenis para interceptar o scroll nativo e aplicar física de inércia.
+ * Utiliza Locomotive Scroll v5.
  */
 export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [lenis, setLenis] = useState<Lenis | null>(null);
+  const [scroll, setScroll] = useState<LocomotiveScroll | null>(null);
 
   useEffect(() => {
-    // Configuração "Heavy Luxury / Cinematic"
-    // O objetivo é criar uma sensação de massa e inércia ("peso"), similar a rolar uma página de revista premium.
-    const lenisInstance = new Lenis({
-      duration: 2.2, // Mantido 2.2s (Silk)
-      easing: (t: number) => 1 - Math.pow(1 - t, 5), // Quintic Out: A "Rolls Royce" das curvas. Início rápido, final extremamente suave.
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 0.9, // Leve toque de peso para combinar com a curva Quintic
-      touchMultiplier: 2.0,
-      autoResize: true,
-      // Explicitly bind to window to prevent ambiguity
-      wrapper: window,
-      content: document.documentElement,
+    // Inicialização do Locomotive Scroll
+    // v5 é "native-friendly" e mais leve.
+    const scrollInstance = new LocomotiveScroll({
+      lenisOptions: {
+        // Locomotive v5 usa Lenis "under the hood" em alguns modos, ou lógica própria.
+        // Mas a API principal é via LocomotiveScroll.
+        // Se quisermos opções específicas:
+        duration: 1.5,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing suave
+        orientation: 'vertical',
+        smoothWheel: true,
+      }
     });
 
-    setLenis(lenisInstance);
+    setScroll(scrollInstance);
 
-    let rafId: number;
-
-    /**
-     * Loop de Animação (Request Animation Frame).
-     * O Lenis precisa ser atualizado a cada frame do navegador para calcular a nova posição.
-     * @param time Timestamp atual fornecido pelo requestAnimationFrame
-     */
-    function raf(time: number) {
-      lenisInstance.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-
-    rafId = requestAnimationFrame(raf);
-
-    // Cleanup: Remove o loop e destrói a instância ao desmontar
+    // Cleanup
     return () => {
-      cancelAnimationFrame(rafId);
-      lenisInstance.destroy();
+      scrollInstance.destroy();
     };
   }, []);
 
   return (
-    <ScrollContext.Provider value={lenis}>
+    <ScrollContext.Provider value={scroll}>
       {children}
     </ScrollContext.Provider>
   );
