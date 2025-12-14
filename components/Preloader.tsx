@@ -17,7 +17,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 
     useEffect(() => {
         // Lock scroll
-        scroll?.stop();
+        if (scroll) scroll.stop();
         window.scrollTo(0, 0);
         // Fallback for browsers/situations where lenis might not be active instantly
         document.body.style.overflow = 'hidden';
@@ -27,7 +27,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
                 if (prev >= words.length - 1) {
                     clearInterval(interval);
                     setTimeout(() => {
-                        scroll?.start(); // Resume scroll
+                        if (scroll) scroll.start(); // Resume scroll
                         document.body.style.overflow = '';
                         onComplete();
                     }, 800);
@@ -39,7 +39,7 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 
         return () => {
             clearInterval(interval);
-            scroll?.start();
+            if (scroll) scroll.start();
             document.body.style.overflow = '';
         };
     }, [onComplete, scroll]);

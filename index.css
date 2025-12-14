@@ -46,12 +46,16 @@ body {
     color: var(--color-petrol-base);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Remova overflow-x: hidden se estiver causando problemas no mobile, 
+       mas geralmente é bom manter para evitar scroll horizontal indesejado */
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
 }
 
-/* Scrollbar Styling */
+/* Scrollbar Styling - Opcional, pois o Lenis pode ocultar ou customizar */
 ::-webkit-scrollbar {
-    width: 4px;
+    width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -70,18 +74,4 @@ body {
 ::selection {
     background: #CBD5E1;
     color: #0B232E;
-}
-
-/* Locomotive Scroll Helper */
-html.has-scroll-smooth {
-    overflow: hidden;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
-
-html.has-scroll-smooth body {
-    overflow: hidden;
 }
