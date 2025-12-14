@@ -41,9 +41,19 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
   const [textIndex, setTextIndex] = useState(0);
   const words = ["INICIALIZANDO", "ESTRATÉGIA", "DESIGN", "SISTEMA PRONTO"];
 
+  // Use Lenis hook if available, or fallback to body overflow
+  // We need to access the lenis instance. Since Preloader is usually outside the context provider 
+  // in the tree (or needs it), we have to be careful. 
+  // WAIT: Preloader is rendered INSIDE ScrollProvider in App.tsx return structure? 
+  // Yes, see line 122 ScrollProvider, line 128 Preloader. So we can use useLenis.
+  const { useLenis } = require('./components/ScrollContext');
+  const lenis = useLenis();
+
   useEffect(() => {
-    // Garante que o scroll esteja travado no topo durante o loading
+    // Lock scroll
+    lenis?.stop();
     window.scrollTo(0, 0);
+    // Fallback for browsers/situations where lenis might not be active instantly
     document.body.style.overflow = 'hidden';
 
     const interval = setInterval(() => {
@@ -51,7 +61,8 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
         if (prev >= words.length - 1) {
           clearInterval(interval);
           setTimeout(() => {
-            document.body.style.overflow = ''; // Libera o scroll
+            lenis?.start(); // Resume scroll
+            document.body.style.overflow = '';
             onComplete();
           }, 800);
           return prev;
@@ -62,9 +73,10 @@ const Preloader = ({ onComplete }: { onComplete: () => void }) => {
 
     return () => {
       clearInterval(interval);
+      lenis?.start();
       document.body.style.overflow = '';
     };
-  }, [onComplete]);
+  }, [onComplete, lenis]);
 
   return (
     <motion.div

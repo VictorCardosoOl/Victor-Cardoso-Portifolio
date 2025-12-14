@@ -5,8 +5,8 @@ import { ArrowUpRight, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-reac
 import { Reveal } from './ui/Reveal';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const MotionImg = motion.img as any;
-const MotionH1 = motion.h1 as any;
+const MotionImg = motion.img;
+const MotionH1 = motion.h1;
 
 interface ProjectDetailContentProps {
   project: typeof PROJECTS[0];
