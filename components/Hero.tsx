@@ -72,7 +72,7 @@ const Hero: React.FC = () => {
               <div className="relative mb-16 md:mb-24">
 
                 {/* Linha 1: MASKED */}
-                <div className="overflow-hidden py-2">
+                <div className="overflow-hidden py-6">
                   <motion.h1
                     initial={{ y: "110%" }} // Começa totalmente escondido em baixo
                     animate={{ y: "0%" }}   // Sobe para a posição original
