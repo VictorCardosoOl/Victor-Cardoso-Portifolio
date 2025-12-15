@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { Reveal } from './ui/Reveal';
 import ContentModal from './ui/ContentModal';
-import { ResumeContent } from './ResumeContent';
+import { ClassicResume } from './ClassicResume';
+
+
 import { ArrowUpRight, Camera, FileText, Code2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Magnetic from './ui/Magnetic';
@@ -129,7 +131,7 @@ const About: React.FC = () => {
                 title="Currículo Profissional"
                 category="Sobre"
             >
-                <ResumeContent layoutId="profile-photo-main" />
+                <ClassicResume layoutId="profile-photo-main" />
             </ContentModal>
 
         </section>
