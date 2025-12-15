@@ -1,4 +1,5 @@
 import { Monitor, Code, Layout, Database, Smartphone, Globe, Search, Rocket, MessageSquare, CheckCircle, Users, BarChart, BookOpen, Layers } from 'lucide-react';
+import type { Project, Service, Experience, Education, SkillItem } from './src/types';
 
 export const NAV_LINKS = [
   { name: 'Obras', href: '#projects' },
@@ -9,7 +10,7 @@ export const NAV_LINKS = [
 ];
 
 // --- DADOS DO CURRÍCULO (Extraídos do PDF) ---
-export const WORK_EXPERIENCE = [
+export const WORK_EXPERIENCE: Experience[] = [
   {
     company: "Wise System",
     role: "Supervisor de Operações",
@@ -89,7 +90,7 @@ export const WORK_EXPERIENCE = [
   }
 ];
 
-export const EDUCATION = [
+export const EDUCATION: Education[] = [
   {
     period: 'Jan 2022 - Dez 2026',
     degree: 'Ciência da Computação (Bacharelado)',
@@ -98,7 +99,7 @@ export const EDUCATION = [
   }
 ];
 
-export const SKILLS = [
+export const SKILLS: SkillItem[] = [
   {
     title: 'Engenharia & Análise',
     description: 'Capacidade de traduzir regras de negócio em código e arquitetura.',
@@ -120,7 +121,7 @@ export const SKILLS = [
 ];
 
 // --- SEÇÕES DO SITE (SERVIÇOS, PROJETOS, ETC) ---
-export const SERVICES = [
+export const SERVICES: Service[] = [
   {
     title: 'Consultoria de Processos & Tech',
     description: 'Unificação entre operação e tecnologia. Mapeamento de fluxos e automação para reduzir custos e erros.',
@@ -191,7 +192,7 @@ export const PROCESS_STEPS = [
   }
 ];
 
-export const PROJECTS = [
+export const PROJECTS: Project[] = [
   {
     title: 'Lumina Architecture',
     category: 'SaaS / Plataforma',

@@ -6,7 +6,7 @@ import GrainBackground from './components/GrainBackground';
 import Gamification from './components/Gamification';
 import ScrollProgress from './components/ui/ScrollProgress';
 
-import { ScrollProvider, useLenis } from './components/ScrollContext';
+import { ScrollProvider, useLocomotiveScroll } from './components/ScrollContext';
 import { GamificationProvider } from './components/GamificationContext';
 import { PageTransitionProvider } from './components/ui/PageTransition';
 import { MessageCircle } from 'lucide-react';
@@ -106,7 +106,7 @@ const App: React.FC = () => {
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: 10, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: "easeOut" }}
-                    className="pointer-events-auto bg-white text-petrol-base px-4 py-2 rounded-lg shadow-xl border border-petrol-base/5 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden md:block"
+                    className="pointer-events-auto bg-white/90 backdrop-blur-md text-petrol-base px-4 py-2 rounded-lg shadow-xl border border-white/20 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden md:block"
                   >
                     Fale pelo WhatsApp
                   </motion.div>

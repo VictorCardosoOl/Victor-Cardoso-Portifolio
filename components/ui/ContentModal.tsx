@@ -154,7 +154,7 @@ const ContentModal: React.FC<ContentModalProps> = ({
                 <Magnetic strength={0.3}>
                   <button
                     onClick={onClose}
-                    className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-[#0B232E] flex items-center justify-center transition-all duration-300 shadow-lg group"
+                    className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-petrol-base hover:bg-white hover:text-[#0B232E] flex items-center justify-center transition-all duration-300 shadow-lg group"
                   >
                     <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                   </button>

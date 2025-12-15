@@ -4,15 +4,12 @@ import LocomotiveScroll from 'locomotive-scroll';
 // Contexto para expor a instância do LocomotiveScroll globalmente
 const ScrollContext = createContext<LocomotiveScroll | null>(null);
 
-/**
- * Hook para acessar a instância do LocomotiveScroll.
- */
+// Hook para acessar a instância do LocomotiveScroll.
 export const useLocomotiveScroll = () => useContext(ScrollContext);
 
-// ALIAS PARA RETROCOMPATIBILIDADE (Refatorar consumidores depois)
-// Mantendo o nome useLenis para não quebrar o build imediato, mas ele retorna LocomotiveScroll agora.
-export const useLenis = () => useContext(ScrollContext);
-export const useScroll = () => useContext(ScrollContext);
+// Backwards compatibility alias
+export const useLenis = useLocomotiveScroll;
+export const useScroll = useLocomotiveScroll;
 
 /**
  * Provider que envolve a aplicação para gerenciar o "Smooth Scroll".
@@ -26,9 +23,6 @@ export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // v5 é "native-friendly" e mais leve.
     const scrollInstance = new LocomotiveScroll({
       lenisOptions: {
-        // Locomotive v5 usa Lenis "under the hood" em alguns modos, ou lógica própria.
-        // Mas a API principal é via LocomotiveScroll.
-        // Se quisermos opções específicas:
         duration: 1.5,
         easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Easing suave
         orientation: 'vertical',

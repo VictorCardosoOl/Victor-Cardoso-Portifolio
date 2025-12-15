@@ -17,6 +17,18 @@ const THEME = {
     bg: '#FFFFFF'
 };
 
+const handleDownload = () => {
+    // Simula o download abrindo o arquivo PDF
+    // Em um cenário real, isso linkaria para "/documents/Victor_Cardoso_CV.pdf"
+    const link = document.createElement('a');
+    link.href = '/Victor_Cardoso_CV.pdf'; // Placeholder path
+    link.download = 'Victor_Cardoso_CV.pdf';
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
 // --- 1. COMPONENTE: GRÁFICO DE ROSCA (Ajustado para menos densidade) ---
 const DonutChart = ({ percent, label, delay }: { percent: number, label: string, delay: number }) => {
     const radius = 40;
@@ -229,6 +241,7 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                         <div className="hidden md:block pt-8">
                             <Button
                                 variant="outline"
+                                onClick={handleDownload}
                                 className="w-full border-[#D1D2D4] text-[#58585A] hover:border-[#232323] hover:bg-[#232323] hover:text-white transition-all duration-500 py-4 text-xs font-bold tracking-widest"
                             >
                                 <Download size={14} className="mr-3" /> DOWNLOAD CV (PDF)
@@ -308,7 +321,7 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
 
                         {/* Botão Mobile */}
                         <div className="md:hidden pt-8">
-                            <Button variant="outline" className="w-full">
+                            <Button variant="outline" className="w-full" onClick={handleDownload}>
                                 Baixar CV em PDF
                             </Button>
                         </div>

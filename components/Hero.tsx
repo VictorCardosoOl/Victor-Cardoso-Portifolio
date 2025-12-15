@@ -5,6 +5,7 @@ import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 import Magnetic from './ui/Magnetic';
 import { usePageTransition } from './ui/PageTransition';
+import ImageDisplay from './ui/ImageDisplay';
 import { Globe, ArrowDown, ArrowRight, Plus } from 'lucide-react';
 
 const Hero: React.FC = () => {
@@ -12,10 +13,10 @@ const Hero: React.FC = () => {
   const { scrollY } = useScroll();
   const { transitionTo } = usePageTransition();
 
-  // --- PHYSICS & SKEW (Kept for "Gelatin" effect) ---
-  const scrollVelocity = useVelocity(scrollY);
-  const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-3, 3]);
-  const skewVelocity = useSpring(rawSkew, { stiffness: 100, damping: 30, mass: 1 });
+  // --- PHYSICS & SKEW (Removed for Performance) ---
+  // const scrollVelocity = useVelocity(scrollY);
+  // const rawSkew = useTransform(scrollVelocity, [-2000, 2000], [-3, 3]);
+  // const skewVelocity = useSpring(rawSkew, { stiffness: 100, damping: 30, mass: 1 });
 
   const handleNav = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
@@ -41,7 +42,7 @@ const Hero: React.FC = () => {
       <motion.div
         animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-[#CBD5E1] to-transparent rounded-full blur-[100px] pointer-events-none z-0 mix-blend-multiply"
+        className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-[#CBD5E1] to-transparent rounded-full blur-[60px] pointer-events-none z-0 mix-blend-multiply will-change-transform"
       />
 
       {/* TECHNICAL MARKERS (Precision Feel) */}
@@ -94,8 +95,8 @@ const Hero: React.FC = () => {
                     initial={{ y: "110%" }} // Começa totalmente escondido em baixo
                     animate={{ y: "0%" }}   // Sobe para a posição original
                     transition={{ duration: 1.4, ease: cinematicEase }}
-                    style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                    className="text-[15vw] md:text-[8.5rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken block"
+                    style={{ transformOrigin: "bottom left" }}
+                    className="text-[15vw] md:text-[8.5rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter block will-change-transform"
                   >
                     Lógica
                   </motion.h1>
@@ -108,8 +109,8 @@ const Hero: React.FC = () => {
                       initial={{ y: "110%" }}
                       animate={{ y: "0%" }}
                       transition={{ duration: 1.4, delay: 0.15, ease: cinematicEase }}
-                      style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                      className="text-[15vw] md:text-[8.5rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter italic opacity-80 block"
+                      style={{ transformOrigin: "bottom left" }}
+                      className="text-[15vw] md:text-[8.5rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter italic opacity-80 block will-change-transform"
                     >
                       Estética
                     </motion.h1>
@@ -176,12 +177,10 @@ const Hero: React.FC = () => {
             >
               <Reveal width="100%" className="w-full" delay={200} variant="scale">
                 <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[2.5rem] border border-petrol-base/5 shadow-[0_40px_100px_-20px_rgba(11,35,46,0.15)] bg-slate-200 group">
-                  <motion.img
-                    initial={{ scale: 1.4, filter: "grayscale(100%) blur(5px)" }}
-                    animate={{ scale: 1, filter: "grayscale(0%) blur(0px)" }}
-                    transition={{ duration: 2, ease: "circOut", delay: 0.5 }}
+                  <ImageDisplay
                     src="/images/profile_main.jpg"
                     alt="Victor Cardoso Portrait"
+                    containerClassName="w-full h-full"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   />
                   <div className="absolute inset-3 border border-white/20 rounded-[2rem] pointer-events-none mix-blend-overlay"></div>
@@ -223,11 +222,14 @@ const Hero: React.FC = () => {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-12 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20"
+        className="absolute bottom-12 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20 cursor-pointer group"
+        onClick={(e) => handleNav(e, '#projects')}
+        whileHover={{ opacity: 1, y: 5 }}
+        transition={{ duration: 0.3 }}
       >
-        <div className="h-px w-12 bg-petrol-base/20"></div>
-        <span className="text-[9px] uppercase tracking-widest font-mono">Role</span>
-        <ArrowDown size={12} className="animate-bounce" />
+        <div className="h-px w-12 bg-petrol-base/20 group-hover:w-16 transition-all"></div>
+        <span className="text-[9px] uppercase tracking-widest font-mono text-petrol-base/50 group-hover:text-petrol-base transition-colors">Role</span>
+        <ArrowDown size={12} className="animate-bounce text-petrol-base/50 group-hover:text-petrol-base transition-colors" />
       </motion.div>
 
     </section>
