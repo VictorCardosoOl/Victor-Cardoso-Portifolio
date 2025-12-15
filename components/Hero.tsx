@@ -29,7 +29,7 @@ const Hero: React.FC = () => {
     <section
       id="hero"
       ref={containerRef}
-      className="min-h-screen relative bg-paper text-petrol-base pt-32 pb-12 flex flex-col justify-end md:justify-center overflow-hidden"
+      className="min-h-screen relative bg-paper text-petrol-base pt-36 pb-20 md:pt-48 md:pb-32 flex flex-col justify-end md:justify-center overflow-hidden"
       data-scroll-section
     >
 
@@ -58,11 +58,11 @@ const Hero: React.FC = () => {
         </div>
 
         {/* ASYMMETRIC COMPOSITION */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 relative mt-20 md:mt-0">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 relative mt-20 md:mt-0 items-center">
 
           {/* TEXT MASS - LOCOMOTIVE PARALLAX SPEED -0.1 */}
           <div
-            className="lg:col-span-8 flex flex-col justify-center relative z-20 pl-2 md:pl-24"
+            className="lg:col-span-7 flex flex-col justify-center relative z-20 pl-2 md:pl-24"
             data-scroll
             data-scroll-speed="-0.1"
           >
@@ -78,21 +78,21 @@ const Hero: React.FC = () => {
                     animate={{ y: "0%" }}   // Sobe para a posição original
                     transition={{ duration: 1.4, ease: cinematicEase }}
                     style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                    className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken block"
+                    className="text-[15vw] md:text-[8.5rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter mix-blend-darken block"
                   >
                     Lógica
                   </motion.h1>
                 </div>
 
                 {/* Linha 2: MASKED & INDENTED */}
-                <div className="flex flex-col items-start ml-[15%] md:ml-[25%] mt-2 md:mt-4">
+                <div className="flex flex-col items-start ml-[15%] md:ml-[20%] -mt-4 md:-mt-8">
                   <div className="overflow-hidden py-2">
                     <motion.h1
                       initial={{ y: "110%" }}
                       animate={{ y: "0%" }}
                       transition={{ duration: 1.4, delay: 0.15, ease: cinematicEase }}
                       style={{ skewX: skewVelocity, transformOrigin: "bottom left" }}
-                      className="text-[16vw] md:text-[9rem] lg:text-[11rem] leading-[0.75] font-serif font-light text-petrol-base tracking-tighter italic opacity-80 block"
+                      className="text-[15vw] md:text-[8.5rem] lg:text-[10rem] leading-[0.8] font-serif font-light text-petrol-base tracking-tighter italic opacity-80 block"
                     >
                       Estética
                     </motion.h1>
@@ -109,7 +109,7 @@ const Hero: React.FC = () => {
               {/* Description */}
               <div className="max-w-md flex flex-col gap-8 ml-2 md:ml-0">
                 <Reveal delay={500} variant="translate">
-                  <p className="text-sm md:text-base font-light text-petrol-ink leading-[1.6] border-l border-petrol-base/20 pl-6">
+                  <p className="text-sm md:text-base font-light text-petrol-ink leading-[1.7] border-l border-petrol-base/20 pl-6">
                     Arquitetura de software de alta precisão fundida com design editorial.
                     Transformando complexidade em interfaces silenciosas.
                   </p>
@@ -150,15 +150,15 @@ const Hero: React.FC = () => {
 
           {/* IMAGE ANCHOR - LOCOMOTIVE PARALLAX SPEED 0.2 */}
           <div
-            className="lg:col-span-4 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0"
+            className="lg:col-span-5 relative flex flex-col justify-end items-end z-10 mt-12 lg:mt-0"
             data-scroll
             data-scroll-speed="0.2"
           >
             <div
-              className="relative w-full max-w-[280px] md:max-w-[320px] mr-0 md:mr-12"
+              className="relative w-full max-w-[300px] md:max-w-[380px] mr-0 md:mr-0"
             >
               <Reveal width="100%" className="w-full" delay={200} variant="scale">
-                <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[2rem] border border-petrol-base/5 shadow-2xl bg-slate-200 group">
+                <div className="relative w-full aspect-[3/4] overflow-hidden rounded-[2.5rem] border border-petrol-base/5 shadow-[0_40px_100px_-20px_rgba(11,35,46,0.15)] bg-slate-200 group">
                   <motion.img
                     initial={{ scale: 1.4, filter: "grayscale(100%) blur(5px)" }}
                     animate={{ scale: 1, filter: "grayscale(0%) blur(0px)" }}
@@ -167,21 +167,21 @@ const Hero: React.FC = () => {
                     alt="Victor Cardoso Portrait"
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
                   />
-                  <div className="absolute inset-3 border border-white/20 rounded-[1.5rem] pointer-events-none mix-blend-overlay"></div>
+                  <div className="absolute inset-3 border border-white/20 rounded-[2rem] pointer-events-none mix-blend-overlay"></div>
                 </div>
 
                 {/* Caption */}
-                <div className="absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-end pointer-events-none mix-blend-difference">
+                <div className="absolute -left-10 top-1/2 -translate-y-1/2 flex flex-col items-end pointer-events-none mix-blend-difference">
                   <div className="rotate-[-90deg] origin-center translate-y-8">
-                    <span className="text-[9px] font-mono uppercase tracking-widest text-white/60">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/80">
                       Perfil Doc.
                     </span>
                   </div>
                 </div>
 
                 {/* Spinner */}
-                <div className="absolute -bottom-6 -right-6 z-20">
-                  <div className="bg-petrol-base text-white w-20 h-20 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite]">
+                <div className="absolute -bottom-8 -right-8 z-20">
+                  <div className="bg-petrol-base text-white w-24 h-24 rounded-full flex items-center justify-center animate-[spin_10s_linear_infinite] shadow-xl">
                     <svg viewBox="0 0 100 100" width="80" height="80">
                       <path id="curve" d="M 50 50 m -37 0 a 37 37 0 1 1 74 0 a 37 37 0 1 1 -74 0" fill="transparent" />
                       <text>
@@ -192,7 +192,7 @@ const Hero: React.FC = () => {
                     </svg>
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center text-white">
-                    <ArrowRight size={14} className="-rotate-45" />
+                    <ArrowRight size={16} className="-rotate-45" />
                   </div>
                 </div>
 
@@ -206,7 +206,7 @@ const Hero: React.FC = () => {
 
       {/* Scroll Indicator */}
       <motion.div
-        className="absolute bottom-8 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20"
+        className="absolute bottom-12 left-8 md:left-24 flex items-center gap-4 text-petrol-base/30 z-20"
       >
         <div className="h-px w-12 bg-petrol-base/20"></div>
         <span className="text-[9px] uppercase tracking-widest font-mono">Role</span>
