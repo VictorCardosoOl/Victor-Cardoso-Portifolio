@@ -18,17 +18,17 @@ const COLORS = {
 
 // --- COMPONENTE: GRÁFICO DE ROSCA (Donut Chart) ---
 const DonutChart = ({ percent, label, delay }: { percent: number, label: string, delay: number }) => {
-    const radius = 36;
+    const radius = 32; // Ajustado para tamanho médio
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percent / 100) * circumference;
 
     return (
-        <div className="flex flex-col items-center justify-center relative group mx-4 mb-6 md:mb-0">
-            <div className="relative w-32 h-32">
+        <div className="flex flex-col items-center justify-center relative group">
+            <div className="relative w-24 h-24"> {/* Tamanho w-24 (96px) - Equilibrado */}
                 {/* Texto Central */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                    <span className="text-lg font-bold font-serif text-[#58585A]">{label}</span>
-                    <span className="text-xs font-mono text-[#888888]">{percent}%</span>
+                    <span className="text-xs font-bold text-[#58585A] tracking-tight">{label}</span>
+                    <span className="text-[10px] font-mono text-[#888888] mt-0.5">{percent}%</span>
                 </div>
 
                 {/* SVG Rotacionado */}
@@ -36,7 +36,8 @@ const DonutChart = ({ percent, label, delay }: { percent: number, label: string,
                     {/* Círculo de Fundo */}
                     <circle
                         cx="50" cy="50" r={radius}
-                        stroke={COLORS.light} strokeWidth="8" fill="transparent"
+                        stroke={COLORS.light} strokeWidth="6" fill="transparent"
+                        className="opacity-50"
                     />
                     {/* Círculo de Progresso Animado */}
                     <motion.circle
@@ -45,7 +46,7 @@ const DonutChart = ({ percent, label, delay }: { percent: number, label: string,
                         viewport={{ once: true }}
                         transition={{ duration: 1.5, delay: delay, ease: "easeOut" }}
                         cx="50" cy="50" r={radius}
-                        stroke={COLORS.text} strokeWidth="8" fill="transparent"
+                        stroke={COLORS.text} strokeWidth="6" fill="transparent"
                         strokeDasharray={circumference}
                         strokeLinecap="butt"
                     />
@@ -66,7 +67,7 @@ const SkillDots = ({ level, total = 8 }: { level: number, total?: number }) => {
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 + (i * 0.05), type: "spring" }}
-                    className={`w-2.5 h-2.5 rounded-full ${i < level ? 'bg-[#58585A]' : 'bg-[#D1D2D4]'}`}
+                    className={`w-2 h-2 rounded-full ${i < level ? 'bg-[#58585A]' : 'bg-[#D1D2D4]'}`}
                 />
             ))}
         </div>
@@ -122,86 +123,103 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
     return (
         <div className="bg-white text-[#58585A] min-h-screen font-sans selection:bg-[#D1D2D4] selection:text-[#232323]">
 
-            {/* --- CABEÇALHO (Cinematic Style) --- */}
-            {/* Mantido o cabeçalho cinemático para consistência com o portfólio, conforme solicitado anteriormente. */}
-            <div className="relative w-full h-[320px] bg-[#0B232E] text-[#F2F4F6] overflow-hidden border-b border-[#0B232E]">
-                {/* Background Noise & Image */}
-                <div className="absolute inset-0 opacity-20 bg-[url('/noise.png')] z-10 pointer-events-none"></div>
-                <img
+            {/* --- CABEÇALHO ESTILO PROJETO (Sem Avatar) --- */}
+            {/* Referência: ProjectDetailContent.tsx - Cinematic Hero */}
+            <div className="w-full h-[50vh] min-h-[400px] relative overflow-hidden bg-[#0B232E] flex items-end">
+                {/* Background Image (Blurred) */}
+                <motion.img
                     src="/images/profile_main.jpg"
-                    alt="Background"
-                    className="absolute inset-0 w-full h-full object-cover opacity-10 blur-sm"
+                    alt="Resume Background"
+                    className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm"
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: 1 }}
+                    transition={{ duration: 1.5 }}
                 />
 
-                <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
+                {/* Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0B232E] via-[#0B232E]/40 to-transparent"></div>
+
+                {/* Content Container */}
+                <div className="container mx-auto px-6 md:px-12 pb-16 relative z-10 w-full max-w-5xl">
                     <Reveal>
-                        <div className="w-32 h-32 rounded-full border-4 border-white/10 overflow-hidden shadow-2xl mb-4 relative z-20 group">
-                            <motion.img
-                                layoutId={layoutId} // Magic Motion Link
-                                src="/images/profile_main.jpg"
-                                alt="Victor Cardoso"
-                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                            {/* Inner Glow */}
-                            <div className="absolute inset-0 rounded-full shadow-[inset_0_0_20px_rgba(0,0,0,0.5)] pointer-events-none"></div>
-                        </div>
+                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-[#F2F4F6] tracking-tighter leading-[0.9] mb-8">
+                            Victor <br /> Cardoso
+                        </h1>
                     </Reveal>
+
                     <Reveal delay={100}>
-                        <h1 className="text-4xl md:text-5xl font-serif font-medium mb-2 text-white tracking-tight">Victor Cardoso</h1>
-                    </Reveal>
-                    <Reveal delay={200}>
-                        <p className="text-xs md:text-sm font-mono uppercase tracking-[0.2em] text-[#78909C]">Engenheiro de Software</p>
+                        <div className="flex flex-wrap items-center gap-8 md:gap-12 text-[#F2F4F6]/80 border-t border-white/10 pt-6">
+
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1">Cargo</span>
+                                <span className="font-mono text-sm tracking-wide">Engenheiro de Software</span>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1">Localização</span>
+                                <span className="font-mono text-sm tracking-wide">São Paulo, Brasil</span>
+                            </div>
+
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1">Status</span>
+                                <span className="font-mono text-sm tracking-wide text-green-400 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                                    Disponível
+                                </span>
+                            </div>
+
+                        </div>
                     </Reveal>
                 </div>
             </div>
 
-            {/* --- CONTEÚDO (EFResume Refined Style) --- */}
-            <div className="max-w-5xl mx-auto px-6 py-16">
-
-                {/* 1. DESTAQUES (ROSQUINHAS) */}
-                <Reveal variant="scale">
-                    <section className="mb-20">
-                        <div className="flex items-center gap-3 mb-10 border-b-2 border-dotted border-[#D1D2D4] pb-4">
-                            <Award size={20} className="text-[#232323]" />
-                            <h3 className="text-xl font-light text-[#232323]">Especialidades</h3>
-                        </div>
-                        <div className="flex flex-wrap justify-center md:justify-around items-center">
-                            {SPECIALTIES.map((spec, i) => (
-                                <DonutChart key={i} percent={spec.percent} label={spec.name} delay={i * 0.2} />
-                            ))}
-                        </div>
-                    </section>
-                </Reveal>
+            {/* --- CONTEÚDO PRINCIPAL --- */}
+            <div className="max-w-5xl mx-auto px-6 pt-16 pb-16">
 
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20">
 
                     {/* COLUNA ESQUERDA (Info & Skills) */}
-                    <div className="md:col-span-5 space-y-16">
+                    <div className="md:col-span-4 lg:col-span-4 space-y-12">
 
                         {/* PERFIL */}
                         <Reveal delay={100}>
                             <section>
-                                <div className="flex items-center gap-3 mb-6 border-b-2 border-dotted border-[#D1D2D4] pb-4">
-                                    <User size={20} className="text-[#232323]" />
-                                    <h3 className="text-xl font-light text-[#232323]">Perfil</h3>
+                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
+                                    <User size={16} className="text-[#232323]" />
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Perfil</h3>
                                 </div>
-                                <p className="text-sm font-light leading-relaxed text-justify">
-                                    Engenheiro de Software focado em criar soluções escaláveis. Combino liderança operacional com capacidade técnica full-stack para transformar processos manuais em sistemas digitais eficientes.
+                                <p className="text-xs md:text-sm font-light leading-relaxed text-justify text-[#58585A]">
+                                    Engenheiro de Software com foco em escalabilidade e performance. Combino visão de produto com profundidade técnica para entregar soluções robustas.
                                 </p>
                             </section>
                         </Reveal>
 
-                        {/* HABILIDADES (PONTOS) */}
+                        {/* ESPECIALIDADES (Grid Compacto) */}
+                        <Reveal delay={150}>
+                            <section>
+                                <div className="flex items-center gap-3 mb-6 border-b border-dotted border-[#D1D2D4] pb-2">
+                                    <Award size={16} className="text-[#232323]" />
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Top Skills</h3>
+                                </div>
+                                <div className="flex flex-wrap justify-between gap-4">
+                                    {SPECIALTIES.map((spec, i) => (
+                                        <DonutChart key={i} percent={spec.percent} label={spec.name} delay={i * 0.2} />
+                                    ))}
+                                </div>
+                            </section>
+                        </Reveal>
+
+                        {/* TECH SKILLS (Dots) */}
                         <Reveal delay={200}>
                             <section>
-                                <div className="flex items-center gap-3 mb-6 border-b-2 border-dotted border-[#D1D2D4] pb-4">
-                                    <Star size={20} className="text-[#232323]" />
-                                    <h3 className="text-xl font-light text-[#232323]">Tech Skills</h3>
+                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
+                                    <Star size={16} className="text-[#232323]" />
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Stack</h3>
                                 </div>
-                                <div className="space-y-5">
+                                <div className="space-y-3">
                                     {SKILLS_LIST.map((skill, i) => (
-                                        <div key={i} className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                                            <span className="text-sm font-bold text-[#232323] mb-1 sm:mb-0">{skill.name}</span>
+                                        <div key={i} className="flex justify-between items-center bg-[#F9FAFB] p-2 rounded border border-[#F2F4F6]">
+                                            <span className="text-xs font-medium text-[#232323]">{skill.name}</span>
                                             <SkillDots level={skill.level} />
                                         </div>
                                     ))}
@@ -209,17 +227,31 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                             </section>
                         </Reveal>
 
+                        {/* EDUCAÇÃO (Moved to Sidebar) */}
+                        <Reveal delay={250}>
+                            <section>
+                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
+                                    <GraduationCap size={16} className="text-[#232323]" />
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Educação</h3>
+                                </div>
+                                <div className="relative pl-4 border-l-2 border-[#D1D2D4]">
+                                    <h4 className="text-xs font-bold text-[#58585A]">Ciência da Computação</h4>
+                                    <p className="text-[10px] text-[#888888] font-mono uppercase tracking-wider mb-1">Anhembi Morumbi • 2022-2026</p>
+                                </div>
+                            </section>
+                        </Reveal>
+
                         {/* CONTATO */}
                         <Reveal delay={300}>
                             <section>
-                                <div className="flex items-center gap-3 mb-6 border-b-2 border-dotted border-[#D1D2D4] pb-4">
-                                    <Globe size={20} className="text-[#232323]" />
-                                    <h3 className="text-xl font-light text-[#232323]">Conexões</h3>
+                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
+                                    <Globe size={16} className="text-[#232323]" />
+                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Contato</h3>
                                 </div>
-                                <ul className="space-y-4 text-sm font-light">
+                                <ul className="space-y-3 text-xs md:text-sm font-light">
                                     {CONTACTS.map((c, i) => (
                                         <li key={i} className="flex items-center gap-3">
-                                            <c.icon size={16} className="text-[#888888] shrink-0" />
+                                            <c.icon size={14} className="text-[#888888] shrink-0" />
                                             {c.link ? (
                                                 <a href={c.link} target="_blank" rel="noreferrer" className="hover:text-[#232323] hover:underline transition-colors break-all">
                                                     {c.text}
@@ -236,7 +268,7 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                     </div>
 
                     {/* COLUNA DIREITA (Experiência & Educação) */}
-                    <div className="md:col-span-7 space-y-16">
+                    <div className="md:col-span-8 lg:col-span-8 space-y-16">
 
                         {/* EXPERIÊNCIA (Timeline) */}
                         <Reveal delay={200}>
@@ -263,22 +295,6 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                                             </p>
                                         </div>
                                     ))}
-                                </div>
-                            </section>
-                        </Reveal>
-
-                        {/* EDUCAÇÃO */}
-                        <Reveal delay={400}>
-                            <section>
-                                <div className="flex items-center gap-3 mb-8 border-b-2 border-dotted border-[#D1D2D4] pb-4">
-                                    <GraduationCap size={20} className="text-[#232323]" />
-                                    <h3 className="text-xl font-light text-[#232323]">Formação Acadêmica</h3>
-                                </div>
-                                <div className="relative pl-8 border-l-2 border-[#58585A]">
-                                    <span className="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white bg-[#222]"></span>
-                                    <h4 className="text-lg font-bold text-[#58585A]">Ciência da Computação</h4>
-                                    <p className="text-xs text-[#888888] font-mono uppercase tracking-wider mb-2">Anhembi Morumbi • 2022 - 2026</p>
-                                    <p className="text-sm font-light">Bacharelado com ênfase em Engenharia de Software e Algoritmos Avançados.</p>
                                 </div>
                             </section>
                         </Reveal>
