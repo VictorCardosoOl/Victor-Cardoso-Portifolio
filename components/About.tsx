@@ -40,7 +40,7 @@ const About: React.FC = () => {
                                     layoutId="profile-photo-main"
                                     src="/images/profile_main.jpg"
                                     alt="Victor Cardoso"
-                                    className="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
+                                    className="w-full h-full object-cover transition-all duration-700"
                                 />
 
                                 {/* Glass Overlay Compacto */}
@@ -69,12 +69,15 @@ const About: React.FC = () => {
                         <div className="space-y-4 text-base md:text-lg font-light text-petrol-ink/80 leading-relaxed max-w-xl mb-8">
                             <Reveal delay={100}>
                                 <p>
-                                    Não apenas escrevo código; construo sistemas. Minha base sólida em operações me ensinou a identificar ineficiências, mas foi na <strong>Engenharia de Software</strong> que encontrei as ferramentas para resolvê-las definitivamente.
+                                    Não sou apenas um desenvolvedor; sou um <strong>Estrategista Técnico</strong>.
+                                    Minha trajetória como <strong>Supervisor de Operações</strong> me ensinou que código sem propósito é custo.
                                 </p>
                             </Reveal>
                             <Reveal delay={150}>
                                 <p>
-                                    Atuo como <strong>Desenvolvedor Full Stack</strong>, focado em criar aplicações que são escaláveis no backend (Node.js/SQL) e intuitivas no frontend (React). Acredito que o bom código é aquele que é limpo, testável e, acima de tudo, gera valor real para o negócio.
+                                    Hoje, uso essa visão híbrida para construir sistemas que não apenas funcionam (Dev),
+                                    mas que resolvem gargalos reais de infraestrutura e atendimento (Ops),
+                                    como fiz ao liderar a integração de contratos complexos na Wise System.
                                 </p>
                             </Reveal>
                         </div>

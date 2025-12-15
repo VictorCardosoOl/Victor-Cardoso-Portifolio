@@ -88,9 +88,41 @@ body {
 /* Paper Pattern Utility */
 .bg-paper-pattern {
     background-color: #f8f9fa;
-    background-image: 
+    background-image:
         linear-gradient(#e5e7eb 1px, transparent 1px),
         linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
     background-size: 20px 20px;
     background-position: center center;
+}
+
+@media print {
+
+    /* Esconde tudo que não for o currículo */
+    body * {
+        visibility: hidden;
+    }
+
+    /* Mostra apenas o modal do currículo, sem scroll, fundo branco puro */
+    #resume-content,
+    #resume-content * {
+        visibility: visible;
+        color: #000 !important;
+        /* Força preto puro para economizar tinta */
+    }
+
+    #resume-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: white;
+    }
+
+    /* Remove botões e decorações */
+    button,
+    .no-print {
+        display: none !important;
+    }
 }

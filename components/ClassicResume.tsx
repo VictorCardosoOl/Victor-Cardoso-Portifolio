@@ -126,7 +126,7 @@ const CONTACTS = [
 
 export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => {
     return (
-        <div className="bg-white text-[#58585A] min-h-screen font-sans selection:bg-[#D1D2D4] selection:text-[#232323]">
+        <div id="resume-content" className="bg-white text-[#58585A] min-h-screen font-sans selection:bg-[#D1D2D4] selection:text-[#232323]">
 
             {/* --- 1. HEADER (Mais limpo e centralizado) --- */}
             <header className="relative w-full pt-20 pb-12 bg-[#F9FAFB] border-b border-[#D1D2D4]">
@@ -183,26 +183,11 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
             {/* --- 3. CONTEÚDO PRINCIPAL (Grid mais espaçado) --- */}
             <div className="max-w-7xl mx-auto px-6 md:px-12 py-20">
 
-                {/* DESTAQUES (Donuts) - Agora com muito mais espaço */}
-                <Reveal variant="scale">
-                    <section className="mb-24">
-                        <div className="flex items-center justify-center gap-3 mb-12">
-                            <Award size={18} className="text-[#232323]" />
-                            <h3 className="text-lg font-mono uppercase tracking-widest text-[#232323]">Especialidades Principais</h3>
-                        </div>
-                        <div className="flex flex-wrap justify-center gap-16 md:gap-32">
-                            {SPECIALTIES.map((spec, i) => (
-                                <DonutChart key={i} percent={spec.percent} label={spec.name} delay={i * 0.15} />
-                            ))}
-                        </div>
-                    </section>
-                </Reveal>
-
                 {/* GRID DE DUAS COLUNAS (Layout Assimétrico 4/8) */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-16 lg:gap-24">
 
                     {/* COLUNA ESQUERDA: Perfil e Skills */}
-                    <aside className="md:col-span-5 space-y-20">
+                    <aside className="md:col-span-5 space-y-20 md:sticky md:top-12 md:h-fit">
 
                         {/* Resumo */}
                         <Reveal delay={100}>
@@ -212,8 +197,7 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                                     <h3 className="text-lg font-serif font-medium text-[#232323]">Sobre Mim</h3>
                                 </div>
                                 <p className="text-base text-[#58585A] leading-relaxed font-light text-justify">
-                                    Desenvolvedor focado em resolver problemas de negócio através de código limpo e arquitetura escalável.
-                                    Tenho uma abordagem "T-Shaped", combinando profundidade técnica em <strong>JavaScript/TypeScript</strong> com uma visão ampla de gestão e operações.
+                                    Engenheiro de Software e Supervisor de Operações com background sólido em Ciência da Computação. Diferencio-me por não apenas escrever código, mas por entender a estratégia de negócio por trás dele. Com experiência em liderança de equipes multidisciplinares e gestão de contas Enterprise, crio soluções que unem eficiência técnica (Clean Code, Arquitetura) com resultados operacionais mensuráveis (KPIs, SLAs e Redução de Custos).
                                 </p>
                             </section>
                         </Reveal>
@@ -267,7 +251,14 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                                     {EXPERIENCE.map((exp, i) => (
                                         <div key={i} className="relative pl-8 border-l border-[#D1D2D4] group">
                                             {/* Indicador Visual da Timeline */}
-                                            <span className="absolute -left-[5px] top-2 w-[9px] h-[9px] rounded-full border border-[#D1D2D4] bg-white group-hover:bg-[#232323] group-hover:border-[#232323] transition-colors duration-300"></span>
+                                            {/* Indicador Visual da Timeline */}
+                                            <motion.span
+                                                initial={{ backgroundColor: "#FFFFFF", borderColor: "#D1D2D4" }}
+                                                whileInView={{ backgroundColor: "#232323", borderColor: "#232323", scale: 1.2 }}
+                                                viewport={{ once: false, margin: "-50% 0px -50% 0px" }} // Ativa quando estiver no meio da tela
+                                                transition={{ duration: 0.4 }}
+                                                className="absolute -left-[5px] top-2 w-[9px] h-[9px] rounded-full border border-[#D1D2D4] z-10"
+                                            ></motion.span>
 
                                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-3">
                                                 <h4 className="text-xl font-bold text-[#232323]">{exp.role}</h4>
@@ -325,6 +316,21 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                     </main>
 
                 </div>
+
+                {/* DESTAQUES (Donuts) - Movido para o final (Centralizado e largo) */}
+                <Reveal variant="scale">
+                    <section className="mt-24 border-t border-[#D1D2D4] pt-16">
+                        <div className="flex items-center justify-center gap-3 mb-12">
+                            <Award size={18} className="text-[#232323]" />
+                            <h3 className="text-lg font-mono uppercase tracking-widest text-[#232323]">Especialidades Principais</h3>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-16 md:gap-32">
+                            {SPECIALTIES.map((spec, i) => (
+                                <DonutChart key={i} percent={spec.percent} label={spec.name} delay={i * 0.15} />
+                            ))}
+                        </div>
+                    </section>
+                </Reveal>
             </div>
         </div>
     );
