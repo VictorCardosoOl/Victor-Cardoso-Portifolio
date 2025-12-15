@@ -5,7 +5,7 @@ import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 import Magnetic from './ui/Magnetic';
 import { usePageTransition } from './ui/PageTransition';
-import { Globe, ArrowDown, ArrowRight } from 'lucide-react';
+import { Globe, ArrowDown, ArrowRight, Plus } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const containerRef = useRef(null);
@@ -37,6 +37,17 @@ const Hero: React.FC = () => {
       <div className="absolute top-0 left-6 md:left-24 w-px h-full bg-petrol-base/[0.03] z-0" />
       <div className="absolute top-0 right-12 w-px h-full bg-petrol-base/[0.03] z-0 hidden md:block" />
 
+      {/* AMBIENT GLOW (Subtle Depth) */}
+      <motion.div
+        animate={{ opacity: [0.3, 0.5, 0.3], scale: [1, 1.1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[-10%] right-[-5%] w-[800px] h-[800px] bg-gradient-to-br from-[#CBD5E1] to-transparent rounded-full blur-[100px] pointer-events-none z-0 mix-blend-multiply"
+      />
+
+      {/* TECHNICAL MARKERS (Precision Feel) */}
+      <Plus strokeWidth={1} size={14} className="absolute top-32 left-[1.35rem] md:left-[5.85rem] text-petrol-base/40 z-20 -translate-x-1/2 -translate-y-1/2" />
+      <Plus strokeWidth={1} size={14} className="absolute bottom-20 right-[2.85rem] text-petrol-base/40 z-20 hidden md:block" />
+
       <div className="container mx-auto px-6 md:px-12 xl:px-24 relative z-10 h-full flex flex-col justify-center">
 
         {/* Meta Header */}
@@ -50,8 +61,14 @@ const Hero: React.FC = () => {
 
           <Reveal width="100%" delay={100}>
             <div className="flex flex-col gap-1 text-right">
-              <div className="flex items-center justify-end gap-2 text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base/40">
-                <Globe size={10} className="text-petrol-electric" /> SP, BR
+              <div className="flex items-center justify-end gap-3 text-[10px] font-mono uppercase tracking-[0.2em] text-petrol-base/40">
+                <div className="flex items-center gap-2 px-2 py-1 border border-petrol-base/10 rounded-full bg-white/50 backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span className="text-[9px] font-bold text-petrol-base/60">Open to Work</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Globe size={10} className="text-petrol-electric" /> SP, BR
+                </div>
               </div>
             </div>
           </Reveal>
