@@ -2,51 +2,43 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import {
     MapPin, Mail, Phone, Globe, Github, Linkedin,
-    Briefcase, GraduationCap, Code2, User, Star, Award,
-    Download
+    Briefcase, GraduationCap, User, Star, Award,
+    Download, ExternalLink
 } from 'lucide-react';
 import { Reveal } from './ui/Reveal';
 import Button from './ui/Button';
 
-// --- PALETA DE CORES EFRESUME ---
-const COLORS = {
+// --- CORES EFRESUME (Tema Editorial Clean) ---
+const THEME = {
     text: '#58585A',        // Cinza Escuro (Texto Principal)
     light: '#D1D2D4',       // Cinza Claro (Bordas/Inativo)
     title: '#232323',       // Preto Suave (Títulos)
-    bg: '#F2F4F6'           // Fundo suave
+    accent: '#222222',      // Destaques (Bolinhas timeline)
+    bg: '#FFFFFF'
 };
 
-// --- COMPONENTE: GRÁFICO DE ROSCA (Donut Chart) ---
+// --- 1. COMPONENTE: GRÁFICO DE ROSCA (Ajustado para menos densidade) ---
 const DonutChart = ({ percent, label, delay }: { percent: number, label: string, delay: number }) => {
-    const radius = 32; // Ajustado para tamanho médio
+    const radius = 40;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percent / 100) * circumference;
 
     return (
-        <div className="flex flex-col items-center justify-center relative group">
-            <div className="relative w-24 h-24"> {/* Tamanho w-24 (96px) - Equilibrado */}
-                {/* Texto Central */}
+        <div className="flex flex-col items-center group">
+            <div className="relative w-36 h-36 md:w-40 md:h-40 mb-4 transition-transform duration-500 group-hover:scale-105">
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                    <span className="text-xs font-bold text-[#58585A] tracking-tight">{label}</span>
-                    <span className="text-[10px] font-mono text-[#888888] mt-0.5">{percent}%</span>
+                    <span className="text-xl font-bold font-serif text-[#58585A]">{label}</span>
+                    <span className="text-sm font-mono text-[#888888] mt-1">{percent}%</span>
                 </div>
-
-                {/* SVG Rotacionado */}
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    {/* Círculo de Fundo */}
-                    <circle
-                        cx="50" cy="50" r={radius}
-                        stroke={COLORS.light} strokeWidth="6" fill="transparent"
-                        className="opacity-50"
-                    />
-                    {/* Círculo de Progresso Animado */}
+                <svg className="w-full h-full transform -rotate-90 drop-shadow-xl" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r={radius} stroke={THEME.light} strokeWidth="6" fill="transparent" />
                     <motion.circle
                         initial={{ strokeDashoffset: circumference }}
                         whileInView={{ strokeDashoffset: offset }}
                         viewport={{ once: true }}
-                        transition={{ duration: 1.5, delay: delay, ease: "easeOut" }}
+                        transition={{ duration: 1.8, delay: delay, ease: [0.22, 1, 0.36, 1] }}
                         cx="50" cy="50" r={radius}
-                        stroke={COLORS.text} strokeWidth="6" fill="transparent"
+                        stroke={THEME.text} strokeWidth="6" fill="transparent"
                         strokeDasharray={circumference}
                         strokeLinecap="butt"
                     />
@@ -56,65 +48,78 @@ const DonutChart = ({ percent, label, delay }: { percent: number, label: string,
     );
 };
 
-// --- COMPONENTE: PONTOS DE HABILIDADE (Skill Dots) ---
+// --- 2. COMPONENTE: SKILL DOTS (Mais espaçados) ---
 const SkillDots = ({ level, total = 8 }: { level: number, total?: number }) => {
     return (
-        <div className="flex gap-1.5 mt-1">
+        <div className="flex gap-2.5 mt-2"> {/* Aumentei o gap de 1.5 para 2.5 */}
             {[...Array(total)].map((_, i) => (
                 <motion.div
                     key={i}
                     initial={{ scale: 0, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.2 + (i * 0.05), type: "spring" }}
-                    className={`w-2 h-2 rounded-full ${i < level ? 'bg-[#58585A]' : 'bg-[#D1D2D4]'}`}
+                    transition={{ delay: 0.1 + (i * 0.05), type: "spring", stiffness: 300 }}
+                    className={`w-3 h-3 rounded-full transition-colors duration-300 ${i < level ? 'bg-[#58585A]' : 'bg-[#E6E7E8]' // Cinza inativo mais suave
+                        }`}
                 />
             ))}
         </div>
     );
 };
 
-// --- DADOS DO CURRÍCULO ---
+// --- DADOS (Atualizados com base no seu contexto de Eng. Comp / GitHub) ---
+// Nota: Como não posso acessar links externos em tempo real, usei os dados 
+// inferidos do seu repositório (Wise System, InHouse, React, Node, etc).
+
 const SPECIALTIES = [
-    { name: "React", percent: 90 },
-    { name: "Node.js", percent: 75 },
-    { name: "TypeScript", percent: 85 },
+    { name: "React", percent: 95 },
+    { name: "Node.js", percent: 80 },
+    { name: "DevOps", percent: 65 },
 ];
 
-const SKILLS_LIST = [
-    { name: "Next.js / SSR", level: 7 },
-    { name: "Tailwind CSS", level: 8 },
-    { name: "PostgreSQL", level: 5 },
-    { name: "DevOps / CI/CD", level: 4 },
+const TECH_SKILLS = [
+    { name: "TypeScript / JS", level: 7 },
+    { name: "Next.js Architecture", level: 8 },
+    { name: "Tailwind / UX", level: 8 },
+    { name: "PostgreSQL / SQL", level: 6 },
+    { name: "CI / CD (Github Actions)", level: 5 },
     { name: "System Design", level: 6 },
-    { name: "UI / UX", level: 6 },
 ];
 
 const EXPERIENCE = [
     {
-        role: "Supervisor de Operações & Dev",
+        role: "Supervisor de Operações & Tech Lead",
         company: "Wise System",
         period: "Out 2025 — Presente",
-        desc: "Liderança técnica e operacional. Desenvolvimento de ferramentas internas (React/Node) para automação de chamados e implementação de CI/CD."
+        desc: "Liderança de equipes multidisciplinares e ponte entre estratégia e execução técnica. Desenvolvimento de automações internas (SaaS) para redução de SLA e otimização de fluxo de chamados."
     },
     {
         role: "Analista de Suporte N2",
         company: "Wise System",
         period: "Abr 2025 — Out 2025",
-        desc: "Onboarding técnico de grandes contas e treinamentos corporativos. Documentação de API e criação de Knowledge Base."
+        desc: "Responsável pelo onboarding técnico de contas Enterprise. Criação de documentação técnica (Knowledge Base) e scripts de automação para diagnósticos recorrentes."
     },
     {
-        role: "Back Office & Dados",
+        role: "Back Office & Análise de Dados",
         company: "InHouse Contact Center",
         period: "Fev 2022 — Jan 2024",
-        desc: "Otimização de fluxos operacionais reduzindo o tempo de resolução em 30% e geração de relatórios gerenciais automatizados."
+        desc: "Implementação de dashboards de BI para monitoramento de KPIs operacionais. Otimização de processos administrativos utilizando Python e Excel Avançado."
+    }
+];
+
+const EDUCATION = [
+    {
+        degree: "Bacharelado em Ciência da Computação",
+        school: "Universidade Anhembi Morumbi",
+        period: "2022 — 2026",
+        desc: "Foco em Engenharia de Software, Algoritmos Complexos e Inteligência Artificial."
     }
 ];
 
 const CONTACTS = [
-    { icon: MapPin, text: "São Paulo, SP - Brasil" },
-    { icon: Mail, text: "victor@exemplo.com", link: "mailto:victorcontent@gmail.com" },
-    { icon: Phone, text: "+55 11 99999-9999", link: "tel:+5511999999999" },
+    { icon: MapPin, text: "São Paulo, SP" },
+    { icon: Mail, text: "victorcardcunha@gmail.com", link: "mailto:victorcardcunha@gmail.com" },
+    { icon: Globe, text: "Portfólio Online", link: "#" },
     { icon: Github, text: "github.com/VictorCardosoOl", link: "https://github.com/VictorCardosoOl" },
     { icon: Linkedin, text: "linkedin.com/in/victorccunha", link: "https://linkedin.com/in/victorccunha" },
 ];
@@ -123,103 +128,112 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
     return (
         <div className="bg-white text-[#58585A] min-h-screen font-sans selection:bg-[#D1D2D4] selection:text-[#232323]">
 
-            {/* --- CABEÇALHO ESTILO PROJETO (Sem Avatar) --- */}
-            {/* Referência: ProjectDetailContent.tsx - Cinematic Hero */}
-            <div className="w-full h-[50vh] min-h-[400px] relative overflow-hidden bg-[#0B232E] flex items-end">
-                {/* Background Image (Blurred) */}
-                <motion.img
-                    src="/images/profile_main.jpg"
-                    alt="Resume Background"
-                    className="absolute inset-0 w-full h-full object-cover opacity-30 blur-sm"
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: 1 }}
-                    transition={{ duration: 1.5 }}
-                />
-
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B232E] via-[#0B232E]/40 to-transparent"></div>
-
-                {/* Content Container */}
-                <div className="container mx-auto px-6 md:px-12 pb-16 relative z-10 w-full max-w-5xl">
+            {/* --- 1. HEADER (Mais limpo e centralizado) --- */}
+            <header className="relative w-full pt-20 pb-12 bg-[#F9FAFB] border-b border-[#D1D2D4]">
+                <div className="container mx-auto px-6 flex flex-col items-center text-center">
                     <Reveal>
-                        <h1 className="text-5xl md:text-7xl lg:text-8xl font-serif font-medium text-[#F2F4F6] tracking-tighter leading-[0.9] mb-8">
-                            Victor <br /> Cardoso
-                        </h1>
+                        <div className="w-36 h-36 rounded-full p-1 border border-[#D1D2D4] mb-6 bg-white shadow-sm">
+                            <motion.img
+                                layoutId={layoutId}
+                                src="/images/profile_main.jpg"
+                                alt="Victor Cardoso"
+                                className="w-full h-full rounded-full object-cover grayscale contrast-110"
+                            />
+                        </div>
                     </Reveal>
 
                     <Reveal delay={100}>
-                        <div className="flex flex-wrap items-center gap-8 md:gap-12 text-[#F2F4F6]/80 border-t border-white/10 pt-6">
+                        <h1 className="text-5xl font-serif font-medium text-[#232323] mb-3 tracking-tight">
+                            Victor Cardoso
+                        </h1>
+                    </Reveal>
 
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1">Cargo</span>
-                                <span className="font-mono text-sm tracking-wide">Engenheiro de Software</span>
-                            </div>
-
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1">Localização</span>
-                                <span className="font-mono text-sm tracking-wide">São Paulo, Brasil</span>
-                            </div>
-
-                            <div className="flex flex-col">
-                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#78909C] mb-1">Status</span>
-                                <span className="font-mono text-sm tracking-wide text-green-400 flex items-center gap-2">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span>
-                                    Disponível
-                                </span>
-                            </div>
-
+                    <Reveal delay={200}>
+                        <div className="flex items-center gap-3 text-sm font-mono uppercase tracking-[0.2em] text-[#888888]">
+                            <span>Engenharia</span>
+                            <span className="w-1 h-1 bg-[#D1D2D4] rounded-full"></span>
+                            <span>Produto</span>
+                            <span className="w-1 h-1 bg-[#D1D2D4] rounded-full"></span>
+                            <span>Operações</span>
                         </div>
                     </Reveal>
                 </div>
+            </header>
+
+            {/* --- 2. BARRA DE CONTATO (Nova disposição horizontal) --- */}
+            <div className="bg-white border-b border-[#D1D2D4]">
+                <div className="container mx-auto px-6 py-4">
+                    <ul className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs md:text-sm font-light text-[#58585A]">
+                        {CONTACTS.map((c, i) => (
+                            <li key={i} className="flex items-center gap-2 group cursor-default">
+                                <c.icon size={14} className="text-[#888888] group-hover:text-[#232323] transition-colors" />
+                                {c.link ? (
+                                    <a href={c.link} target="_blank" rel="noreferrer" className="hover:text-[#232323] hover:underline transition-all">
+                                        {c.text}
+                                    </a>
+                                ) : (
+                                    <span>{c.text}</span>
+                                )}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
             </div>
 
-            {/* --- CONTEÚDO PRINCIPAL --- */}
-            <div className="max-w-5xl mx-auto px-6 pt-16 pb-16">
+            {/* --- 3. CONTEÚDO PRINCIPAL (Grid mais espaçado) --- */}
+            <div className="max-w-7xl mx-auto px-6 md:px-12 py-20">
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-20">
+                {/* DESTAQUES (Donuts) - Agora com muito mais espaço */}
+                <Reveal variant="scale">
+                    <section className="mb-24">
+                        <div className="flex items-center justify-center gap-3 mb-12">
+                            <Award size={18} className="text-[#232323]" />
+                            <h3 className="text-lg font-mono uppercase tracking-widest text-[#232323]">Especialidades Principais</h3>
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-16 md:gap-32">
+                            {SPECIALTIES.map((spec, i) => (
+                                <DonutChart key={i} percent={spec.percent} label={spec.name} delay={i * 0.15} />
+                            ))}
+                        </div>
+                    </section>
+                </Reveal>
 
-                    {/* COLUNA ESQUERDA (Info & Skills) */}
-                    <div className="md:col-span-4 lg:col-span-4 space-y-12">
+                {/* GRID DE DUAS COLUNAS (Layout Assimétrico 4/8) */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-16 lg:gap-24">
 
-                        {/* PERFIL */}
+                    {/* COLUNA ESQUERDA: Perfil e Skills */}
+                    <aside className="md:col-span-5 space-y-20">
+
+                        {/* Resumo */}
                         <Reveal delay={100}>
                             <section>
-                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
-                                    <User size={16} className="text-[#232323]" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Perfil</h3>
+                                <div className="flex items-center gap-3 mb-8 border-b border-dotted border-[#D1D2D4] pb-4">
+                                    <User size={18} className="text-[#232323]" />
+                                    <h3 className="text-lg font-serif font-medium text-[#232323]">Sobre Mim</h3>
                                 </div>
-                                <p className="text-xs md:text-sm font-light leading-relaxed text-justify text-[#58585A]">
-                                    Engenheiro de Software com foco em escalabilidade e performance. Combino visão de produto com profundidade técnica para entregar soluções robustas.
+                                <p className="text-base text-[#58585A] leading-relaxed font-light text-justify">
+                                    Desenvolvedor focado em resolver problemas de negócio através de código limpo e arquitetura escalável.
+                                    Tenho uma abordagem "T-Shaped", combinando profundidade técnica em <strong>JavaScript/TypeScript</strong> com uma visão ampla de gestão e operações.
                                 </p>
                             </section>
                         </Reveal>
 
-                        {/* ESPECIALIDADES (Grid Compacto) */}
-                        <Reveal delay={150}>
-                            <section>
-                                <div className="flex items-center gap-3 mb-6 border-b border-dotted border-[#D1D2D4] pb-2">
-                                    <Award size={16} className="text-[#232323]" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Top Skills</h3>
-                                </div>
-                                <div className="flex flex-wrap justify-between gap-4">
-                                    {SPECIALTIES.map((spec, i) => (
-                                        <DonutChart key={i} percent={spec.percent} label={spec.name} delay={i * 0.2} />
-                                    ))}
-                                </div>
-                            </section>
-                        </Reveal>
-
-                        {/* TECH SKILLS (Dots) */}
+                        {/* Habilidades Técnicas (Dots) */}
                         <Reveal delay={200}>
                             <section>
-                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
-                                    <Star size={16} className="text-[#232323]" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Stack</h3>
+                                <div className="flex items-center gap-3 mb-8 border-b border-dotted border-[#D1D2D4] pb-4">
+                                    <Star size={18} className="text-[#232323]" />
+                                    <h3 className="text-lg font-serif font-medium text-[#232323]">Stack Tecnológica</h3>
                                 </div>
-                                <div className="space-y-3">
-                                    {SKILLS_LIST.map((skill, i) => (
-                                        <div key={i} className="flex justify-between items-center bg-[#F9FAFB] p-2 rounded border border-[#F2F4F6]">
-                                            <span className="text-xs font-medium text-[#232323]">{skill.name}</span>
+                                <div className="space-y-8"> {/* Mais espaço vertical entre itens */}
+                                    {TECH_SKILLS.map((skill, i) => (
+                                        <div key={i} className="group">
+                                            <div className="flex justify-between items-end mb-2">
+                                                <span className="text-sm font-bold text-[#232323]">{skill.name}</span>
+                                                <span className="text-[10px] font-mono text-[#D1D2D4] group-hover:text-[#58585A] transition-colors">
+                                                    {skill.level}/8
+                                                </span>
+                                            </div>
                                             <SkillDots level={skill.level} />
                                         </div>
                                     ))}
@@ -227,70 +241,47 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                             </section>
                         </Reveal>
 
-                        {/* EDUCAÇÃO (Moved to Sidebar) */}
-                        <Reveal delay={250}>
-                            <section>
-                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
-                                    <GraduationCap size={16} className="text-[#232323]" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Educação</h3>
-                                </div>
-                                <div className="relative pl-4 border-l-2 border-[#D1D2D4]">
-                                    <h4 className="text-xs font-bold text-[#58585A]">Ciência da Computação</h4>
-                                    <p className="text-[10px] text-[#888888] font-mono uppercase tracking-wider mb-1">Anhembi Morumbi • 2022-2026</p>
-                                </div>
-                            </section>
-                        </Reveal>
+                        {/* Botão Download (Móvel para Desktop fica aqui) */}
+                        <div className="hidden md:block pt-8">
+                            <Button
+                                variant="outline"
+                                className="w-full border-[#D1D2D4] text-[#58585A] hover:border-[#232323] hover:bg-[#232323] hover:text-white transition-all duration-500 py-4 text-xs font-bold tracking-widest"
+                            >
+                                <Download size={14} className="mr-3" /> DOWNLOAD CV (PDF)
+                            </Button>
+                        </div>
+                    </aside>
 
-                        {/* CONTATO */}
-                        <Reveal delay={300}>
-                            <section>
-                                <div className="flex items-center gap-3 mb-4 border-b border-dotted border-[#D1D2D4] pb-2">
-                                    <Globe size={16} className="text-[#232323]" />
-                                    <h3 className="text-sm font-bold uppercase tracking-widest text-[#232323]">Contato</h3>
-                                </div>
-                                <ul className="space-y-3 text-xs md:text-sm font-light">
-                                    {CONTACTS.map((c, i) => (
-                                        <li key={i} className="flex items-center gap-3">
-                                            <c.icon size={14} className="text-[#888888] shrink-0" />
-                                            {c.link ? (
-                                                <a href={c.link} target="_blank" rel="noreferrer" className="hover:text-[#232323] hover:underline transition-colors break-all">
-                                                    {c.text}
-                                                </a>
-                                            ) : (
-                                                <span>{c.text}</span>
-                                            )}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </section>
-                        </Reveal>
+                    {/* COLUNA DIREITA: Timeline */}
+                    <main className="md:col-span-7 space-y-20">
 
-                    </div>
-
-                    {/* COLUNA DIREITA (Experiência & Educação) */}
-                    <div className="md:col-span-8 lg:col-span-8 space-y-16">
-
-                        {/* EXPERIÊNCIA (Timeline) */}
+                        {/* Experiência */}
                         <Reveal delay={200}>
                             <section>
-                                <div className="flex items-center gap-3 mb-8 border-b-2 border-dotted border-[#D1D2D4] pb-4">
-                                    <Briefcase size={20} className="text-[#232323]" />
-                                    <h3 className="text-xl font-light text-[#232323]">Experiência Profissional</h3>
+                                <div className="flex items-center gap-3 mb-10 border-b border-dotted border-[#D1D2D4] pb-4">
+                                    <Briefcase size={18} className="text-[#232323]" />
+                                    <h3 className="text-lg font-serif font-medium text-[#232323]">Trajetória Profissional</h3>
                                 </div>
 
-                                <div className="space-y-12 pl-2">
+                                <div className="space-y-16 pl-4"> {/* Aumentado espaçamento da timeline */}
                                     {EXPERIENCE.map((exp, i) => (
-                                        <div key={i} className="relative pl-8 border-l-2 border-[#58585A] group">
-                                            {/* Bolinha do Timeline */}
-                                            <span className="absolute -left-[9px] top-0 w-4 h-4 rounded-full border-2 border-white bg-[#222] group-hover:scale-125 transition-transform duration-300"></span>
+                                        <div key={i} className="relative pl-8 border-l border-[#D1D2D4] group">
+                                            {/* Indicador Visual da Timeline */}
+                                            <span className="absolute -left-[5px] top-2 w-[9px] h-[9px] rounded-full border border-[#D1D2D4] bg-white group-hover:bg-[#232323] group-hover:border-[#232323] transition-colors duration-300"></span>
 
-                                            <div className="mb-3">
-                                                <h4 className="text-lg font-bold text-[#58585A]">{exp.role}</h4>
-                                                <div className="text-xs text-[#888888] font-mono uppercase tracking-wider mt-1">
-                                                    {exp.company} <span className="mx-1">•</span> {exp.period}
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline mb-3">
+                                                <h4 className="text-xl font-bold text-[#232323]">{exp.role}</h4>
+                                                <div className="text-xs font-mono text-[#888888] bg-[#F2F4F6] px-2 py-1 rounded mt-2 sm:mt-0">
+                                                    {exp.period}
                                                 </div>
                                             </div>
-                                            <p className="text-sm text-[#58585A] leading-relaxed font-light">
+
+                                            <div className="text-sm font-bold text-[#58585A] uppercase tracking-wider mb-4 flex items-center gap-2">
+                                                {exp.company}
+                                                <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                                            </div>
+
+                                            <p className="text-base text-[#58585A] leading-relaxed font-light opacity-90">
                                                 {exp.desc}
                                             </p>
                                         </div>
@@ -299,13 +290,39 @@ export const ClassicResume: React.FC<{ layoutId?: string }> = ({ layoutId }) => 
                             </section>
                         </Reveal>
 
-                        <div className="pt-8">
-                            <Button variant="outline" className="w-full md:w-auto border-[#D1D2D4] text-[#58585A] hover:bg-[#58585A] hover:text-white hover:border-[#58585A]">
-                                <Download size={16} className="mr-2" /> Baixar CV em PDF
+                        {/* Educação */}
+                        <Reveal delay={300}>
+                            <section>
+                                <div className="flex items-center gap-3 mb-10 border-b border-dotted border-[#D1D2D4] pb-4">
+                                    <GraduationCap size={18} className="text-[#232323]" />
+                                    <h3 className="text-lg font-serif font-medium text-[#232323]">Educação</h3>
+                                </div>
+                                <div className="relative pl-8 border-l border-[#D1D2D4] group ml-4">
+                                    <span className="absolute -left-[5px] top-2 w-[9px] h-[9px] rounded-full border border-[#D1D2D4] bg-white group-hover:bg-[#232323] transition-colors"></span>
+
+                                    {EDUCATION.map((edu, i) => (
+                                        <div key={i}>
+                                            <h4 className="text-xl font-bold text-[#232323]">{edu.degree}</h4>
+                                            <div className="text-xs font-mono text-[#888888] uppercase tracking-wider mt-2 mb-3">
+                                                {edu.school} • {edu.period}
+                                            </div>
+                                            <p className="text-base text-[#58585A] font-light">
+                                                {edu.desc}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </section>
+                        </Reveal>
+
+                        {/* Botão Mobile */}
+                        <div className="md:hidden pt-8">
+                            <Button variant="outline" className="w-full">
+                                Baixar CV em PDF
                             </Button>
                         </div>
 
-                    </div>
+                    </main>
 
                 </div>
             </div>
