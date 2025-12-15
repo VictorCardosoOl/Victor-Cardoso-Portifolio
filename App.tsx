@@ -5,7 +5,7 @@ import Hero from './components/Hero';
 import GrainBackground from './components/GrainBackground';
 import Gamification from './components/Gamification';
 import ScrollProgress from './components/ui/ScrollProgress';
-import BackToTop from './components/ui/BackToTop';
+
 import { ScrollProvider, useLenis } from './components/ScrollContext';
 import { GamificationProvider } from './components/GamificationContext';
 import { PageTransitionProvider } from './components/ui/PageTransition';
@@ -65,7 +65,7 @@ const App: React.FC = () => {
             <GrainBackground />
             <ScrollProgress />
             <Gamification />
-            <BackToTop />
+
 
             {/* Navigation (Always Visible) */}
             <Navbar />

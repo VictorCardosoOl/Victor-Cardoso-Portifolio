@@ -11,25 +11,64 @@ export const NAV_LINKS = [
 
 export const SERVICES = [
   {
-    title: 'Landing Page',
-    description: 'Páginas de alta conversão, rápidas e otimizadas para SEO. Ideal para lançamentos, captura de leads e presença digital essencial.',
+    title: 'Landing Page de Alta Conversão',
+    description: 'Páginas estratégicas desenhadas para transformar visitantes em leads ou compradores. Ideal para lançamentos e produtos únicos.',
+    benefit: 'Aumente o retorno sobre seu investimento em anúncios (ROAS). Uma LP bem feita guia o usuário sem distrações até o botão de compra.',
+    analogy: 'Imagine sua Landing Page como um vendedor de elite que trabalha 24h por dia, apresentando seu produto perfeitamente para cada cliente que entra na loja.',
     icon: Layout,
-    techStack: ['React', 'Tailwind CSS', 'SEO', 'Performance', 'Design Responsivo'],
-    tags: ['Rápido', 'Vendas', 'Marketing']
+    techStack: ['React', 'Tailwind CSS', 'Framer Motion', 'SEO Técnico', 'Analytics'],
+    tags: ['Vendas', 'Marketing', 'Performance'],
+    deliverables: [
+      'Site de página única (SPA) ultra-rápido',
+      'Design persuasivo (Copywriting + UI)',
+      'Integração com Pixel (Meta/Google)',
+      'Formulários de captura de Lead'
+    ]
   },
   {
-    title: 'Sistema Completo',
-    description: 'Soluções robustas sob medida. Painéis administrativos, gestão de dados, integração com APIs, autenticação e arquitetura escalável.',
-    icon: Database,
-    techStack: ['Next.js', 'Node.js', 'PostgreSQL', 'Auth', 'Dashboards', 'API Rest'],
-    tags: ['SaaS', 'Gestão', 'Complexo']
-  },
-  {
-    title: 'E-commerce (Loja)',
-    description: 'Venda seus produtos online com uma experiência de compra fluida, segura e gerenciável. Integração com meios de pagamento.',
+    title: 'Site Institucional & Blog',
+    description: 'A sede digital da sua empresa. Construção de autoridade e canal de comunicação centralizado com seus clientes.',
+    benefit: 'Credibilidade imediata. Quando um cliente te procura no Google, ele precisa encontrar uma "sede" organizada e profissional.',
+    analogy: 'É como o escritório físico ou showroom da sua marca: precisa ser bonito, organizado e transmitir confiança instantânea.',
     icon: Globe,
-    techStack: ['Shopify', 'Stripe/MercadoPago', 'Carrinho', 'Gestão de Estoque'],
-    tags: ['Vendas', 'Loja Online', 'Pagamentos']
+    techStack: ['Next.js', 'CMS (Sanity/Prismic)', 'SEO Avançado', 'Design System'],
+    tags: ['Branding', 'Autoridade', 'Conteúdo'],
+    deliverables: [
+      'Painel para editar textos (CMS)',
+      'Páginas: Home, Sobre, Serviços, Contato',
+      'Otimização para Google (SEO)',
+      'Design Responsivo (Mobile First)'
+    ]
+  },
+  {
+    title: 'E-commerce & Lojas Virtuais',
+    description: 'Venda seus produtos online com uma experiência de compra fluida, segura e gerenciável.',
+    benefit: 'Escalabilidade de vendas sem barreiras geográficas. Sua loja aberta para o mundo todo.',
+    analogy: 'Seu ponto comercial no shopping mais movimentado do mundo: a internet. Com vitrines que mudam sozinhas baseadas no gosto do cliente.',
+    icon: Rocket,
+    techStack: ['Shopify', 'Stripe/MercadoPago', 'React', 'Gestão de Estoque'],
+    tags: ['Vendas', 'Loja Online', 'Pagamentos'],
+    deliverables: [
+      'Catálogo de Produtos Gerenciável',
+      'Checkout Transparente e Seguro',
+      'Integração com Frete (Correios/Melhor Envio)',
+      'Painel de Vendas e Estoque'
+    ]
+  },
+  {
+    title: 'Sistemas Web (SaaS) sob Medida',
+    description: 'Soluções complexas para resolver problemas de negócio específicos. Dashboards, CRMs e Portais.',
+    benefit: 'Eficiência operacional. Automatize processos manuais, reduza erros humanos e tenha dados na palma da mão.',
+    analogy: 'Como construir uma fábrica automatizada: você aperta um botão e o sistema faz o trabalho pesado de organização e processamento.',
+    icon: Database,
+    techStack: ['Next.js', 'Node.js', 'PostgreSQL', 'Auth', 'API Rest'],
+    tags: ['Gestão', 'SaaS', 'Automação'],
+    deliverables: [
+      'Dashboard Administrativo',
+      'Banco de Dados Seguro',
+      'Autenticação de Usuários',
+      'Relatórios e Gráficos'
+    ]
   }
 ];
 

@@ -54,24 +54,33 @@ body {
 }
 
 /* Scrollbar Styling - Opcional, pois o Lenis pode ocultar ou customizar */
+/* HIDE SCROLLBAR GLOBALLY */
 ::-webkit-scrollbar {
-    width: 6px;
+    display: none;
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+html,
+body {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
-::-webkit-scrollbar-thumb {
-    background: rgba(11, 35, 46, 0.2);
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: rgba(11, 35, 46, 0.6);
-}
 
 ::selection {
     background: #CBD5E1;
     color: #0B232E;
+}
+
+/* HIDE SCROLLBAR UTILITY */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
